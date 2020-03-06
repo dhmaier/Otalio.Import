@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Otalio.Import", "Otalio.Import\Otalio.Import.vbproj", "{928527BD-54A8-4986-B7B5-676A62B5F230}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Otalio Import Tool", "Otalio Import Tool\Otalio Import Tool.vdproj", "{7FEE5CC3-170C-4E1D-B9DA-D34ABA7243A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{928527BD-54A8-4986-B7B5-676A62B5F230}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{928527BD-54A8-4986-B7B5-676A62B5F230}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{928527BD-54A8-4986-B7B5-676A62B5F230}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FEE5CC3-170C-4E1D-B9DA-D34ABA7243A5}.Debug|Any CPU.ActiveCfg = Debug
+		{7FEE5CC3-170C-4E1D-B9DA-D34ABA7243A5}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
