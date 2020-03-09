@@ -158,6 +158,7 @@
     <Compile Include="Classes\clsColumnProperties.vb" />
     <Compile Include="Classes\clsAPI.vb" />
     <Compile Include="Classes\clsGraphQL.vb" />
+    <Compile Include="Classes\clsHierarchies.vb" />
     <Compile Include="Classes\clsImportColum.vb" />
     <Compile Include="Classes\clsJsonHelper.vb" />
     <Compile Include="Classes\clsLookUpTypes.vb" />

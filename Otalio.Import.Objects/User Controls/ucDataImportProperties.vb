@@ -122,8 +122,6 @@ Public Class ucDataImportProperties
         gdImportColumns.BestFitColumns()
         gdValidators.BestFitColumns()
 
-
-
       End If
     End Set
   End Property

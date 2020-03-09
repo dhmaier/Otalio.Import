@@ -47,7 +47,6 @@ Public Class ucConnectionDetails
       'load it
       Dim oConnnection As clsConnectionDetails = TryCast(LoadFile(sFullPath), clsConnectionDetails)
       If oConnnection IsNot Nothing Then
-
         moConnection = oConnnection
         txtServerName.DataBindings.Clear()
         txtServerName.DataBindings.Add(New Binding("Text", moConnection, "_ServerAddress"))

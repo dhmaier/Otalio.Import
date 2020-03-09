@@ -58,6 +58,7 @@ Public Class clsAPI
     If eStatus = HttpStatusCode.OK Then
       If pbSilent = False Then MsgBox("System sucessfully tested connection to server")
       Call LoadLookupTypes()
+      Call LoadHierarchies()
       Return True
     Else
       MsgBox(String.Format("Server returned following error code {0}", eStatus))
@@ -175,6 +176,9 @@ Public Class clsAPI
 
   Public Function CallWebEndpointUsingPost(psEndPoint As String, psDTOJson As String) As IRestResponse
 
+    ExtractSystemVariables(psEndPoint)
+    ExtractSystemVariables(psDTOJson)
+
     Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
     Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
@@ -196,20 +200,41 @@ Public Class clsAPI
 
   Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "") As IRestResponse
 
-    Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+    psEndPoint = ExtractSystemVariables(psEndPoint)
+    psHeader = ExtractSystemVariables(psHeader)
+    psQuery = ExtractSystemVariables(psQuery)
+    psSort = ExtractSystemVariables(psSort)
 
-    If Not String.IsNullOrEmpty(psQuery) Then
-      If psQuery.Contains("??") Then
-        url = url + Replace(psQuery, "??", "?")
-      Else
-        If url.Contains("?") Then
-          url = url + String.Format("&search={0}", System.Web.HttpUtility.UrlEncode(psQuery))
-        Else
-          url = url + String.Format("?search={0}", System.Web.HttpUtility.UrlEncode(psQuery))
+
+    Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+    Dim sQuery As String = psQuery.ToString.Trim
+
+    If Not String.IsNullOrEmpty(sQuery) Then
+
+      If sQuery.Contains("??") Then
+        Dim sQueryValues As List(Of String) = sQuery.Split(New Char() {"?"}, StringSplitOptions.RemoveEmptyEntries).ToList
+        If sQueryValues IsNot Nothing Then
+          If sQueryValues.Count = 1 Then
+            url = url + "?" & sQueryValues(0)
+            sQuery = ""
+          End If
+
+          If sQueryValues.Count = 2 Then
+            url = url + "?" & sQueryValues(1)
+            sQuery = sQueryValues(0)
+          End If
         End If
       End If
 
+      If String.IsNullOrEmpty(sQuery) = False Then
+        If url.Contains("?") Then
+          url = url + String.Format("&search={0}", System.Web.HttpUtility.UrlEncode(sQuery))
+        Else
+          url = url + String.Format("?search={0}", System.Web.HttpUtility.UrlEncode(sQuery))
+        End If
+      End If
     End If
+
 
     If psSort <> "" Then
       url = url + "&sort=" & psSort
@@ -243,6 +268,10 @@ Public Class clsAPI
 
   Public Function CallWebEndpointUsingDelete(psEndPoint As String, psQuery As String) As IRestResponse
 
+    psEndPoint = ExtractSystemVariables(psEndPoint)
+    psQuery = ExtractSystemVariables(psQuery)
+
+
     Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
     If Not String.IsNullOrEmpty(psQuery) Then
@@ -265,6 +294,10 @@ Public Class clsAPI
   End Function
 
   Public Function CallWebEndpointUsingPut(psEndPoint As String, psEntityID As String, psQuery As String, psDTOJson As String) As IRestResponse
+
+    psEndPoint = ExtractSystemVariables(psEndPoint)
+    psQuery = ExtractSystemVariables(psQuery)
+    psDTOJson = ExtractSystemVariables(psDTOJson)
 
     Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
 
@@ -290,7 +323,10 @@ Public Class clsAPI
 
   End Function
 
-  Public Function GetValueFromEndpoint(psEndPoint As String, psQuery As String, psNodeName As String) As String
+  Public Function GetValueFromEndpoint(psEndPoint As String, psQuery As String, psNodeName As String, psRootNode As String) As String
+
+    psEndPoint = ExtractSystemVariables(psEndPoint)
+    psQuery = ExtractSystemVariables(psQuery)
 
     Dim sReturnValue As String = ""
 
@@ -298,9 +334,14 @@ Public Class clsAPI
     Dim json As JObject = JObject.Parse(oResponse.Content)
     If json IsNot Nothing Then
 
+      Dim sRoot As String = ""
+
+      If String.IsNullOrEmpty(psNodeName) = False AndAlso psNodeName.Contains("[0]") Then
+        sRoot = psNodeName.Substring(0, psNodeName.LastIndexOf("[0]"))
+      End If
 
       If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
-        Dim oObject As JToken = TryCast(json.SelectToken("responsePayload.content"), JToken)
+        Dim oObject As JToken = TryCast(json.SelectToken(sRoot), JToken)
         If oObject IsNot Nothing Then
           If oObject.Count > 0 Then
 
@@ -351,6 +392,9 @@ Public Class clsAPI
 
   Public Function CallGraphQL(psEndPoint As String, psDTOJson As String) As IRestResponse
 
+    psEndPoint = ExtractSystemVariables(psEndPoint)
+    psDTOJson = ExtractSystemVariables(psDTOJson)
+
     Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
     Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
@@ -373,5 +417,102 @@ Public Class clsAPI
 
   End Function
 
+  Private Sub LoadHierarchies()
+
+    If goHierarchies IsNot Nothing AndAlso goHierarchies.Count = 0 Then
+      Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", "", "")
+      If oResponse IsNot Nothing Then
+
+        Dim json As JObject = JObject.Parse(oResponse.Content)
+        Dim oOjbect As JToken = TryCast(json.SelectToken("responsePayload"), JToken)
+
+        For Each oNode In oOjbect
+          If oNode IsNot Nothing Then
+
+            Dim sDescription As JToken = oNode.SelectToken("translations.en.description")
+
+            goHierarchies.Add(New clsHierarchies With {.Id = oNode("id"), .Code = oNode("code"), .Description = sDescription, .ParentHierarchyId = oNode("parentHierarchyId"),
+                             .Enabled = IIf(oNode("enabled").ToString.ToUpper = "TRUE", True, False), .Level = oNode("level"), .Priority = oNode("priority")})
+          End If
+        Next
+
+        json = Nothing
+        oOjbect = Nothing
+
+        'check for children
+        For Each oH As clsHierarchies In goHierarchies
+
+          oH.ParentName = LookforParentHierarchies(oH, "")
+
+          'If oH.ParentHierarchyId IsNot Nothing AndAlso oH.ParentHierarchyId.ToString <> "" Then
+          '  Dim oParent As clsHierarchies = goHierarchies.Where(Function(n) n.Id = oH.ParentHierarchyId).FirstOrDefault
+          '  If oParent IsNot Nothing AndAlso oParent.Description <> "" Then
+          '    oH.ParentName = oParent.Description
+          '    If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> "" Then
+          '      oParent = LookforParentHierarchies(oParent)
+          '    End If
+          '  End If
+          'End If
+        Next
+
+
+        If goHierarchies IsNot Nothing Then
+          goHierarchies = goHierarchies.OrderBy(Function(n) n.ParentName).ThenBy(Function(n) n.Description).ToList
+        End If
+
+
+
+      End If
+      oResponse = Nothing
+    End If
+  End Sub
+
+  Private Function LookforParentHierarchies(poHierarchy As clsHierarchies, psParentString As String) As String
+
+    If poHierarchy.ParentHierarchyId IsNot Nothing AndAlso poHierarchy.ParentHierarchyId.ToString <> "" Then
+
+      Dim oParent As clsHierarchies = goHierarchies.Where(Function(n) n.Id = poHierarchy.ParentHierarchyId).FirstOrDefault
+
+      If oParent.Id <> "1" Then
+        If oParent IsNot Nothing AndAlso oParent.Description <> "" Then
+          If psParentString = "" Then
+            psParentString = oParent.Description
+          Else
+            psParentString = oParent.Description & "\" & psParentString
+          End If
+        End If
+
+        If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> "" Then
+          psParentString = LookforParentHierarchies(oParent, psParentString)
+        End If
+      Else
+        If psParentString = "" Then
+          psParentString = "Enterprise"
+        Else
+          psParentString = "Enterprise" & " \ " & psParentString
+        End If
+      End If
+     End If
+      Return psParentString
+  End Function
+
+  Private Function ExtractSystemVariables(psObject As String) As String
+
+    Try
+
+
+      'check for Hierarchy
+      If psObject IsNot Nothing AndAlso String.IsNullOrEmpty(psObject) = False Then
+        If psObject.ToString.ToUpper.Contains("@@HIERARCHYID@@") = True Then psObject = Replace(psObject, "@@HIERARCHYID@@", gsSelectedHierarchy.ToString)
+
+      End If
+
+      Return psObject
+
+    Catch ex As Exception
+
+    End Try
+
+  End Function
 
 End Class

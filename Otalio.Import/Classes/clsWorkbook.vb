@@ -21,6 +21,7 @@ Public Class clsWorkbook
   Public Property MajorVersion As Integer = 1
   Public Property MinorVersion As Integer = 1
   Public Property SaveVersion As Integer = 1
+  Public Property SelectedHierarchy As String = ""
 
   Public ReadOnly Property WorkbookVersion As String
     Get
