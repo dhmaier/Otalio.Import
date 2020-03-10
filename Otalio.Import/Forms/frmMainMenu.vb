@@ -55,6 +55,7 @@ Public Class frmMainMenu
     siInfo.Caption = String.Format("Version:{0}", My.Application.Info.Version)
 
     AddHandler goHTTPServer.APICallEvent, AddressOf APICallEvent
+    AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
 
 
 
@@ -407,6 +408,23 @@ Public Class frmMainMenu
 
   End Sub
 
+  Public Sub ErrorEvent(poExcetpion As Exception)
+    If poExcetpion IsNot Nothing Then
+
+      Dim sText As String = ""
+
+      sText = sText + String.Format("Code:{0} - Message: {1} {3}Stack:{2}", poExcetpion.HResult, poExcetpion.Message, poExcetpion.StackTrace, vbNewLine) & vbNewLine & vbNewLine & vbNewLine
+
+      txtErrors.EditValue = sText & txtErrors.EditValue & vbNewLine
+
+    End If
+
+    If txtErrors.EditValue.ToString.Length > EventLogHistory Then
+      txtErrors.EditValue = txtErrors.EditValue.ToString.Substring(0, EventLogHistory)
+    End If
+
+  End Sub
+
   Public Sub createNewExcelSheet(poImportTemplate As clsDataImportTemplate)
 
     If poImportTemplate IsNot Nothing Then
@@ -427,7 +445,14 @@ Public Class frmMainMenu
           With .ActiveWorksheet
             For Each oImportColumn In poImportTemplate.ImportColumns.OrderBy(Function(n) n.ColumnID)
 
-              .Cells(String.Format("{0}1", oImportColumn.ColumnName)).Value = oImportColumn.Name
+              Dim sColumnName As String = ""
+              If String.IsNullOrEmpty(oImportColumn.Parent) = False Then
+                sColumnName = String.Format("{0}.{1}", oImportColumn.Parent, oImportColumn.Name)
+              Else
+                sColumnName = oImportColumn.Name
+              End If
+
+              .Cells(String.Format("{0}1", oImportColumn.ColumnName)).Value = sColumnName
 
               If oImportColumn.Parent = "translations.en" Then
                 .Cells(String.Format("{0}1", oImportColumn.ColumnName)).Value = "English"
@@ -2191,6 +2216,20 @@ Public Class frmMainMenu
       SaveFile(Path.Combine(sPath, sFileName), goOpenWorkBook)
 
 
+      If pbSaveAs Then
+        'copy also the excel file
+        sFileName = Path.GetFileNameWithoutExtension(sFileName)
+
+        Dim sCurrentFilename As String = spreadsheetControl.Document.Path
+        If String.IsNullOrEmpty(sCurrentFilename) = True Then
+          sCurrentFilename = String.Format("{0}\{1}.{2}", sPath, sFileName, "xlsx")
+        End If
+
+        Dim sExcelExtention As String = Path.GetExtension(sCurrentFilename)
+        spreadsheetControl.SaveDocument(String.Format("{0}\{1}{2}", sPath, sFileName, sExcelExtention))
+
+      End If
+
     Catch ex As Exception
 
     Finally
@@ -2344,6 +2383,8 @@ Public Class frmMainMenu
                                 If mbCancel = True Then Exit For
 
                                 Dim sValue As String = ""
+                                Dim sColumnName As String = ""
+
                                 Dim oCell As Cell = .ActiveWorksheet.Cells(String.Format("{0}{1}", ocolumn.ColumnName, nRow))
 
                                 'check if this is a multi node array
