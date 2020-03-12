@@ -7,6 +7,7 @@ Imports System.Dynamic
 Imports System.Net
 Imports Newtonsoft.Json.Linq
 Imports System.Linq
+Imports System.IO
 
 
 
@@ -350,7 +351,9 @@ Public Class clsAPI
       Dim oClient = New RestClient(url)
 
 
+
       Dim oRequest = New RestRequest(Method.PUT)
+
       oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
       oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
       oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
@@ -360,6 +363,38 @@ Public Class clsAPI
       RaiseEvent APICallEvent(oRequest, oResponse)
 
       Return oResponse
+    Catch ex As Exception
+      RaiseEvent ErrorEvent(ex)
+    End Try
+
+    Return Nothing
+
+  End Function
+
+  Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
+    Try
+      psEndPoint = ExtractSystemVariables(psEndPoint)
+
+      If File.Exists(psFileName) Then
+
+        Dim bFileContent As Byte() = System.IO.File.ReadAllBytes(psFileName)
+        If bFileContent IsNot Nothing Then
+
+          Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID, psObject)
+          Dim oClient = New RestClient(url)
+
+          Dim oRequest = New RestRequest(psObject, Method.POST)
+          ' oRequest.AddHeader("Content-Type", "multipart/form-data")
+          oRequest.AddHeader("Accept-Encoding", ": gzip, deflate, br")
+          oRequest.AddFile("file", bFileContent, Path.GetFileName(psFileName), String.Format("image/{0}", Path.GetExtension(psFileName)))
+          Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+
+          RaiseEvent APICallEvent(oRequest, oResponse)
+
+          Return oResponse
+        End If
+      End If
+
     Catch ex As Exception
       RaiseEvent ErrorEvent(ex)
     End Try
@@ -380,15 +415,31 @@ Public Class clsAPI
       If json IsNot Nothing Then
 
         Dim sRoot As String = ""
+        Dim sNode As String = ""
 
         If String.IsNullOrEmpty(psNodeName) = False AndAlso psNodeName.Contains("[0]") Then
           sRoot = psNodeName.Substring(0, psNodeName.LastIndexOf("[0]"))
+          sNode = psNodeName.Substring(psNodeName.LastIndexOf("]") + 2)
         End If
 
         If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
           Dim oObject As JToken = TryCast(json.SelectToken(sRoot), JToken)
           If oObject IsNot Nothing Then
             If oObject.Count > 0 Then
+
+              Try
+                If sNode = "description" Then
+                  'try to exact it from the object
+                  Dim oToken As JToken = TryCast(json.SelectToken(String.Format("{0}[0].translations.en.description", sRoot, sNode)), JToken)
+                  If oToken IsNot Nothing Then
+                    Return oToken.ToString
+                  End If
+                End If
+
+              Catch ex As Exception
+
+              End Try
+
 
               'Extract the value
               sReturnValue = json.SelectToken(psNodeName).ToString
@@ -563,7 +614,7 @@ Public Class clsAPI
 
   End Function
 
-  Private Function ExtractSystemVariables(psObject As String) As String
+  Public Function ExtractSystemVariables(psObject As String) As String
 
     Try
 

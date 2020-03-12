@@ -7,7 +7,7 @@
 Public Class clsDataImportTemplate
 
   Public Property ID As String = System.Guid.NewGuid.ToString
-  Public Property ImportType As String = "1"
+  Public Property ImportType As String = "2"
   Public Property Name As String = ""
   Public Property APIEndpoint As String = ""
   Public Property DTOObject As String = ""
@@ -26,6 +26,9 @@ Public Class clsDataImportTemplate
   Public Property Variables As New List(Of clsVariables)
   Public Property GraphQLQuery As String = ""
   Public Property GraphQLRootNode As String = ""
+  Public Property EntityColumn As String = ""
+  Public Property FileLocationColumn As String = ""
+
 
 
   Public ReadOnly Property SortedName As String

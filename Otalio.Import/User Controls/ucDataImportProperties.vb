@@ -118,9 +118,23 @@ Public Class ucDataImportProperties
           .DataBindings.Add(New Binding("Text", moDataImportTemplate, "GraphQLRootNode"))
         End With
 
+
+        With txtEntityColumn
+          .DataBindings.Clear()
+          .DataBindings.Add(New Binding("Text", moDataImportTemplate, "EntityColumn"))
+        End With
+
+        With txtFileLocationColumn
+          .DataBindings.Clear()
+          .DataBindings.Add(New Binding("Text", moDataImportTemplate, "FileLocationColumn"))
+        End With
+
+
         gridValidators.DataSource = moDataImportTemplate.Validators
         gdImportColumns.BestFitColumns()
         gdValidators.BestFitColumns()
+
+
 
 
 
@@ -190,5 +204,25 @@ Public Class ucDataImportProperties
     End With
   End Sub
 
+  Private Sub icbType_EditValueChanged(sender As Object, e As EventArgs) Handles icbType.EditValueChanged
 
+    Select Case moDataImportTemplate.ImportType
+
+      Case "3" 'file import
+
+        lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+        lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+        lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+        lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+
+      Case Else
+
+        lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+        lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+        lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+        lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+
+    End Select
+
+  End Sub
 End Class

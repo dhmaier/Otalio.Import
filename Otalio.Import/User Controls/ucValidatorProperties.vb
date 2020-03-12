@@ -19,6 +19,7 @@ Public Class ucValidatorProperties
     End Get
     Set(value As clsValidation)
       If value IsNot Nothing Then
+        moValidation = Nothing
         moValidation = value
 
         If moValidation.Enabled = "" Then moValidation.Enabled = "1"
@@ -100,6 +101,16 @@ Public Class ucValidatorProperties
         End With
 
 
+        If moValidation.LookUpType IsNot Nothing Then
+          Dim olookup As clsLookUpTypes = goLookupTypes.Where(Function(n) n.Id = moValidation.LookUpType.Id).FirstOrDefault
+          If olookup IsNot Nothing Then
+            moValidation.LookUpType = olookup
+            lueLookupTypes.EditValue = olookup
+          End If
+        End If
+
+
+
       End If
     End Set
   End Property
@@ -120,7 +131,7 @@ Public Class ucValidatorProperties
         lueLookupTypes.Properties.DataSource = goLookupTypes
 
         If moValidation.LookUpType IsNot Nothing Then
-          lueLookupTypes.EditValue = moValidation.ID
+          lueLookupTypes.EditValue = moValidation.LookUpType
         End If
 
         If String.IsNullOrEmpty(txtAPIEndpoint.EditValue) = True Then
@@ -141,7 +152,7 @@ Public Class ucValidatorProperties
         lueLookupTypes.Properties.DataSource = goLookupTypes
 
         If moValidation.LookUpType IsNot Nothing Then
-          lueLookupTypes.EditValue = moValidation.ID
+          lueLookupTypes.EditValue = moValidation.LookUpType.Id
         End If
 
         If String.IsNullOrEmpty(txtAPIEndpoint.EditValue) = True Then
@@ -170,6 +181,8 @@ Public Class ucValidatorProperties
         '    If String.IsNullOrEmpty(txtComments.EditValue) = True Then
         Dim oLookup As clsLookUpTypes = TryCast(lueLookupTypes.GetSelectedDataRow, clsLookUpTypes)
         If oLookup IsNot Nothing Then
+
+          moValidation.LookUpType = oLookup
 
           moValidation.Comments = String.Format("{0}", oLookup.Code, oLookup.Description)
           txtComments.EditValue = moValidation.Comments
