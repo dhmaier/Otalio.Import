@@ -309,7 +309,7 @@ Partial Class ucDataImportProperties
         Me.icbType.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbType.Properties.Appearance.Options.UseFont = True
         Me.icbType.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Update", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upload File", "3", -1)})
+        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Update", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Update", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upload File", "3", -1)})
         Me.icbType.Size = New System.Drawing.Size(258, 20)
         Me.icbType.StyleController = Me.LayoutControl1
         Me.icbType.TabIndex = 15

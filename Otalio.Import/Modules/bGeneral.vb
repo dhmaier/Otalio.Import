@@ -9,8 +9,13 @@
   Public Property goHierarchies As New List(Of clsHierarchies)
   Public Property goJsonHelper As New clsJsonHelper
 
-  Public Const gsSettingFileName As String = "OtalioISF.Setting"
+  Public Const gsSettingFileNameOld As String = "OtalioISF.Setting"
+
+  Public Const gsSettingFileName As String = "OtalioImport.Setting"
   Public Property gsSelectedHierarchy As String = ""
 
+  Public Enum UserControlWaitFormCommand
+    SetSize
+  End Enum
 
 End Module

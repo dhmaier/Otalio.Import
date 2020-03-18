@@ -1,7 +1,17 @@
 ﻿Imports System.IO
 Imports System.Configuration
 Imports System.Linq
-
+Imports System.Drawing.Drawing2D
+Imports System
+Imports System.Collections.Generic
+Imports System.Drawing
+Imports System.Text
+Imports System.Threading.Tasks
+Imports DevExpress.LookAndFeel
+Imports DevExpress.Skins
+Imports DevExpress.Utils
+Imports DevExpress.Utils.Drawing
+Imports DevExpress.Utils.Svg
 
 
 Module bFunctions
@@ -127,7 +137,6 @@ Module bFunctions
     End Try
 
   End Function
-
 
   Public Function Base64Encode(ByVal plainText As String) As String
     Dim plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText)
@@ -275,5 +284,61 @@ Module bFunctions
 
     Return bAns
   End Function
+
+
+#Region "Drawing Functions"
+  Public Function ResizeImage(img As Image, width As Integer, height As Integer) As Image
+    Dim newImage = New Bitmap(width, height)
+    Using gr = Graphics.FromImage(newImage)
+      gr.SmoothingMode = SmoothingMode.HighQuality
+      gr.InterpolationMode = InterpolationMode.HighQualityBicubic
+      gr.PixelOffsetMode = PixelOffsetMode.HighQuality
+      gr.DrawImage(img, New Rectangle(0, 0, width, height))
+    End Using
+    Return newImage
+  End Function
+
+  Public Function ResizeImage(img As Image, size As Size) As Image
+    Return ResizeImage(img, size.Width, size.Height)
+  End Function
+
+  Public Function ResizeImage(bmp As Bitmap, width As Integer, height As Integer) As Image
+    Return ResizeImage(DirectCast(bmp, Image), width, height)
+  End Function
+
+  Public Function ResizeImage(bmp As Bitmap, size As Size) As Image
+    Return ResizeImage(DirectCast(bmp, Image), size.Width, size.Height)
+  End Function
+
+  Public Function LoadAndResizeImageAsBytes(psFileName As String, pnFormat As System.Drawing.Imaging.ImageFormat) As Byte()
+    Try
+
+      If File.Exists(psFileName) Then
+        Dim oImage As Image = Image.FromFile(psFileName)
+        If oImage IsNot Nothing Then
+          oImage = ResizeImage(oImage, 256, 256)
+
+          Using ms = New MemoryStream()
+            oImage.Save(ms, pnFormat) ' Use appropriate format here
+            Return ms.ToArray()
+          End Using
+
+        End If
+        oImage.Dispose()
+
+      End If
+    Catch ex As Exception
+
+    End Try
+    Return Nothing
+
+  End Function
+
+  Public Function CreateImage(ByVal data() As Byte, Optional ByVal skinProvider As ISkinProvider = Nothing) As Image
+    Dim svgBitmap As New SvgBitmap(data)
+    Return svgBitmap.Render(SvgPaletteHelper.GetSvgPalette(If(skinProvider, UserLookAndFeel.Default), ObjectState.Normal), ScaleUtils.GetScaleFactor().Height)
+  End Function
+
+#End Region
 
 End Module

@@ -11,6 +11,7 @@ Imports System.IO
 
 
 
+
 Public Class clsAPI
 
   Private msAccessToken As String
@@ -51,6 +52,11 @@ Public Class clsAPI
         End If
       End If
 
+      If goConnection._HTTPUserName <> "" Then
+        oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
+      End If
+
+
       Return oClient.Execute(oRequest)
 
     Catch ex As Exception
@@ -61,7 +67,7 @@ Public Class clsAPI
 
   End Function
 
-  Public Function TestConnection(Optional pbSilent As Boolean = True, Optional poConnection As clsConnectionDetails = Nothing) As Boolean
+  Public Function TestConnection(Optional pbSilent As Boolean = True, Optional poConnection As clsConnectionDetails = Nothing, Optional psLoadData As Boolean = False) As Boolean
     Try
       If poConnection IsNot Nothing Then
         goConnection = poConnection
@@ -71,11 +77,14 @@ Public Class clsAPI
 
       If eStatus = HttpStatusCode.OK Then
         If pbSilent = False Then MsgBox("System sucessfully tested connection to server")
-        Call LoadLookupTypes()
-        Call LoadHierarchies()
+        If psLoadData Then
+          Call LoadLookupTypes()
+          Call LoadHierarchies()
+        End If
+
         Return True
       Else
-        MsgBox(String.Format("Server returned following error code {0}", eStatus))
+        If pbSilent = False Then MsgBox(String.Format("Server returned following error code {0}", eStatus))
         Return False
       End If
     Catch ex As Exception
@@ -343,10 +352,16 @@ Public Class clsAPI
       Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
 
       If Not String.IsNullOrEmpty(psQuery) Then
-        url = url + String.Format("?{0}", (psQuery.Trim))
+        If psQuery.Contains("??") Then
+          url = url + String.Format("{0}", Replace((psQuery.Trim), "??", ""))
+        Else
+          url = url + String.Format("?{0}", (psQuery.Trim))
+        End If
+
+
       End If
 
-      Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+        Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
       Dim serialized = jsSerializer.Serialize(psDTOJson)
       Dim oClient = New RestClient(url)
 
@@ -372,12 +387,20 @@ Public Class clsAPI
   End Function
 
   Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
+
+    Dim bFileContent As Byte() = Nothing
+
     Try
       psEndPoint = ExtractSystemVariables(psEndPoint)
-
       If File.Exists(psFileName) Then
 
-        Dim bFileContent As Byte() = System.IO.File.ReadAllBytes(psFileName)
+        Select Case Path.GetExtension(psFileName).ToString.ToLower
+          Case ".jpg" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg)
+          Case ".png" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png)
+          Case ".bmp" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp)
+          Case Else : bFileContent = System.IO.File.ReadAllBytes(psFileName)
+        End Select
+
         If bFileContent IsNot Nothing Then
 
           Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID, psObject)
@@ -397,6 +420,8 @@ Public Class clsAPI
 
     Catch ex As Exception
       RaiseEvent ErrorEvent(ex)
+    Finally
+      bFileContent = Nothing
     End Try
 
     Return Nothing
@@ -468,6 +493,8 @@ Public Class clsAPI
 
   Private Sub LoadLookupTypes()
     Try
+      goLookupTypes.Clear()
+
       If goLookupTypes IsNot Nothing AndAlso goLookupTypes.Count = 0 Then
         Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", "", "")
         If oResponse IsNot Nothing Then
@@ -533,6 +560,9 @@ Public Class clsAPI
 
   Private Sub LoadHierarchies()
     Try
+
+      goHierarchies.Clear()
+
       If goHierarchies IsNot Nothing AndAlso goHierarchies.Count = 0 Then
         Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", "", "")
         If oResponse IsNot Nothing Then

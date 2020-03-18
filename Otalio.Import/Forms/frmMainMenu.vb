@@ -14,12 +14,21 @@ Imports System.Net
 Imports RestSharp
 Imports DevExpress.XtraSpreadsheet
 Imports DevExpress.XtraEditors
+Imports DevExpress.XtraWaitForm
+Imports DevExpress.XtraSplashScreen
+Imports DevExpress.XtraBars
+
 
 
 Public Class frmMainMenu
 
   Private mbCancel As Boolean = False
 
+  Private buttonImage As Image
+  Private hotButtonImage As Image
+
+  Private overlayLabel As OverlayTextPainter
+  Private overlayButton As OverlayImagePainter
 
 #Region "Form"
 
@@ -30,9 +39,16 @@ Public Class frmMainMenu
   Private mbForceValidate As Boolean = True
   Private mbHideCalulationColumns As Boolean = True
   Private mbContainsHierarchies As Boolean = False
+  Private moOverlayHandle As IOverlaySplashScreenHandle
 
-
+  Private mnCounter As Integer = 0
   Sub New()
+
+    Me.buttonImage = CreateButtonImage()
+    Me.hotButtonImage = CreateHotButtonImage()
+    Me.overlayLabel = New OverlayTextPainter()
+    Me.overlayButton = New OverlayImagePainter(buttonImage, hotButtonImage, AddressOf OnCancelButtonClick)
+
     InitSkins()
     InitializeComponent()
     Me.InitSkinGallery()
@@ -51,15 +67,22 @@ Public Class frmMainMenu
   Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
 
     UcProperties1._DataImportTemplate = New clsDataImportTemplate
-    UcConnectionDetails1.LoadSettingFile()
+    UcConnectionDetails1.LoadSettingFile(True)
     siInfo.Caption = String.Format("Version:{0}", My.Application.Info.Version)
 
     AddHandler goHTTPServer.APICallEvent, AddressOf APICallEvent
     AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
 
 
-
   End Sub
+
+  Private Function CreateButtonImage() As Image
+    Return CreateImage(My.Resources.cancel_normal)
+  End Function
+  Private Function CreateHotButtonImage() As Image
+    Return CreateImage(My.Resources.cancel_active)
+  End Function
+
 
 #End Region
 
@@ -156,17 +179,31 @@ Public Class frmMainMenu
 
   Private Sub bbiValidateData_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiValidateData.ItemClick
 
-    If lbxImportTemplates.CheckedItemsCount = 0 Then
-      MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
-      Exit Sub
-    End If
+    Try
 
-    For Each oItem In lbxImportTemplates.CheckedItems
-      Call ValidateDataTempalte(TryCast(oItem, clsDataImportTemplate))
-      Call ValidateData(TryCast(oItem, clsDataImportTemplate))
-      Application.DoEvents()
-    Next
 
+      If lbxImportTemplates.CheckedItemsCount = 0 Then
+        MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
+        Exit Sub
+      End If
+
+      For Each oItem In lbxImportTemplates.CheckedItems
+        If oItem IsNot Nothing Then
+          Try
+            Call ValidateDataTempalte(TryCast(oItem, clsDataImportTemplate))
+
+            Call ValidateData(TryCast(oItem, clsDataImportTemplate))
+
+          Catch ex As Exception
+
+          End Try
+
+          Application.DoEvents()
+        End If
+      Next
+    Catch ex As Exception
+
+    End Try
 
   End Sub
 
@@ -246,47 +283,59 @@ Public Class frmMainMenu
 
   Private Sub bbiOpenWorkbook_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiOpenWorkbook.ItemClick
 
-    Dim fd As OpenFileDialog = New OpenFileDialog
-    fd.Multiselect = False
-    fd.Title = "Select a Otalio Dynamic import workbook."
-    fd.Filter = "Dynamic import workbook |*.ditw"
-    fd.FilterIndex = 1
-    fd.FileName = txtWorkbookName.Text
-    fd.RestoreDirectory = True
-    If fd.ShowDialog() = DialogResult.OK Then
 
-      Dim sFilename As String = fd.FileName
-
-      If File.Exists(sFilename) Then
-
-        msFilePath = Path.GetDirectoryName(sFilename)
-        msFileName = fd.SafeFileName
-        txtWorkbookName.EditValue = msFileName
+    Try
 
 
-        Dim oWorkbook As clsWorkbook = TryCast(LoadFile(sFilename), clsWorkbook)
 
-        If oWorkbook IsNot Nothing Then
+      Dim fd As OpenFileDialog = New OpenFileDialog
+      fd.Multiselect = False
+      fd.Title = "Select a Otalio Dynamic import workbook."
+      fd.Filter = "Dynamic import workbook |*.ditw"
+      fd.FilterIndex = 1
+      fd.FileName = txtWorkbookName.Text
+      fd.RestoreDirectory = True
+      If fd.ShowDialog() = DialogResult.OK Then
 
-          goOpenWorkBook = oWorkbook
-          goOpenWorkBook.WorkbookName = msFileName
+        Dim sFilename As String = fd.FileName
 
-          loadWorkbook()
+        If File.Exists(sFilename) Then
 
-          'check if there is a data excel sheet in the same folder with the same name
-          If File.Exists(Replace(sFilename, ".ditw", ".xlsx")) Then
-            spreadsheetControl.LoadDocument(Replace(sFilename, ".ditw", ".xlsx"))
+          msFilePath = Path.GetDirectoryName(sFilename)
+          msFileName = fd.SafeFileName
+          txtWorkbookName.EditValue = msFileName
+
+          ShowWaitDialog("Opening Document")
+
+          Dim oWorkbook As clsWorkbook = TryCast(LoadFile(sFilename), clsWorkbook)
+
+          If oWorkbook IsNot Nothing Then
+
+            goOpenWorkBook = oWorkbook
+            goOpenWorkBook.WorkbookName = msFileName
+
+            loadWorkbook()
+
+            'check if there is a data excel sheet in the same folder with the same name
+            If File.Exists(Replace(sFilename, ".ditw", ".xlsx")) Then
+              spreadsheetControl.LoadDocument(Replace(sFilename, ".ditw", ".xlsx"))
+            End If
+
+
+          Else
+            MsgBox("Failed to load Data import workbook file",, "Warning...")
           End If
 
-
-        Else
-          MsgBox("Failed to load Data import workbook file",, "Warning...")
         End If
+
 
       End If
 
+    Catch ex As Exception
+    Finally
+      ShowWaitDialog()
+    End Try
 
-    End If
   End Sub
 
   Private Sub bbiSaveWorkbook_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiSaveWorkbook.ItemClick
@@ -323,6 +372,8 @@ Public Class frmMainMenu
 
   Private Sub bbiSaveAll_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiSaveAll.ItemClick
 
+    ShowWaitDialog("Saving Files")
+
     If String.IsNullOrEmpty(msFilePath) = False Then
       lbxImportTemplates.Focus()
       Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
@@ -351,6 +402,8 @@ Public Class frmMainMenu
 
       spreadsheetControl.SaveDocument(sCurrentFilename)
     End If
+
+    ShowWaitDialog()
 
   End Sub
 
@@ -1238,7 +1291,6 @@ Public Class frmMainMenu
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
-        If nRow.ToString.EndsWith("00") = True Then Application.DoEvents()
 
         Dim bSourceData As Boolean = True
 
@@ -1896,12 +1948,13 @@ Public Class frmMainMenu
                 sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
               Next
 
+              oDTO = goHTTPServer.ExtractSystemVariables(oDTO)
 
-              If String.IsNullOrEmpty(poImportTemplate.ReturnCellDTO) = False Then
-                .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCellDTO, nRow)).Value = oDTO.ToString
+
+              If String.IsNullOrEmpty(poImportTemplate.ReturnCellDTO) = False AndAlso oDTO IsNot Nothing Then
+                .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCellDTO, nRow)).Value = goHTTPServer.ExtractSystemVariables(oDTO.ToString)
               End If
 
-              oDTO = goHTTPServer.ExtractSystemVariables(oDTO)
 
               Dim oResponse As IRestResponse
 
@@ -1925,6 +1978,11 @@ Public Class frmMainMenu
                                                                  .Cells(String.Format("{0}{1}", poImportTemplate.FileLocationColumn, nRow)).Value.ToString,
                                                                  poImportTemplate.ReturnNodeValue)
 
+                Case "4"
+
+                  oResponse = goHTTPServer.CallWebEndpointUsingPut(poImportTemplate.APIEndpoint,
+                                                               .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCell, nRow)).Value.ToString,
+                                                                sQuery, oDTO)
                 Case Else
                   Exit Sub
               End Select
@@ -1932,7 +1990,7 @@ Public Class frmMainMenu
 
               If oResponse IsNot Nothing Then
 
-                Call UpdateProgressStatus(String.Format("Importing row {0} of {1} with {2}", nRow, nCountRows + 2, oResponse.StatusCode))
+                Dim sReplyMessage As String = ""
 
                 Select Case oResponse.StatusCode
 
@@ -1941,6 +1999,7 @@ Public Class frmMainMenu
                     Dim json As JObject = JObject.Parse(oResponse.Content)
                     .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
                     .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
+                    sReplyMessage = json.SelectToken("message").ToString
 
                     Select Case poImportTemplate.ImportType
                       Case "1", "2"
@@ -1973,10 +2032,13 @@ Public Class frmMainMenu
                           mbIgnore = True
                       End Select
                     End If
+                    sReplyMessage = json.SelectToken("message").ToString
+
                   Case HttpStatusCode.NotFound
                     .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
                     .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Record not Found"
 
+                    sReplyMessage = "Record Not Found"
 
                   Case Else
                     Dim json As JObject = JObject.Parse(oResponse.Content)
@@ -1984,10 +2046,15 @@ Public Class frmMainMenu
                     .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
 
                 End Select
+
+                Call UpdateProgressStatus(String.Format("Importing row {0} of {1} with {2} - {3}", nRow, nCountRows + 2, oResponse.StatusCode, sReplyMessage))
+
               Else
 
                 .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = "Unknown Error"
                 .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Unknown Error has occured"
+
+                Call UpdateProgressStatus(String.Format("Importing row {0} of {1} with {2} - {3}", nRow, nCountRows + 2, "Error", "Unknown Error has occured"))
 
               End If
 
@@ -2008,7 +2075,7 @@ Public Class frmMainMenu
 
       Call HideShowColumns(poImportTemplate, mbHideCalulationColumns)
       spreadsheetControl.EndUpdate()
-      Call UpdateProgressStatus("Import Completed.")
+      Call UpdateProgressStatus("")
       bbiCancel.Enabled = False
       mbCancel = False
     End Try
@@ -2201,7 +2268,7 @@ Public Class frmMainMenu
 
       Call HideShowColumns(poImportTemplate, mbHideCalulationColumns)
       spreadsheetControl.EndUpdate()
-      Call UpdateProgressStatus("Import Completed.")
+      Call UpdateProgressStatus("")
       bbiCancel.Enabled = False
       mbCancel = False
     End Try
@@ -2361,13 +2428,56 @@ Public Class frmMainMenu
 
   End Sub
 
+  Public Sub ShowWaitDialog(Optional psStatus As String = "")
+    If psStatus = "" Then
+      SplashScreenManager.CloseForm(False)
+    Else
+      SplashScreenManager.ShowForm(Me, GetType(frmWait), True, True, False)
+      SplashScreenManager.Default.SetWaitFormDescription(psStatus)
+    End If
+  End Sub
+
   Public Sub UpdateProgressStatus(Optional psStatus As String = "")
 
-    siStatus.Caption = psStatus
-    siStatus.Refresh()
-    Application.DoEvents()
+    If psStatus = "" Then
+
+      Try
+        SplashScreenManager.CloseOverlayForm(moOverlayHandle)
+      Catch ex As Exception
+
+      End Try
+      moOverlayHandle = Nothing
+
+    Else
+
+      If moOverlayHandle Is Nothing Then
+        Try
+          moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(overlayLabel, overlayButton), opacity:=220)
+        Catch ex As Exception
+
+        End Try
+      End If
+
+      overlayLabel.Text = psStatus
+
+      End If
+
+    If mnCounter >= 10 Then
+      Application.DoEvents()
+      mnCounter = 0
+    End If
+
+    mnCounter += 1
 
   End Sub
+
+  Private Sub OnCancelButtonClick()
+    If mbCancel = False Then mbCancel = True
+
+    overlayLabel.Text = "Cancelling"
+
+  End Sub
+
 
   Public Function SaveWorkbook(Optional pbSaveAs As Boolean = False, Optional psPath As String = "", Optional psFolder As String = "",
                           Optional psFileName As String = "", Optional psExtention As String = "", Optional pbIncreaseCounter As Boolean = True) As Boolean
@@ -2398,9 +2508,13 @@ Public Class frmMainMenu
             sPath = Path.GetDirectoryName(fd.FileName)
             sFileName = Path.GetFileName(fd.FileName)
 
+            If sFileName.EndsWith(".ditw") = False Then
+              sFileName = sFileName & ".ditw"
+            End If
+
           Else
 
-            Return False
+              Return False
 
           End If
         End Using
@@ -2533,7 +2647,7 @@ Public Class frmMainMenu
               .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(oTemplate.WorkbookSheetName)
             End If
 
-            Call UpdateProgressStatus(String.Format("Requesting Data from Server {0} on API {1} ", goConnection._ServerAddress, oTemplate.APIEndpoint))
+            Call UpdateProgressStatus(String.Format("Requesting Data from Server {0} on API {1} ", goConnection._ServerAddress, oTemplate.APIEndpoint, vbNewLine))
 
 
             If goHTTPServer.TestConnection(True, UcConnectionDetails1._Connection) Then
