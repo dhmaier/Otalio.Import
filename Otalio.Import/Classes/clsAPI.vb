@@ -1,13 +1,11 @@
 ﻿Option Strict Off
 
-Imports RestSharp
-Imports Newtonsoft.Json
-Imports System.Web.Script.Serialization
-Imports System.Dynamic
-Imports System.Net
 Imports Newtonsoft.Json.Linq
-Imports System.Linq
+Imports RestSharp
 Imports System.IO
+Imports System.Linq
+Imports System.Net
+Imports System.Web.Script.Serialization
 
 
 
@@ -39,7 +37,7 @@ Public Class clsAPI
 
   Private Function ExecuteAPI(ByVal oClient As RestClient, ByVal oRequest As RestRequest, ByVal isLogin As Boolean) As IRestResponse
     Try
-      If goConnection._UserName <> "" Then
+      If goConnection._UserName <> String.Empty Then
         oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
 
         If Not isLogin Then
@@ -52,7 +50,7 @@ Public Class clsAPI
         End If
       End If
 
-      If goConnection._HTTPUserName <> "" Then
+      If goConnection._HTTPUserName <> String.Empty Then
         oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
       End If
 
@@ -76,7 +74,7 @@ Public Class clsAPI
       Dim eStatus As HttpStatusCode = LogIntoIAM(True)
 
       If eStatus = HttpStatusCode.OK Then
-        If pbSilent = False Then MsgBox("System sucessfully tested connection to server")
+        If pbSilent = False Then MsgBox("System successfully tested connection to server")
         If psLoadData Then
           Call LoadLookupTypes()
           Call LoadHierarchies()
@@ -256,7 +254,7 @@ Public Class clsAPI
           If sQueryValues IsNot Nothing Then
             If sQueryValues.Count = 1 Then
               url = url + "?" & sQueryValues(0)
-              sQuery = ""
+              sQuery = String.Empty
             End If
 
             If sQueryValues.Count = 2 Then
@@ -276,7 +274,7 @@ Public Class clsAPI
       End If
 
 
-      If psSort <> "" Then
+      If psSort <> String.Empty Then
         url = url + "&sort=" & psSort
       End If
 
@@ -353,7 +351,7 @@ Public Class clsAPI
 
       If Not String.IsNullOrEmpty(psQuery) Then
         If psQuery.Contains("??") Then
-          url = url + String.Format("{0}", Replace((psQuery.Trim), "??", ""))
+          url = url + String.Format("{0}", Replace((psQuery.Trim), "??", String.Empty))
         Else
           url = url + String.Format("?{0}", (psQuery.Trim))
         End If
@@ -361,7 +359,7 @@ Public Class clsAPI
 
       End If
 
-        Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+      Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
       Dim serialized = jsSerializer.Serialize(psDTOJson)
       Dim oClient = New RestClient(url)
 
@@ -433,14 +431,14 @@ Public Class clsAPI
       psEndPoint = ExtractSystemVariables(psEndPoint)
       psQuery = ExtractSystemVariables(psQuery)
 
-      Dim sReturnValue As String = ""
+      Dim sReturnValue As String = String.Empty
 
-      Dim oResponse As IRestResponse = CallWebEndpointUsingGet(psEndPoint, "", psQuery)
+      Dim oResponse As IRestResponse = CallWebEndpointUsingGet(psEndPoint, String.Empty, psQuery)
       Dim json As JObject = JObject.Parse(oResponse.Content)
       If json IsNot Nothing Then
 
-        Dim sRoot As String = ""
-        Dim sNode As String = ""
+        Dim sRoot As String = String.Empty
+        Dim sNode As String = String.Empty
 
         If String.IsNullOrEmpty(psNodeName) = False AndAlso psNodeName.Contains("[0]") Then
           sRoot = psNodeName.Substring(0, psNodeName.LastIndexOf("[0]"))
@@ -448,14 +446,14 @@ Public Class clsAPI
         End If
 
         If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
-          Dim oObject As JToken = TryCast(json.SelectToken(sRoot), JToken)
+          Dim oObject As JToken = json.SelectToken(sRoot)
           If oObject IsNot Nothing Then
             If oObject.Count > 0 Then
 
               Try
                 If sNode = "description" Then
                   'try to exact it from the object
-                  Dim oToken As JToken = TryCast(json.SelectToken(String.Format("{0}[0].translations.en.description", sRoot, sNode)), JToken)
+                  Dim oToken As JToken = json.SelectToken(String.Format("{0}[0].translations.en.description", sRoot, sNode))
                   If oToken IsNot Nothing Then
                     Return oToken.ToString
                   End If
@@ -496,11 +494,11 @@ Public Class clsAPI
       goLookupTypes.Clear()
 
       If goLookupTypes IsNot Nothing AndAlso goLookupTypes.Count = 0 Then
-        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", "", "")
+        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", String.Empty, String.Empty)
         If oResponse IsNot Nothing Then
 
           Dim json As JObject = JObject.Parse(oResponse.Content)
-          Dim oOjbect As JToken = TryCast(json.SelectToken("responsePayload.content"), JToken)
+          Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
 
           For Each oNode In oOjbect
             If oNode IsNot Nothing Then
@@ -536,7 +534,7 @@ Public Class clsAPI
       Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
       Dim serialized = jsSerializer.Serialize(psDTOJson)
       Dim oClient = New RestClient(url)
-      Dim sBody As String = Replace(String.Format("{1}{3}query{3}:{3}{0}{3}{2}", psDTOJson, "{", "}", ControlChars.Quote), vbNewLine, "")
+      Dim sBody As String = Replace(String.Format("{1}{3}query{3}:{3}{0}{3}{2}", psDTOJson, "{", "}", ControlChars.Quote), vbNewLine, String.Empty)
 
       Dim oRequest = New RestRequest(Method.POST)
       oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
@@ -564,11 +562,11 @@ Public Class clsAPI
       goHierarchies.Clear()
 
       If goHierarchies IsNot Nothing AndAlso goHierarchies.Count = 0 Then
-        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", "", "")
+        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", String.Empty, String.Empty)
         If oResponse IsNot Nothing Then
 
           Dim json As JObject = JObject.Parse(oResponse.Content)
-          Dim oOjbect As JToken = TryCast(json.SelectToken("responsePayload"), JToken)
+          Dim oOjbect As JToken = json.SelectToken("responsePayload")
 
           For Each oNode In oOjbect
             If oNode IsNot Nothing Then
@@ -586,7 +584,7 @@ Public Class clsAPI
           'check for children
           For Each oH As clsHierarchies In goHierarchies
 
-            oH.ParentName = LookforParentHierarchies(oH, "")
+            oH.ParentName = LookforParentHierarchies(oH, String.Empty)
 
           Next
 
@@ -610,24 +608,24 @@ Public Class clsAPI
   Private Function LookforParentHierarchies(poHierarchy As clsHierarchies, psParentString As String) As String
     Try
 
-      If poHierarchy.ParentHierarchyId IsNot Nothing AndAlso poHierarchy.ParentHierarchyId.ToString <> "" Then
+      If poHierarchy.ParentHierarchyId IsNot Nothing AndAlso poHierarchy.ParentHierarchyId.ToString <> String.Empty Then
 
         Dim oParent As clsHierarchies = goHierarchies.Where(Function(n) n.Id = poHierarchy.ParentHierarchyId).FirstOrDefault
 
         If oParent.Id <> "1" Then
-          If oParent IsNot Nothing AndAlso oParent.Description <> "" Then
-            If psParentString = "" Then
+          If oParent IsNot Nothing AndAlso oParent.Description <> String.Empty Then
+            If psParentString = String.Empty Then
               psParentString = oParent.Description
             Else
               psParentString = oParent.Description & "\" & psParentString
             End If
           End If
 
-          If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> "" Then
+          If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> String.Empty Then
             psParentString = LookforParentHierarchies(oParent, psParentString)
           End If
         Else
-          If psParentString = "" Then
+          If psParentString = String.Empty Then
             psParentString = "Enterprise"
           Else
             psParentString = "Enterprise" & " \ " & psParentString
@@ -651,7 +649,9 @@ Public Class clsAPI
 
       'check for Hierarchy
       If psObject IsNot Nothing AndAlso String.IsNullOrEmpty(psObject) = False Then
+
         If psObject.ToString.ToUpper.Contains("@@HIERARCHYID@@") = True Then psObject = Replace(psObject, "@@HIERARCHYID@@", gsSelectedHierarchy.ToString)
+        If psObject.ToString.ToUpper.Contains("@@EMPTYARRAY@@") = True Then psObject = Replace(psObject, ControlChars.Quote & "@@EMPTYARRAY@@" & ControlChars.Quote, "[]")
 
       End If
 
@@ -661,7 +661,7 @@ Public Class clsAPI
       RaiseEvent ErrorEvent(ex)
     End Try
 
-    Return ""
+    Return String.Empty
 
   End Function
 

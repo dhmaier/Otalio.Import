@@ -12,7 +12,8 @@ Imports DevExpress.Skins
 Imports DevExpress.Utils
 Imports DevExpress.Utils.Drawing
 Imports DevExpress.Utils.Svg
-
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
 
 Module bFunctions
 
@@ -71,6 +72,25 @@ Module bFunctions
     End Try
   End Function
 
+  Public Function LoadFileJson(psFullPath As String) As Object
+
+
+    Try
+
+      Dim oObject = JObject.Parse(File.ReadAllText(psFullPath))
+
+      If oObject IsNot Nothing Then
+        Return oObject
+      End If
+
+      Return True
+
+    Catch ex As Exception
+      Return False
+
+    End Try
+  End Function
+
   Public Function SaveFile(psFullPath As String, poObject As Object) As Boolean
     'Save it
 
@@ -93,6 +113,20 @@ Module bFunctions
     End Try
   End Function
 
+  Public Function SaveFileJson(psFullPath As String, poObject As Object) As Boolean
+    'Save it
+
+    Try
+
+      File.WriteAllText(psFullPath, JsonConvert.SerializeObject(poObject, Newtonsoft.Json.Formatting.Indented))
+
+      Return True
+    Catch ex As Exception
+      Return False
+    Finally
+
+    End Try
+  End Function
 
 
   'The Following functions should be moved to MiscUtils dll

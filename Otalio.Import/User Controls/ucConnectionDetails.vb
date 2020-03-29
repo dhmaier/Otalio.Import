@@ -1,5 +1,4 @@
-﻿Imports System.Net
-Imports System.IO
+﻿Imports System.IO
 Imports System.Linq
 
 
@@ -8,7 +7,6 @@ Imports System.Linq
 Public Class ucConnectionDetails
 
   Private moConnection As New clsConnectionDetails
-  Private moConnectionHistory As New clsConnectionHistory
   Private moLastUsedConnection As New clsConnectionDetails
 
   Public Property _Connection As clsConnectionDetails
@@ -36,21 +34,21 @@ Public Class ucConnectionDetails
 
     'If moLastUsedConnection.Key <> moConnection.Key Then
 
-    If moConnectionHistory.ConnectionHistory IsNot Nothing AndAlso moConnectionHistory.ConnectionHistory.Count > 0 Then
+    If goConnectionHistory.ConnectionHistory IsNot Nothing AndAlso goConnectionHistory.ConnectionHistory.Count > 0 Then
       'check if connection already exist in History
-      Dim oConnection As clsConnectionDetails = TryCast(moConnectionHistory.ConnectionHistory.Where(Function(n) n.Key = moConnection.Key).FirstOrDefault, clsConnectionDetails)
+      Dim oConnection As clsConnectionDetails = TryCast(goConnectionHistory.ConnectionHistory.Where(Function(n) n.Key = moConnection.Key).FirstOrDefault, clsConnectionDetails)
       If oConnection IsNot Nothing Then
-        moConnectionHistory.ConnectionHistory.Remove(oConnection)
+        goConnectionHistory.ConnectionHistory.Remove(oConnection)
         'update it
         moConnection._DateLastUsed = Now
-        moConnectionHistory.ConnectionHistory.Add(moConnection.Clone)
+        goConnectionHistory.ConnectionHistory.Add(moConnection.Clone)
 
       Else
         'add it.
         moConnection._DateLastUsed = Now
-        moConnectionHistory.ConnectionHistory.Add(moConnection.Clone)
+        goConnectionHistory.ConnectionHistory.Add(moConnection.Clone)
       End If
-      End If
+    End If
 
     'End If
 
@@ -58,7 +56,7 @@ Public Class ucConnectionDetails
     moLastUsedConnection = moConnection
     goConnection = moConnection
 
-    SaveFile(GetAppPath(gsSettingFileName), moConnectionHistory)
+    SaveFile(GetAppPath(gsSettingFileName), goConnectionHistory)
     gridHistory.RefreshDataSource()
     gdHistory.BestFitColumns()
     gdHistory.ExpandAllGroups()
@@ -100,42 +98,42 @@ Public Class ucConnectionDetails
 
     If File.Exists(sFullPath) Then
       'load it
-      moConnectionHistory = TryCast(LoadFile(sFullPath), clsConnectionHistory)
-      If moConnectionHistory IsNot Nothing Then
+      goConnectionHistory = TryCast(LoadFile(sFullPath), clsConnectionHistory)
+      If goConnectionHistory IsNot Nothing Then
 
-        If moConnectionHistory.ActiveConnection Is Nothing Then
-          If moConnectionHistory.ConnectionHistory IsNot Nothing AndAlso moConnectionHistory.ConnectionHistory.Count > 0 Then
-            moConnectionHistory.ActiveConnection = moConnectionHistory.ConnectionHistory(moConnectionHistory.ConnectionHistory.Count - 1)
+        If goConnectionHistory.ActiveConnection Is Nothing Then
+          If goConnectionHistory.ConnectionHistory IsNot Nothing AndAlso goConnectionHistory.ConnectionHistory.Count > 0 Then
+            goConnectionHistory.ActiveConnection = goConnectionHistory.ConnectionHistory(goConnectionHistory.ConnectionHistory.Count - 1)
           Else
-            moConnectionHistory.ActiveConnection = New clsConnectionDetails
+            goConnectionHistory.ActiveConnection = New clsConnectionDetails
           End If
         End If
 
-        If moConnectionHistory.ActiveConnection._ID Is Nothing Then
-          moConnectionHistory.ActiveConnection._ID = System.Guid.NewGuid.ToString
+        If goConnectionHistory.ActiveConnection._ID Is Nothing Then
+          goConnectionHistory.ActiveConnection._ID = System.Guid.NewGuid.ToString
         End If
 
-        moConnection = moConnectionHistory.ActiveConnection
-        goConnection = moConnectionHistory.ActiveConnection
+        moConnection = goConnectionHistory.ActiveConnection
+        goConnection = goConnectionHistory.ActiveConnection
 
         BindConnection()
 
         'check if connection already exist in History
-        Dim oConnection As clsConnectionDetails = TryCast(moConnectionHistory.ConnectionHistory.Where(Function(n) n.Key = moConnection.Key).FirstOrDefault, clsConnectionDetails)
+        Dim oConnection As clsConnectionDetails = TryCast(goConnectionHistory.ConnectionHistory.Where(Function(n) n.Key = moConnection.Key).FirstOrDefault, clsConnectionDetails)
 
         If oConnection IsNot Nothing Then
           oConnection._DateLastUsed = Now
         Else
           moConnection._DateLastUsed = Now
-          moConnectionHistory.ConnectionHistory.Add(moConnection.Clone)
+          goConnectionHistory.ConnectionHistory.Add(moConnection.Clone)
         End If
 
-        gridHistory.DataSource = moConnectionHistory.ConnectionHistory
+        gridHistory.DataSource = goConnectionHistory.ConnectionHistory
         gdHistory.BestFitColumns()
 
         goHTTPServer.TestConnection(pbSilent,, True)
 
-        moLastUsedConnection = moConnectionHistory.ActiveConnection.Clone
+        moLastUsedConnection = goConnectionHistory.ActiveConnection.Clone
 
 
       Else
@@ -144,7 +142,7 @@ Public Class ucConnectionDetails
     Else
       'create it
       If goConnection IsNot Nothing Then
-        SaveFile(sFullPath, moConnectionHistory)
+        SaveFile(sFullPath, goConnectionHistory)
       End If
     End If
 
@@ -161,8 +159,8 @@ Public Class ucConnectionDetails
       Dim oConnection As clsConnectionDetails = gdHistory.GetRow(gdHistory.GetSelectedRows(0))
       If oConnection IsNot Nothing Then
 
-        moConnectionHistory.ActiveConnection = oConnection.Clone
-        moConnection = moConnectionHistory.ActiveConnection
+        goConnectionHistory.ActiveConnection = oConnection.Clone
+        moConnection = goConnectionHistory.ActiveConnection
         goConnection = moConnection
 
         BindConnection()
@@ -196,7 +194,7 @@ Public Class ucConnectionDetails
 
     With chkEnableLoging
       .DataBindings.Clear()
-      .DataBindings.Add(New Binding("Checked", moConnectionHistory, "LoggedEvents"))
+      .DataBindings.Add(New Binding("Checked", goConnectionHistory, "LoggedEvents"))
     End With
 
   End Sub

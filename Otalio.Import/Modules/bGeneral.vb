@@ -2,6 +2,7 @@
 
 
   Public Property goConnection As New clsConnectionDetails
+  Public Property goConnectionHistory As New clsConnectionHistory
   Public Property goHTTPServer As New clsAPI
   Public Property goOpenDataImportTemplate As New clsDataImportTemplate
   Public Property goOpenWorkBook As New clsWorkbook

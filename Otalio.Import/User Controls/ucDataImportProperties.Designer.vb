@@ -102,6 +102,7 @@ Partial Class ucDataImportProperties
         Me.SplitterItem3 = New DevExpress.XtraLayout.SplitterItem()
         Me.lciEntityColumn = New DevExpress.XtraLayout.LayoutControlItem()
         Me.lciFileLocationColumn = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.rchkEnabled = New DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
         CType(Me.txtFileLocationColumn.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -164,6 +165,7 @@ Partial Class ucDataImportProperties
         CType(Me.SplitterItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciEntityColumn, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciFileLocationColumn, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.rchkEnabled, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'LayoutControl1
@@ -389,7 +391,7 @@ Partial Class ucDataImportProperties
         Me.gridValidators.Location = New System.Drawing.Point(24, 401)
         Me.gridValidators.MainView = Me.gdValidators
         Me.gridValidators.Name = "gridValidators"
-        Me.gridValidators.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.RepositoryItemImageComboBox1})
+        Me.gridValidators.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.RepositoryItemImageComboBox1, Me.rchkEnabled})
         Me.gridValidators.Size = New System.Drawing.Size(558, 278)
         Me.gridValidators.TabIndex = 7
         Me.gridValidators.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdValidators})
@@ -418,7 +420,7 @@ Partial Class ucDataImportProperties
         '
         Me.RepositoryItemImageComboBox1.AutoHeight = False
         Me.RepositoryItemImageComboBox1.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.RepositoryItemImageComboBox1.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("ValidateObjectExists", "0", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("FindAndReplace", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Translation", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("FindAndReplaceList", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Delete", "3", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpItem", "5", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpList", "6", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpType", "7", -1)})
+        Me.RepositoryItemImageComboBox1.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("ValidateObjectExists", "0", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("FindAndReplace", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Translation", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("FindAndReplaceList", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Delete", "3", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpItem", "5", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpList", "6", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpType", "7", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Array", "8", -1)})
         Me.RepositoryItemImageComboBox1.Name = "RepositoryItemImageComboBox1"
         '
         'gcPriority
@@ -432,6 +434,7 @@ Partial Class ucDataImportProperties
         'gcEnabled
         '
         Me.gcEnabled.Caption = "Enabled"
+        Me.gcEnabled.ColumnEdit = Me.rchkEnabled
         Me.gcEnabled.FieldName = "Enabled"
         Me.gcEnabled.Name = "gcEnabled"
         Me.gcEnabled.Visible = True
@@ -440,6 +443,7 @@ Partial Class ucDataImportProperties
         'gcVisibility
         '
         Me.gcVisibility.Caption = "Visibility"
+        Me.gcVisibility.ColumnEdit = Me.rchkEnabled
         Me.gcVisibility.FieldName = "Visibility"
         Me.gcVisibility.Name = "gcVisibility"
         Me.gcVisibility.Visible = True
@@ -903,6 +907,14 @@ Partial Class ucDataImportProperties
         Me.lciFileLocationColumn.TextSize = New System.Drawing.Size(125, 13)
         Me.lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
         '
+        'rchkEnabled
+        '
+        Me.rchkEnabled.AutoHeight = False
+        Me.rchkEnabled.Caption = "Enabled"
+        Me.rchkEnabled.Name = "rchkEnabled"
+        Me.rchkEnabled.ValueChecked = "1"
+        Me.rchkEnabled.ValueUnchecked = "0"
+        '
         'ucDataImportProperties
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -972,6 +984,7 @@ Partial Class ucDataImportProperties
         CType(Me.SplitterItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciEntityColumn, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciFileLocationColumn, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.rchkEnabled, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1056,4 +1069,5 @@ Partial Class ucDataImportProperties
     Friend WithEvents txtEntityColumn As DevExpress.XtraEditors.TextEdit
     Friend WithEvents lciEntityColumn As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents lciFileLocationColumn As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents rchkEnabled As DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit
 End Class

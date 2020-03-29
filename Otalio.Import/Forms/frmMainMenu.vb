@@ -1,53 +1,46 @@
-﻿Imports System.ComponentModel
-Imports System.Text
-Imports DevExpress.Skins
-Imports DevExpress.LookAndFeel
-Imports DevExpress.UserSkins
+﻿Imports DevExpress.Spreadsheet
 Imports DevExpress.XtraBars.Helpers
-Imports DevExpress.XtraBars.Ribbon
-Imports System.IO
-Imports Newtonsoft.Json.Linq
-Imports Newtonsoft.Json
-Imports System.Linq
-Imports DevExpress.Spreadsheet
-Imports System.Net
-Imports RestSharp
-Imports DevExpress.XtraSpreadsheet
-Imports DevExpress.XtraEditors
-Imports DevExpress.XtraWaitForm
 Imports DevExpress.XtraSplashScreen
-Imports DevExpress.XtraBars
-
+Imports DevExpress.XtraSpreadsheet
+Imports Newtonsoft.Json.Linq
+Imports RestSharp
+Imports System.IO
+Imports System.Linq
+Imports System.Net
+Imports System.Threading
 
 
 Public Class frmMainMenu
 
-  Private mbCancel As Boolean = False
-
-  Private buttonImage As Image
-  Private hotButtonImage As Image
-
-  Private overlayLabel As OverlayTextPainter
-  Private overlayButton As OverlayImagePainter
 
 #Region "Form"
 
   Private Const EventLogHistory As Integer = 1000000
-  Private msFilePath As String = ""
+  Private msFilePath As String = String.Empty
   Private msFileName As String
   Private moCopyObject As New List(Of clsValidation)
   Private mbForceValidate As Boolean = True
   Private mbHideCalulationColumns As Boolean = True
   Private mbContainsHierarchies As Boolean = False
   Private moOverlayHandle As IOverlaySplashScreenHandle
-
+  Private miButtonImage As Image
+  Private miHotButtonImage As Image
+  Private mbCancel As Boolean = False
+  Private moOverlayButton As OverlayImagePainter
+  Private moOverlayLabel As OverlayTextPainter
   Private mnCounter As Integer = 0
+
   Sub New()
 
-    Me.buttonImage = CreateButtonImage()
-    Me.hotButtonImage = CreateHotButtonImage()
-    Me.overlayLabel = New OverlayTextPainter()
-    Me.overlayButton = New OverlayImagePainter(buttonImage, hotButtonImage, AddressOf OnCancelButtonClick)
+    ' Open a Splash Screen
+    SplashScreenManager.ShowForm(Me, GetType(frmSplashScreen), True, True, False)
+    SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Initializing")
+    Thread.Sleep(3000)
+
+    Me.miButtonImage = CreateButtonImage()
+    Me.miHotButtonImage = CreateHotButtonImage()
+    Me.moOverlayLabel = New OverlayTextPainter()
+    Me.moOverlayButton = New OverlayImagePainter(miButtonImage, miHotButtonImage, AddressOf OnCancelButtonClick)
 
     InitSkins()
     InitializeComponent()
@@ -66,9 +59,14 @@ Public Class frmMainMenu
 
   Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
 
+    SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Loading Data Connections")
+
     UcProperties1._DataImportTemplate = New clsDataImportTemplate
     UcConnectionDetails1.LoadSettingFile(True)
     siInfo.Caption = String.Format("Version:{0}", My.Application.Info.Version)
+    lueHierarchies.Properties.DataSource = goHierarchies
+
+    SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Adding hooks")
 
     AddHandler goHTTPServer.APICallEvent, AddressOf APICallEvent
     AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
@@ -79,9 +77,17 @@ Public Class frmMainMenu
   Private Function CreateButtonImage() As Image
     Return CreateImage(My.Resources.cancel_normal)
   End Function
+
   Private Function CreateHotButtonImage() As Image
     Return CreateImage(My.Resources.cancel_active)
   End Function
+
+  Private Sub frmMainMenu_Shown(sender As Object, e As EventArgs) Handles Me.Shown
+    ' Close the Splash Screen.
+    SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Initialization Completed")
+
+    SplashScreenManager.CloseForm(False)
+  End Sub
 
 
 #End Region
@@ -96,7 +102,7 @@ Public Class frmMainMenu
     fd.Title = "Select a Otalio Dynamic import template."
     fd.Filter = "Dynamic import Template |*.dit"
     fd.FilterIndex = 1
-    fd.FileName = ""
+    fd.FileName = String.Empty
     fd.RestoreDirectory = True
     If fd.ShowDialog() = DialogResult.OK Then
 
@@ -132,8 +138,61 @@ Public Class frmMainMenu
   End Sub
 
   Private Sub bbiSaveImport_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiSaveImport.ItemClick
-    Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
-    Call UcProperties1.SaveSettings()
+
+    Try
+
+
+      If lbxImportTemplates.CheckedItemsCount = 0 Then
+        MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
+        Exit Sub
+      End If
+
+      If lbxImportTemplates.CheckedItemsCount > 0 Then
+        Using oFolder As New FolderBrowserDialog
+
+          oFolder.Description = "Please select a folder to save template in"
+
+          If String.IsNullOrEmpty(goConnectionHistory.LastUsedFolder) = False Then
+            oFolder.SelectedPath = goConnectionHistory.LastUsedFolder
+          End If
+
+          If oFolder.ShowDialog = DialogResult.OK Then
+            Dim sFolderName As String = oFolder.SelectedPath
+
+            goConnectionHistory.LastUsedFolder = sFolderName
+
+            For Each oItem In lbxImportTemplates.CheckedItems
+              If oItem IsNot Nothing Then
+                Try
+
+                  Dim otemplate As clsDataImportTemplate = TryCast(oItem, clsDataImportTemplate)
+                  If otemplate IsNot Nothing Then
+                    Call ValidateDataTempalte(otemplate)
+                    UcProperties1.SaveSettings(String.Format("{0}\{1}.dit", sFolderName, otemplate.Name), otemplate)
+                  End If
+
+                Catch ex As Exception
+
+                End Try
+
+                Application.DoEvents()
+              End If
+            Next
+          End If
+        End Using
+      End If
+
+
+
+
+
+    Catch ex As Exception
+
+    End Try
+
+
+
+
   End Sub
 
   Private Sub bbiSaveImportAs_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiSaveImportAs.ItemClick
@@ -147,7 +206,6 @@ Public Class frmMainMenu
       Call createNewExcelSheet(TryCast(oItem, clsDataImportTemplate))
       Application.DoEvents()
     Next
-
 
   End Sub
 
@@ -272,11 +330,14 @@ Public Class frmMainMenu
     Dim oSelectedRows As List(Of Integer) = TryCast(UcProperties1.gdValidators.GetSelectedRows.ToList, List(Of Integer))
 
     If oSelectedRows IsNot Nothing And oSelectedRows.Count > 0 Then
-      Dim oValidation As clsValidation = TryCast(UcProperties1.gdValidators.GetRow(oSelectedRows(0)), clsValidation)
-      If oValidation IsNot Nothing Then
-        UcProperties1._DataImportTemplate.Validators.Remove(oValidation)
-        UcProperties1.gridValidators.RefreshDataSource()
-      End If
+      For Each orow As Integer In oSelectedRows
+
+        Dim oValidation As clsValidation = TryCast(UcProperties1.gdValidators.GetRow(orow), clsValidation)
+        If oValidation IsNot Nothing Then
+          UcProperties1._DataImportTemplate.Validators.Remove(oValidation)
+          UcProperties1.gridValidators.RefreshDataSource()
+        End If
+      Next
     End If
 
   End Sub
@@ -427,6 +488,7 @@ Public Class frmMainMenu
 
   End Sub
 
+
 #End Region
 
 #Region "Functions"
@@ -438,14 +500,13 @@ Public Class frmMainMenu
 
         If psResponse IsNot Nothing Then
 
-          Dim sText As String = ""
+          Dim sText As String = String.Empty
 
           For Each oPar In psResponse.Headers
             sText = sText + String.Format("Header:{0}", oPar.ToString) & vbNewLine
           Next
 
           If psResponse.Content IsNot Nothing Then
-
 
             Dim jsServerResponse As JObject = JObject.Parse(psResponse.Content)
             If jsServerResponse IsNot Nothing Then
@@ -472,7 +533,7 @@ Public Class frmMainMenu
   Public Sub ErrorEvent(poExcetpion As Exception)
     If poExcetpion IsNot Nothing Then
 
-      Dim sText As String = ""
+      Dim sText As String = String.Empty
 
       sText = sText + String.Format("Code:{0} - Message: {1} {3}Stack:{2}", poExcetpion.HResult, poExcetpion.Message, poExcetpion.StackTrace, vbNewLine) & vbNewLine & vbNewLine & vbNewLine
 
@@ -506,7 +567,7 @@ Public Class frmMainMenu
           With .ActiveWorksheet
             For Each oImportColumn In poImportTemplate.ImportColumns.OrderBy(Function(n) n.ColumnID)
 
-              Dim sColumnName As String = ""
+              Dim sColumnName As String = String.Empty
               If String.IsNullOrEmpty(oImportColumn.Parent) = False Then
                 sColumnName = String.Format("{0}.{1}", oImportColumn.Parent, oImportColumn.Name)
               Else
@@ -548,12 +609,13 @@ Public Class frmMainMenu
     Try
 
       mbContainsHierarchies = False
+      If poImportTemplate.GraphQLQuery Is Nothing Then poImportTemplate.GraphQLQuery = ""
 
       'extract list of columns from the Json code
       Dim oColumns As List(Of clsImportColum) = ExactExcelColumns(poImportTemplate.DTOObject).OrderBy(Function(n) n.No).ToList
 
       'extract only column used for the data import
-      Dim oActiveColumns As List(Of clsImportColum) = oColumns.Where(Function(n) n.ColumnID <> "").OrderBy(Function(n) n.No).ToList
+      Dim oActiveColumns As List(Of clsImportColum) = oColumns.Where(Function(n) n.ColumnID <> String.Empty).OrderBy(Function(n) n.No).ToList
 
       Dim oVariables As New List(Of clsVariables)
 
@@ -562,7 +624,7 @@ Public Class frmMainMenu
         If oColumn.VariableName IsNot Nothing AndAlso String.IsNullOrEmpty(oColumn.VariableName) = False Then
           With oVariables
             If .Exists(Function(n) n.Name = oColumn.Name) = False Then
-              .Add(New clsVariables With {.Name = oColumn.VariableName, .Value = ""})
+              .Add(New clsVariables With {.Name = oColumn.VariableName, .Value = String.Empty})
             End If
           End With
         End If
@@ -605,8 +667,8 @@ Public Class frmMainMenu
             oValidation.Visibility = "1"
           End If
           If String.IsNullOrEmpty(oValidation.Query) = False Then
-            oValidation.Query = Replace(oValidation.Query, " ", "")
-            oValidation.Query = Replace(oValidation.Query, vbNewLine, "")
+            oValidation.Query = Replace(oValidation.Query, "  ", String.Empty)
+            oValidation.Query = Replace(oValidation.Query, vbNewLine, String.Empty)
 
             If mbContainsHierarchies = False Then mbContainsHierarchies = oValidation.Query.ToString.ToUpper.Contains("@@HIERARCHYID@@")
             If mbContainsHierarchies = False Then mbContainsHierarchies = oValidation.APIEndpoint.ToString.ToUpper.Contains("@@HIERARCHYID@@")
@@ -659,106 +721,38 @@ Public Class frmMainMenu
   End Sub
 
   Public Function ExactExcelColumns(poJsonObject As Object) As List(Of clsImportColum)
+
+    Dim oColumns As New List(Of clsImportColum)
+
     Try
 
       If poJsonObject IsNot Nothing AndAlso String.IsNullOrEmpty(poJsonObject) = False Then
-        Dim oColumns As New List(Of clsImportColum)
 
         Dim nodes As Dictionary(Of String, String) = New Dictionary(Of String, String)()
         Dim rootObject As JObject = JObject.Parse(poJsonObject)
         goJsonHelper.ParseJson(rootObject, nodes)
+
         For Each key As String In nodes.Keys
           ExtractColumnDetails2(nodes(key), key, oColumns)
         Next
 
         For Each oCol As clsImportColum In oColumns
-          Dim oNode = rootObject.SelectToken(IIf(oCol.Parent = "", oCol.Name, String.Format("{0}", oCol.Parent, oCol.Name)))
+          Dim oNode = rootObject.SelectToken(IIf(oCol.Parent = String.Empty, oCol.Name, String.Format("{0}", oCol.Parent, oCol.Name)))
           If oNode IsNot Nothing Then
             oCol.Type = oNode.Type
           End If
         Next
 
-        Return oColumns
 
-
-
-        If poJsonObject IsNot Nothing Then
-          Select Case poJsonObject.GetType.Name.ToString.ToUpper
-
-            Case "JOBJECT"
-              Dim oJsonObject As JObject = JObject.Parse(poJsonObject)
-
-              If oJsonObject IsNot Nothing Then
-                For Each oNode In oJsonObject
-
-                  Select Case oNode.Value.Type
-
-                    Case JTokenType.Array
-                      Dim oNodes = oNode.Value.Children
-                      ExactExcelColumns(oNode.Value.Children)
-
-                    Case JTokenType.Object
-
-                      Dim oNodes = oNode.Value.Children
-                      Dim oChildColumns As New List(Of clsImportColum)
-
-                      For Each oChild In oNodes
-                        oChildColumns.AddRange(ExtractExcelColumnChildern(oChild))
-                      Next
-
-                      oColumns.AddRange(oChildColumns)
-
-                    Case Else
-
-                      oColumns.Add(ExtractColumnDetails(oNode, oNode.Value.Type))
-
-                  End Select
-                Next
-              End If
-            Case ""
-              Dim oJsonObject As JEnumerable(Of JToken) = poJsonObject
-              If oJsonObject.Count > 0 Then
-                For Each oNode As JToken In oJsonObject
-
-                  Select Case oNode.Type
-
-                    Case JTokenType.Array
-                      Dim oNodes = oNode.Children
-                      ExactExcelColumns(oNode.Children)
-
-                    Case JTokenType.Object
-
-                      Dim oNodes = oNode.Children
-                      Dim oChildColumns As New List(Of clsImportColum)
-
-                      For Each oChild In oNodes
-                        oChildColumns.AddRange(ExtractExcelColumnChildern(oChild))
-                      Next
-
-                      oColumns.AddRange(oChildColumns)
-
-                    Case Else
-
-                      oColumns.Add(ExtractColumnDetails(oNode, oNode.Type))
-
-                  End Select
-                Next
-              End If
-          End Select
-        End If
-
-
-
-
-
-        Return oColumns
 
       End If
 
     Catch ex As Exception
       MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
-    End Try
+    Finally
 
+    End Try
+    Return oColumns
   End Function
 
   Public Function ExtractExcelColumnChildern(poJsonChild As Object) As List(Of clsImportColum)
@@ -792,19 +786,20 @@ Public Class frmMainMenu
 
     Try
 
-      Dim sColumn As String = ""
-      Dim sColumnName As String = ""
-      Dim sVariable As String = ""
-      Dim sFormat As String = ""
+      Dim sColumn As String = String.Empty
+      Dim sColumnName As String = String.Empty
+      Dim sVariable As String = String.Empty
+      Dim sFormat As String = String.Empty
+
       If InStr(poObject.Value.ToString, "<!") > 0 Then
-        sColumn = (Replace(Replace(poObject.Value.ToString, "<!", ""), "!>", ""))
+        sColumn = (Replace(Replace(poObject.Value.ToString, "<!", String.Empty), "!>", String.Empty))
       End If
 
-      sColumn = sColumn.Replace("[", "")
-      sColumn = sColumn.Replace("]", "")
-      sColumn = sColumn.Replace(" ", "")
-      sColumn = sColumn.Replace("""", "")
-      sColumn = sColumn.Replace(vbNewLine, "")
+      sColumn = sColumn.Replace("[", String.Empty)
+      sColumn = sColumn.Replace("]", String.Empty)
+      sColumn = sColumn.Replace(" ", String.Empty)
+      sColumn = sColumn.Replace("""", String.Empty)
+      sColumn = sColumn.Replace(vbNewLine, String.Empty)
 
       If sColumn.Contains(":") Then
         Dim sValues As List(Of String) = sColumn.Split(":").ToList
@@ -840,16 +835,16 @@ Public Class frmMainMenu
 
     Try
 
-      Dim sColumnData As String = ""
-      Dim sColumnHeader As String = ""
-      Dim sColumnFieldName As String = ""
-      Dim sVariable As String = ""
-      Dim sFormat As String = ""
-      Dim sChild As String = ""
-      Dim sParent As String = ""
+      Dim sColumnData As String = String.Empty
+      Dim sColumnHeader As String = String.Empty
+      Dim sColumnFieldName As String = String.Empty
+      Dim sVariable As String = String.Empty
+      Dim sFormat As String = String.Empty
+      Dim sChild As String = String.Empty
+      Dim sParent As String = String.Empty
 
       If InStr(poObject, "<!") > 0 Then
-        sColumnData = (Replace(Replace(poObject, "<!", ""), "!>", ""))
+        sColumnData = (Replace(Replace(poObject, "<!", String.Empty), "!>", String.Empty))
       End If
 
       'sColumnData = sColumnData.Replace("[", "")
@@ -900,7 +895,7 @@ Public Class frmMainMenu
         End If
       Else
         sColumnFieldName = psParent
-        sParent = ""
+        sParent = String.Empty
       End If
 
       Dim oColumn As New clsImportColum
@@ -988,9 +983,9 @@ Public Class frmMainMenu
       Dim oDataSource As List(Of String) = psQuery.Split(New Char() {" ", ",", ";", "=", "==", "?", ControlChars.Quote}, StringSplitOptions.RemoveEmptyEntries).ToList
 
       Dim sColumns As New List(Of String)
-      Dim sPreviousItem As String = ""
+      Dim sPreviousItem As String = String.Empty
       For Each sItem As String In oDataSource
-        sItem = Replace(sItem, ControlChars.Quote, "")
+        sItem = Replace(sItem, ControlChars.Quote, String.Empty)
         If sItem = String.Format("<!{0}!>", psColumn) Then
           Return sPreviousItem
         End If
@@ -1002,7 +997,7 @@ Public Class frmMainMenu
       MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
     End Try
 
-    Return ""
+    Return String.Empty
 
   End Function
 
@@ -1017,7 +1012,7 @@ Public Class frmMainMenu
 
           Dim oColProp As clsColumnProperties = ExtractColumnProperties(oItem)
 
-          oColumns.Add(New clsImportColum With {.ColumnID = oItem, .ColumnName = oColProp.CellName, .Name = sField, .Type = JTokenType.String, .Parent = ""})
+          oColumns.Add(New clsImportColum With {.ColumnID = oItem, .ColumnName = oColProp.CellName, .Name = sField, .Type = JTokenType.String, .Parent = String.Empty})
         End If
       End If
     Next
@@ -1042,7 +1037,7 @@ Public Class frmMainMenu
 
     If ValidateHierarchiesIsSelected() = False Then Return False
 
-    'set focus to the excel spreed sheet
+    'set focus to the excel spread sheet
     tcgTabs.SelectedTabPage = lcgSpreedsheet
     Application.DoEvents()
 
@@ -1061,7 +1056,7 @@ Public Class frmMainMenu
             If oValidation IsNot Nothing Then
 
               Dim sTemplateDTO As String = poImportTemplate.DTOObject
-              sTemplateDTO = Replace(sTemplateDTO, vbNewLine, "")
+              sTemplateDTO = Replace(sTemplateDTO, vbNewLine, String.Empty)
 
               'validate that the specified worksheet exists
               With spreadsheetControl
@@ -1096,9 +1091,9 @@ Public Class frmMainMenu
                     .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, 1)).Value = "Validation Description"
 
                     Dim oRangeError As DevExpress.Spreadsheet.CellRange = .Range.FromLTRB(.Columns(poImportTemplate.StatusCodeColumn).Index, 1, .Columns(poImportTemplate.StatusCodeColumn).Index, nCountRows)
-                    oRangeError.Value = ""
+                    oRangeError.Value = String.Empty
                     oRangeError = .Range.FromLTRB(.Columns(poImportTemplate.StatusDescirptionColumn).Index, 1, .Columns(poImportTemplate.StatusDescirptionColumn).Index, nCountRows)
-                    oRangeError.Value = ""
+                    oRangeError.Value = String.Empty
 
                     If bAutoColumnWidth Then .Columns.AutoFit(0, .Columns.LastUsedIndex)
 
@@ -1208,7 +1203,7 @@ Public Class frmMainMenu
   Private Function Exists(poValidation As clsValidation, poSpreedSheet As DevExpress.XtraSpreadsheet.SpreadsheetControl, psColumns As List(Of String), poTemplate As clsDataImportTemplate) As Boolean
 
     Dim oReturnValuesStore As New Dictionary(Of String, String)
-    Dim sQuery As String = ""
+    Dim sQuery As String = String.Empty
     Dim bHasErrors As Boolean = False
 
     With spreadsheetControl.ActiveWorksheet
@@ -1277,8 +1272,8 @@ Public Class frmMainMenu
   Private Function FindAndReplace(poValidation As clsValidation, poSpreedSheet As DevExpress.XtraSpreadsheet.SpreadsheetControl, psColumns As List(Of String)) As Boolean
 
     Dim oReturnValuesStore As New Dictionary(Of String, String)
-    Dim sQuery As String = ""
-    Dim sAPIEndpoint As String = ""
+    Dim sQuery As String = String.Empty
+    Dim sAPIEndpoint As String = String.Empty
     Dim bHasErrors As Boolean = False
 
     With spreadsheetControl.ActiveWorksheet
@@ -1291,98 +1286,102 @@ Public Class frmMainMenu
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
+        If .Rows.Item(nRow).Visible = True Then
+          Dim bSourceData As Boolean = True
 
-        Dim bSourceData As Boolean = True
+          Call UpdateProgressStatus(String.Format("Validating {3} Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1, poValidation.Comments))
+          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
+          If (oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True) Or mbForceValidate Then
 
-        Call UpdateProgressStatus(String.Format("Validating {3} Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1, poValidation.Comments))
-        Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
-        If (oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True) Or mbForceValidate Then
+            'get copy of query
+            sQuery = poValidation.Query
+            sAPIEndpoint = poValidation.APIEndpoint
 
-          'get copy of query
-          sQuery = poValidation.Query
-          sAPIEndpoint = poValidation.APIEndpoint
+            'find all columns that are reference from the excel sheet to do the query
+            For Each sColumn As String In psColumns
+              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+              If String.IsNullOrEmpty(.Cells(sCellAddress).Value.ToString.Trim) = False Then
+                sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+              Else
+                bSourceData = False
+              End If
+            Next
 
-          'find all colunms that are reference from the excel sheet to do the query
-          For Each sColumn As String In psColumns
-            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-            If String.IsNullOrEmpty(.Cells(sCellAddress).Value.ToString.Trim) = False Then
-              sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-            Else
-              bSourceData = False
+            Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
+            For Each sColumn As String In olist
+              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+              sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+            Next
+
+            'add the Lookup type UUID to the query
+            If poValidation.ValidationType = "5" Or poValidation.ValidationType = "6" Then
+              If poValidation.LookUpType IsNot Nothing Then
+                sQuery = String.Format("lookupType.id=={2}{0}{2};{1}", poValidation.LookUpType.Id, sQuery, ControlChars.Quote)
+              End If
             End If
-          Next
 
-          Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
-          For Each sColumn As String In olist
-            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-            sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-          Next
+            If bSourceData = True Then
+              'check if query has already been process to void duplicate calls
+              If oReturnValuesStore.ContainsKey(sQuery) = False Then
 
-          'add the Lookup type UUID to the query
-          If poValidation.ValidationType = "5" Or poValidation.ValidationType = "6" Then
-            If poValidation.LookUpType IsNot Nothing Then
-              sQuery = String.Format("lookupType.id=={2}{0}{2};{1}", poValidation.LookUpType.Id, sQuery, ControlChars.Quote)
-            End If
-          End If
+                'call the end point to get the query results
+                Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQuery.Trim, poValidation.Sort)
+                Dim json As JObject = JObject.Parse(oResponse.Content)
+                If json IsNot Nothing Then
 
-          If bSourceData = True Then
-            'check if query has already been process to void duplicate calls
-            If oReturnValuesStore.ContainsKey(sQuery) = False Then
+                  Dim sReturnValue As String = String.Empty
 
-              'call the end point to get the query results
-              Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQuery.Trim, poValidation.Sort)
-              Dim json As JObject = JObject.Parse(oResponse.Content)
-              If json IsNot Nothing Then
+                  Try
 
-                Dim sReturnValue As String = ""
+                    If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
+                      Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
+                      If oOjbect IsNot Nothing Then
+                        If oOjbect.Count > 0 Then
 
-                Try
+                          'Extract the value
+                          sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
 
-                  If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
-                    Dim oOjbect As JToken = TryCast(json.SelectToken("responsePayload.content"), JToken)
-                    If oOjbect IsNot Nothing Then
-                      If oOjbect.Count > 0 Then
-
-                        'Extract the value
-                        sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
-
-                        'check if there is formating
-                        If poValidation.Formatted IsNot Nothing Then
-                          Select Case poValidation.Formatted.ToString
-                            Case "U" : sReturnValue = sReturnValue.ToUpper
-                            Case "L" : sReturnValue = sReturnValue.ToLower
-                            Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
-                          End Select
+                          'check if there is formating
+                          If poValidation.Formatted IsNot Nothing Then
+                            Select Case poValidation.Formatted.ToString
+                              Case "U" : sReturnValue = sReturnValue.ToUpper
+                              Case "L" : sReturnValue = sReturnValue.ToLower
+                              Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
+                            End Select
+                          End If
                         End If
+
                       End If
 
+                    Else
+                      sReturnValue = String.Format("Error:{0}", json.SelectToken("message"))
+                      If bHasErrors = False Then
+                        bHasErrors = True
+                      End If
                     End If
 
-                  Else
+                  Catch ex As Exception
+                    sReturnValue = String.Format("Error: {0}", ex.Message)
+                    If bHasErrors = False Then
+                      bHasErrors = True
+                    End If
+                  End Try
 
-                  End If
+                  'add item to dictionary 
+                  oReturnValuesStore.Add(sQuery, sReturnValue)
 
-                Catch ex As Exception
-                  sReturnValue = String.Format("Error: {0}", ex.Message)
-                  If bHasErrors = False Then
-                    bHasErrors = True
-                  End If
-                End Try
+                  oCell.Value = sReturnValue.ToString
 
-                'add item to dictionary 
-                oReturnValuesStore.Add(sQuery, sReturnValue)
+                End If
+              Else
 
-                oCell.Value = sReturnValue.ToString
-
+                'item was already validated, post same results
+                oCell.Value = oReturnValuesStore.Item(sQuery)
               End If
-            Else
-
-              'item was already validated, post same results
-              oCell.Value = oReturnValuesStore.Item(sQuery)
             End If
           End If
-        End If
 
+        End If
 
         If mbCancel Then
           Exit For
@@ -1402,7 +1401,7 @@ Public Class frmMainMenu
   Private Function Translate(poValidation As clsValidation, poSpreedSheet As DevExpress.XtraSpreadsheet.SpreadsheetControl, psColumns As List(Of String)) As Boolean
 
     Dim oReturnValuesStore As New Dictionary(Of String, String)
-    Dim sQuery As String = ""
+    Dim sQuery As String = String.Empty
     Dim bHasErrors As Boolean = False
 
     With spreadsheetControl.ActiveWorksheet
@@ -1414,65 +1413,84 @@ Public Class frmMainMenu
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
+        If .Rows.Item(nRow).Visible = True Then
+          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
-        Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
+          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
+          If oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True Then
 
-        Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
-        If oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True Then
+            'get copy of query
+            sQuery = poValidation.Query
+            Dim sTranslationtext As String = ""
 
-          'get copy of query
-          sQuery = poValidation.Query
+            'find all colunms that are reference from the excel sheet to do the query
+            For Each sColumn As String In psColumns
+              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+              sTranslationtext = .Cells(sCellAddress).Value.ToString.Trim
+              sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim.ToLower)
+            Next
 
-          'find all colunms that are reference from the excel sheet to do the query
-          For Each sColumn As String In psColumns
-            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-            sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-          Next
+            'check if query has already been process to void duplicate calls
+            If oReturnValuesStore.ContainsKey(sQuery) = False Then
 
-          'check if query has already been process to void duplicate calls
-          If oReturnValuesStore.ContainsKey(sQuery) = False Then
+              'call the end point to get the query results
+              Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingPost(poValidation.APIEndpoint, sQuery)
+              Dim json As JObject = JObject.Parse(oResponse.Content)
+              If json IsNot Nothing Then
 
-            'call the end point to get the query results
-            Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingPost(poValidation.APIEndpoint, sQuery)
-            Dim json As JObject = JObject.Parse(oResponse.Content)
-            If json IsNot Nothing Then
+                If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
 
-              Dim sReturnValue As String = ""
+                  Dim sReturnValue As String = String.Empty
 
-              Try
-                sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
-                sReturnValue = Replace(sReturnValue, "&#39;", "'")
-                sReturnValue = Replace(sReturnValue, "&Amp;", "&")
-                sReturnValue = Replace(sReturnValue, "&amp;", "&")
+                  Try
 
-                'check if there is formating
-                Select Case poValidation.Formatted.ToString
-                  Case "U" : sReturnValue = sReturnValue.ToUpper
-                  Case "L" : sReturnValue = sReturnValue.ToLower
-                  Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
-                End Select
+                    sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
+                    sReturnValue = Replace(sReturnValue, "&#39;", "'")
+                    sReturnValue = Replace(sReturnValue, "&Amp;", "&")
+                    sReturnValue = Replace(sReturnValue, "&amp;", "&")
 
-              Catch ex As Exception
-                sReturnValue = ""
-                If bHasErrors = False Then
-                  bHasErrors = True
+                    'check if there is formating
+                    Select Case poValidation.Formatted.ToString
+                      Case "U" : sReturnValue = sReturnValue.ToUpper
+                      Case "L" : sReturnValue = sReturnValue.ToLower
+                      Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
+                    End Select
+
+                  Catch ex As Exception
+                    sReturnValue = String.Empty
+                    If bHasErrors = False Then
+                      bHasErrors = True
+                    End If
+                  End Try
+
+                  'add item to dictionary 
+                  oReturnValuesStore.Add(sQuery, sReturnValue)
+
+                  .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = sReturnValue.ToString
+
+                Else
+
+                  'check if there is formating
+                  Select Case poValidation.Formatted.ToString
+                    Case "U" : sTranslationtext = sTranslationtext.ToUpper
+                    Case "L" : sTranslationtext = sTranslationtext.ToLower
+                    Case "P" : sTranslationtext = StrConv(sTranslationtext, VbStrConv.ProperCase)
+                  End Select
+
+
+                  .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = sTranslationtext.ToString
+
                 End If
-              End Try
 
-              'add item to dictionary 
-              oReturnValuesStore.Add(sQuery, sReturnValue)
+              End If
+            Else
 
-              .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = sReturnValue.ToString
+              'item was already validated, post same results
+              .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = oReturnValuesStore.Item(sQuery)
 
             End If
-          Else
-
-            'item was already validated, post same results
-            .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = oReturnValuesStore.Item(sQuery)
-
           End If
         End If
-
 
         If mbCancel Then
           Exit For
@@ -1492,8 +1510,8 @@ Public Class frmMainMenu
   Private Function Deletes(poValidation As clsValidation, poSpreedSheet As DevExpress.XtraSpreadsheet.SpreadsheetControl, psColumns As List(Of String)) As Boolean
 
     Dim oReturnValuesStore As New Dictionary(Of String, String)
-    Dim sQuery As String = ""
-    Dim sAPIEndpoint As String = ""
+    Dim sQuery As String = String.Empty
+    Dim sAPIEndpoint As String = String.Empty
     Dim bHasErrors As Boolean = False
 
     With spreadsheetControl.ActiveWorksheet
@@ -1503,47 +1521,47 @@ Public Class frmMainMenu
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
+        If .Rows.Item(nRow).Visible = True Then
+          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
-        Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
+          'get copy of query
+          sQuery = poValidation.Query
+          sAPIEndpoint = poValidation.APIEndpoint
 
-        'get copy of query
-        sQuery = poValidation.Query
-        sAPIEndpoint = poValidation.APIEndpoint
+          'find all colunms that are reference from the excel sheet to do the query
+          For Each sColumn As String In psColumns
+            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+            sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+          Next
 
-        'find all colunms that are reference from the excel sheet to do the query
-        For Each sColumn As String In psColumns
-          Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-          sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-        Next
+          Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
+          For Each sColumn As String In olist
+            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+            sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+          Next
 
-        Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
-        For Each sColumn As String In olist
-          Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-          sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-        Next
+          'check if query has already been process to void duplicate calls
+          If oReturnValuesStore.ContainsKey(String.Format("{0}-{1}", sAPIEndpoint, sQuery)) = False Then
 
-        'check if query has already been process to void duplicate calls
-        If oReturnValuesStore.ContainsKey(String.Format("{0}-{1}", sAPIEndpoint, sQuery)) = False Then
+            'call the end point to get the query results
+            Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingDelete(sAPIEndpoint, sQuery)
+            Dim json As JObject = JObject.Parse(oResponse.Content)
+            'If json IsNot Nothing Then
 
-          'call the end point to get the query results
-          Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingDelete(sAPIEndpoint, sQuery)
-          Dim json As JObject = JObject.Parse(oResponse.Content)
-          'If json IsNot Nothing Then
+            '  Dim sRecordsEffeted As String = json.SelectToken("responsePayload.numberOfElements").ToString
+            '  Dim sMessage As String = String.Format("{0} records found.", sRecordsEffeted)
+            '  Dim sCode As String = IIf(CInt(sRecordsEffeted) = 1, "OK", "Failed")
 
-          '  Dim sRecordsEffeted As String = json.SelectToken("responsePayload.numberOfElements").ToString
-          '  Dim sMessage As String = String.Format("{0} records found.", sRecordsEffeted)
-          '  Dim sCode As String = IIf(CInt(sRecordsEffeted) = 1, "OK", "Failed")
+            '  'add item to dictionary 
+            oReturnValuesStore.Add(String.Format("{0}-{1}", sAPIEndpoint, sQuery), String.Format("{0}-{1}", sAPIEndpoint, sQuery))
+            .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = json.SelectToken(poValidation.ReturnNodeValue).ToString
 
-          '  'add item to dictionary 
-          oReturnValuesStore.Add(String.Format("{0}-{1}", sAPIEndpoint, sQuery), String.Format("{0}-{1}", sAPIEndpoint, sQuery))
-          .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = json.SelectToken(poValidation.ReturnNodeValue).ToString
+            '  .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sCode
+            '  .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sMessage
+            'End If
 
-          '  .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sCode
-          '  .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sMessage
-          'End If
-
+          End If
         End If
-
 
         If mbCancel Then
           Exit For
@@ -1564,8 +1582,8 @@ Public Class frmMainMenu
   Private Function FindAndReplaceList(poValidation As clsValidation, poSpreedSheet As DevExpress.XtraSpreadsheet.SpreadsheetControl, psColumns As List(Of String)) As Boolean
 
     Dim oReturnValuesStore As New Dictionary(Of String, String)
-    Dim sQuery As String = ""
-    Dim sAPIEndpoint As String = ""
+    Dim sQuery As String = String.Empty
+    Dim sAPIEndpoint As String = String.Empty
     Dim bHasErrors As Boolean = False
 
     With poSpreedSheet.ActiveWorksheet
@@ -1579,189 +1597,196 @@ Public Class frmMainMenu
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
+        If .Rows.Item(nRow).Visible = True Then
+          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
-        Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
+          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, nRow))
+          If (oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True) Or mbForceValidate Then
 
-        Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, nRow))
-        If (oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True) Or mbForceValidate Then
-
-          'get copy of query
-          sQuery = poValidation.Query
-          sAPIEndpoint = poValidation.APIEndpoint
+            'get copy of query
+            sQuery = poValidation.Query
+            sAPIEndpoint = poValidation.APIEndpoint
 
 
-          Dim sColumnListAddress As String = ""
-          Dim sColumnOrginalValues As String = ""
-          Dim sListValues As New List(Of String)
+            Dim sColumnListAddress As String = String.Empty
+            Dim sColumnOrginalValues As String = String.Empty
+            Dim sListValues As New List(Of String)
 
-          Dim sReturnCell As String = ""
-          Dim sReturnIndex As String = ""
-          If poValidation.ReturnCell.Contains(":") Then
-            Dim sValues As String() = poValidation.ReturnCell.Split(":")
-            If sValues IsNot Nothing And sValues.Count >= 2 Then
-              sReturnCell = sValues(0)
-              sReturnIndex = sValues(1)
-            End If
-          Else
-            sReturnCell = poValidation.ReturnCell
-          End If
-
-          'find all colunms that are reference from the excel sheet to do the query
-          For Each sColumnfromList As String In psColumns
-
-            Dim sColumn As String = ""
-
-            If sColumnfromList.Contains(":") Then
-              sColumn = sColumnfromList.Substring(0, sColumnfromList.IndexOf(":"))
+            Dim sReturnCell As String = String.Empty
+            Dim sReturnIndex As String = String.Empty
+            If poValidation.ReturnCell.Contains(":") Then
+              Dim sValues As String() = poValidation.ReturnCell.Split(":")
+              If sValues IsNot Nothing And sValues.Count >= 2 Then
+                sReturnCell = sValues(0)
+                sReturnIndex = sValues(1)
+              End If
             Else
-              sColumn = sColumnfromList
+              sReturnCell = poValidation.ReturnCell
             End If
 
-            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-            sColumnOrginalValues = .Cells(sCellAddress).Value.ToString
+            'find all colunms that are reference from the excel sheet to do the query
+            For Each sColumnfromList As String In psColumns
 
-            'If String.IsNullOrEmpty(sColumnOrginalValues) = False AndAlso sColumnOrginalValues.Length > 0 Then
-            '  If sColumnOrginalValues.ToString.Trim.EndsWith(",") = False Then
-            '    sColumnOrginalValues = sColumnOrginalValues.ToString.Trim & ","
-            '  End If
-            'End If
+              Dim sColumn As String = String.Empty
 
-            If sColumnOrginalValues.ToString.Contains(",") Then
-
-              sColumnListAddress = sColumnfromList
-              sListValues = .Cells(sCellAddress).Value.ToString.Split(",").ToList
-
-
-
-            Else
-              sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumnfromList), .Cells(sCellAddress).Value.ToString.Trim)
-            End If
-
-          Next
-
-          Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
-          For Each sColumn As String In olist
-            Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-            sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-          Next
-
-
-          Dim oResponseRow As String = ""
-
-
-          For Each oValue As String In sListValues
-
-            Dim sQueryUpdated As String = sQuery
-            If String.IsNullOrEmpty(oValue.ToString.Trim) = False Then
-
-              Dim sNewValue As String = ""
-              Dim sSourceCell As String = ""
-              Dim sSourceIndex As String = ""
-              If sColumnListAddress.Contains(":") Then
-                Dim sValues As String() = sColumnListAddress.Split(":")
-                If sValues IsNot Nothing And sValues.Count >= 2 Then
-                  sSourceCell = sValues(0)
-                  sSourceIndex = sValues(1)
-                End If
+              If sColumnfromList.Contains(":") Then
+                sColumn = sColumnfromList.Substring(0, sColumnfromList.IndexOf(":"))
               Else
-                sReturnCell = sColumnListAddress
+                sColumn = sColumnfromList
               End If
 
+              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+              sColumnOrginalValues = .Cells(sCellAddress).Value.ToString
 
-              If sSourceIndex <> "" Then
-                Dim oArray As String() = oValue.Split(":").ToArray
-                If oArray IsNot Nothing AndAlso oArray.Count >= CInt(sSourceIndex) Then
-                  sNewValue = oArray(CInt(sSourceIndex) - 1)
-                End If
+
+
+              If sColumnOrginalValues.ToString.Contains(",") Then
+
+                sColumnListAddress = sColumnfromList
+                sListValues = .Cells(sCellAddress).Value.ToString.Split(",").ToList
+
               Else
-                sNewValue = oValue
+                sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumnfromList), .Cells(sCellAddress).Value.ToString.Trim)
               End If
 
+            Next
 
-              sQueryUpdated = Replace(sQueryUpdated, String.Format("<!{0}!>", sColumnListAddress), sNewValue.ToString.Trim)
-
-              'add the Lookup type UUID to the query
-              If poValidation.ValidationType = "5" Or poValidation.ValidationType = "6" Then
-                If poValidation.LookUpType IsNot Nothing Then
-                  sQueryUpdated = String.Format("lookupType.id=={2}{0}{2};{1}", poValidation.LookUpType.Id, sQueryUpdated, ControlChars.Quote)
-                End If
-              End If
+            Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
+            For Each sColumn As String In olist
+              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+              sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+            Next
 
 
-              'check if query has already been process to void duplicate calls
-              If oReturnValuesStore.ContainsKey(String.Format("{0}-{1}", sAPIEndpoint, sQueryUpdated)) = False Then
-
-                'call the end point to get the query results
-                Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQueryUpdated)
-                Dim json As JObject = JObject.Parse(oResponse.Content)
-                If json IsNot Nothing Then
-
-                  Dim sReturnValue As String = ""
-
-                  Try
-                    sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
-
-                    'check if there is formating
-                    If poValidation.Formatted IsNot Nothing Then
-                      Select Case poValidation.Formatted.ToString
-                        Case "U" : sReturnValue = sReturnValue.ToUpper
-                        Case "L" : sReturnValue = sReturnValue.ToLower
-                        Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
-                      End Select
-                    End If
-                  Catch ex As Exception
-                    sReturnValue = String.Format("Error:{0}", ex.Message)
-                    If bHasErrors = False Then
-                      bHasErrors = True
-                    End If
-                  End Try
+            Dim oResponseRow As String = String.Empty
 
 
-                  'add item to dictionary 
-                  oReturnValuesStore.Add(String.Format("{0}-{1}", sAPIEndpoint, sQueryUpdated), sReturnValue)
+            For Each oValue As String In sListValues
 
-                  If sReturnIndex <> "" Then
-                    sReturnValue = Replace(oValue, sNewValue, sReturnValue)
+              Dim sQueryUpdated As String = sQuery
+              If String.IsNullOrEmpty(oValue.ToString.Trim) = False Then
+
+                Dim sNewValue As String = String.Empty
+                Dim sSourceCell As String = String.Empty
+                Dim sSourceIndex As String = String.Empty
+                If sColumnListAddress.Contains(":") Then
+                  Dim sValues As String() = sColumnListAddress.Split(":")
+                  If sValues IsNot Nothing And sValues.Count >= 2 Then
+                    sSourceCell = sValues(0)
+                    sSourceIndex = sValues(1)
                   End If
+                Else
+                  sReturnCell = sColumnListAddress
+                End If
 
+
+                If sSourceIndex <> String.Empty Then
+                  Dim oArray As String() = oValue.Split(":").ToArray
+                  If oArray IsNot Nothing AndAlso oArray.Count >= CInt(sSourceIndex) Then
+                    sNewValue = oArray(CInt(sSourceIndex) - 1)
+                  End If
+                Else
+                  sNewValue = oValue
+                End If
+
+
+                sQueryUpdated = Replace(sQueryUpdated, String.Format("<!{0}!>", sColumnListAddress), sNewValue.ToString.Trim)
+
+                'add the Lookup type UUID to the query
+                If poValidation.ValidationType = "5" Or poValidation.ValidationType = "6" Then
+                  If poValidation.LookUpType IsNot Nothing Then
+                    sQueryUpdated = String.Format("lookupType.id=={2}{0}{2};{1}", poValidation.LookUpType.Id, sQueryUpdated, ControlChars.Quote)
+                  End If
+                End If
+
+
+                'check if query has already been process to void duplicate calls
+                If oReturnValuesStore.ContainsKey(String.Format("{0}-{1}", sAPIEndpoint, sQueryUpdated)) = False Then
+
+                  'call the end point to get the query results
+                  Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQueryUpdated)
+                  Dim json As JObject = JObject.Parse(oResponse.Content)
+                  If json IsNot Nothing Then
+
+                    Dim sReturnValue As String = String.Empty
+                    Dim stype As String = json.SelectToken("messageType")
+
+                    If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
+
+                      If CInt(json.SelectToken("responsePayload.numberOfElements").ToString) > 0 Then
+
+                        Try
+                          sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
+
+                          'check if there is formating
+                          If poValidation.Formatted IsNot Nothing Then
+                            Select Case poValidation.Formatted.ToString
+                              Case "U" : sReturnValue = sReturnValue.ToUpper
+                              Case "L" : sReturnValue = sReturnValue.ToLower
+                              Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
+                            End Select
+                          End If
+                        Catch ex As Exception
+                          sReturnValue = String.Format("Error:{0}", ex.Message)
+                          If bHasErrors = False Then
+                            bHasErrors = True
+                          End If
+                        End Try
+
+                      End If
+
+                      'add item to dictionary 
+                      oReturnValuesStore.Add(String.Format("{0}-{1}", sAPIEndpoint, sQueryUpdated), sReturnValue)
+                    Else
+                      sReturnValue = String.Format("Error:{0}", json.SelectToken("message"))
+                      If bHasErrors = False Then
+                        bHasErrors = True
+                      End If
+                    End If
+
+                    If sReturnIndex <> String.Empty Then
+                      sReturnValue = Replace(oValue, sNewValue, sReturnValue)
+                    End If
+
+
+                    If String.IsNullOrEmpty(oResponseRow) Then
+                      oResponseRow = sReturnValue
+                    Else
+                      oResponseRow = String.Format("{0},{1}", oResponseRow, sReturnValue)
+                    End If
+
+
+                  End If
+                Else
+
+                  Dim sValueMemory As String = oReturnValuesStore.Item(String.Format("{0}-{1}", sAPIEndpoint, sQueryUpdated)).ToString
+
+                  If sReturnIndex <> String.Empty Then
+                    sValueMemory = Replace(oValue, sNewValue, sValueMemory)
+                  End If
 
                   If String.IsNullOrEmpty(oResponseRow) Then
-                    oResponseRow = sReturnValue
+                    oResponseRow = sValueMemory
                   Else
-                    oResponseRow = String.Format("{0},{1}", oResponseRow, sReturnValue)
+                    oResponseRow = String.Format("{0},{1}", oResponseRow, sValueMemory)
                   End If
 
+
+
                 End If
+
               Else
-
-                Dim sValueMemory As String = oReturnValuesStore.Item(String.Format("{0}-{1}", sAPIEndpoint, sQueryUpdated)).ToString
-
-                If sReturnIndex <> "" Then
-                  sValueMemory = Replace(oValue, sNewValue, sValueMemory)
-                End If
-
-                If String.IsNullOrEmpty(oResponseRow) Then
-                  oResponseRow = sValueMemory
-                Else
-                  oResponseRow = String.Format("{0},{1}", oResponseRow, sValueMemory)
-                End If
-
 
 
               End If
 
-            Else
+            Next
+
+            .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, nRow)).Value = oResponseRow
 
 
-            End If
-
-          Next
-
-          .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, nRow)).Value = oResponseRow
-
-
+          End If
         End If
-
         If mbCancel Then
           Exit For
         End If
@@ -1790,53 +1815,53 @@ Public Class frmMainMenu
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
+        If .Rows.Item(nRow).Visible = True Then
+          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
-        Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
+          Dim oCellDestination As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
+          If (oCellDestination.Value.IsEmpty Or String.IsNullOrEmpty(oCellDestination.Value.ToString) = True) Or mbForceValidate Then
 
-        Dim oCellDestination As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
-        If (oCellDestination.Value.IsEmpty Or String.IsNullOrEmpty(oCellDestination.Value.ToString) = True) Or mbForceValidate Then
+            Dim sSourceColumnName As String = String.Empty
+            Dim olist As List(Of String) = ExtractColumnDetails(poValidation.Query)
+            If olist IsNot Nothing And olist.Count > 0 Then
 
-          Dim sSourceColumnName As String = ""
-          Dim olist As List(Of String) = ExtractColumnDetails(poValidation.Query)
-          If olist IsNot Nothing And olist.Count > 0 Then
+              sSourceColumnName = olist(0).ToString
+              Dim oCellSource As Cell = .Cells(String.Format("{0}{1}", sSourceColumnName, nRow))
 
-            sSourceColumnName = olist(0).ToString
-            Dim oCellSource As Cell = .Cells(String.Format("{0}{1}", sSourceColumnName, nRow))
-
-            If String.IsNullOrEmpty(oCellSource.Value.ToString) = False And oCellSource.Value.ToString.Length > 0 Then
-              If oCellSource.Value.ToString.Trim.EndsWith(",") = False Then
-                oCellSource.Value = oCellSource.Value.ToString.Trim & ","
-              End If
-            End If
-
-
-            Dim sColumnOrginalValues As String = oCellDestination.Value.ToString
-            Dim sListValues As New List(Of String)
-            Dim sReturnValue As String = ""
-
-            'find all colunms that are reference from the excel sheet to do the query
-            If oCellSource.Value.ToString.Contains(",") Then
-              sListValues = oCellSource.Value.ToString.Split(",").ToList
-            End If
-
-            If sListValues IsNot Nothing Then
-              For Each sValue In sListValues
-                If sValue.ToString.Trim.Length > 0 Then
-                  sReturnValue = String.Format("{0}{1}{2}{1},", sReturnValue, ControlChars.Quote, sValue)
+              If String.IsNullOrEmpty(oCellSource.Value.ToString) = False And oCellSource.Value.ToString.Length > 0 Then
+                If oCellSource.Value.ToString.Trim.EndsWith(",") = False Then
+                  oCellSource.Value = oCellSource.Value.ToString.Trim & ","
                 End If
-              Next
-            End If
+              End If
 
-            If sReturnValue.EndsWith(",") Then
-              sReturnValue = sReturnValue.Substring(0, sReturnValue.Length - 1)
-            End If
 
-            oCellDestination.Value = sReturnValue
+              Dim sColumnOrginalValues As String = oCellDestination.Value.ToString
+              Dim sListValues As New List(Of String)
+              Dim sReturnValue As String = String.Empty
+
+              'find all colunms that are reference from the excel sheet to do the query
+              If oCellSource.Value.ToString.Contains(",") Then
+                sListValues = oCellSource.Value.ToString.Split(",").ToList
+              End If
+
+              If sListValues IsNot Nothing Then
+                For Each sValue In sListValues
+                  If sValue.ToString.Trim.Length > 0 Then
+                    sReturnValue = String.Format("{0}{1}{2}{1},", sReturnValue, ControlChars.Quote, sValue)
+                  End If
+                Next
+              End If
+
+              If sReturnValue.EndsWith(",") Then
+                sReturnValue = sReturnValue.Substring(0, sReturnValue.Length - 1)
+              End If
+
+              oCellDestination.Value = sReturnValue
+
+            End If
 
           End If
-
         End If
-
         If mbCancel Then
           Exit For
         End If
@@ -1865,7 +1890,7 @@ Public Class frmMainMenu
       Application.DoEvents()
 
       Dim sTemplateDTO As String = poImportTemplate.DTOObject
-      sTemplateDTO = Replace(sTemplateDTO, vbNewLine, "")
+      sTemplateDTO = Replace(sTemplateDTO, vbNewLine, String.Empty)
 
       'validate that the specified worksheet exists
       With spreadsheetControl
@@ -1895,9 +1920,9 @@ Public Class frmMainMenu
           If bAutoColumnWidth Then .Columns.AutoFit(0, .Columns.LastUsedIndex)
 
           Dim oRangeError As DevExpress.Spreadsheet.CellRange = .Range.FromLTRB(.Columns(poImportTemplate.StatusCodeColumn).Index, 1, .Columns(poImportTemplate.StatusCodeColumn).Index, nCountRows)
-          oRangeError.Value = ""
+          oRangeError.Value = String.Empty
           oRangeError = .Range.FromLTRB(.Columns(poImportTemplate.StatusDescirptionColumn).Index, 1, .Columns(poImportTemplate.StatusDescirptionColumn).Index, nCountRows)
-          oRangeError.Value = ""
+          oRangeError.Value = String.Empty
 
 
           'get the data as a excel table
@@ -1990,7 +2015,7 @@ Public Class frmMainMenu
 
               If oResponse IsNot Nothing Then
 
-                Dim sReplyMessage As String = ""
+                Dim sReplyMessage As String = String.Empty
 
                 Select Case oResponse.StatusCode
 
@@ -2052,7 +2077,7 @@ Public Class frmMainMenu
               Else
 
                 .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = "Unknown Error"
-                .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Unknown Error has occured"
+                .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Unknown Error has occurred"
 
                 Call UpdateProgressStatus(String.Format("Importing row {0} of {1} with {2} - {3}", nRow, nCountRows + 2, "Error", "Unknown Error has occured"))
 
@@ -2060,7 +2085,7 @@ Public Class frmMainMenu
 
             End If
 
-              If mbCancel Then
+            If mbCancel Then
               Exit For
             End If
 
@@ -2075,7 +2100,7 @@ Public Class frmMainMenu
 
       Call HideShowColumns(poImportTemplate, mbHideCalulationColumns)
       spreadsheetControl.EndUpdate()
-      Call UpdateProgressStatus("")
+      Call UpdateProgressStatus(String.Empty)
       bbiCancel.Enabled = False
       mbCancel = False
     End Try
@@ -2096,7 +2121,7 @@ Public Class frmMainMenu
       Application.DoEvents()
 
       Dim sTemplateDTO As String = poImportTemplate.DTOObject
-      sTemplateDTO = Replace(sTemplateDTO, vbNewLine, "")
+      sTemplateDTO = Replace(sTemplateDTO, vbNewLine, String.Empty)
 
       'validate that the specified worksheet exists
       With spreadsheetControl
@@ -2126,9 +2151,9 @@ Public Class frmMainMenu
           If bAutoColumnWidth Then .Columns.AutoFit(0, .Columns.LastUsedIndex)
 
           Dim oRangeError As DevExpress.Spreadsheet.CellRange = .Range.FromLTRB(.Columns(poImportTemplate.StatusCodeColumn).Index, 1, .Columns(poImportTemplate.StatusCodeColumn).Index, nCountRows)
-          oRangeError.Value = ""
+          oRangeError.Value = String.Empty
           oRangeError = .Range.FromLTRB(.Columns(poImportTemplate.StatusDescirptionColumn).Index, 1, .Columns(poImportTemplate.StatusDescirptionColumn).Index, nCountRows)
-          oRangeError.Value = ""
+          oRangeError.Value = String.Empty
 
 
           'get the data as a excel table
@@ -2268,7 +2293,7 @@ Public Class frmMainMenu
 
       Call HideShowColumns(poImportTemplate, mbHideCalulationColumns)
       spreadsheetControl.EndUpdate()
-      Call UpdateProgressStatus("")
+      Call UpdateProgressStatus(String.Empty)
       bbiCancel.Enabled = False
       mbCancel = False
     End Try
@@ -2300,11 +2325,11 @@ Public Class frmMainMenu
 
                 Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
 
-                If oColumnPropeties.Format <> "" Then
+                If oColumnPropeties.Format <> String.Empty Then
                   sValue = FormatString(sValue, oColumnPropeties.Format)
                 End If
 
-                If sValue = "" Then
+                If sValue = String.Empty Then
                   poNode.Value = Nothing
                 Else
                   poNode.Value = sValue
@@ -2329,7 +2354,7 @@ Public Class frmMainMenu
                     Dim sColumn As List(Of String) = ExtractColumnDetails(poNode.Value.ToString)
                     Dim oColumnPropeties As clsColumnProperties = ExtractColumnProperties(sColumn(0))
 
-                    Dim sNewValue As String = ""
+                    Dim sNewValue As String = String.Empty
                     If oColumnPropeties IsNot Nothing Then
 
                       Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
@@ -2344,7 +2369,7 @@ Public Class frmMainMenu
 
                         poNode.Value = jArray
                       Else
-                        poNode.Value = Nothing
+                        poNode.Value = "@@EMPTYARRAY@@"
                       End If
                     End If
                   Catch ex As Exception
@@ -2378,10 +2403,10 @@ Public Class frmMainMenu
                               Dim sCol As List(Of String) = ExtractColumnDetails(oProp)
                               Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
 
-                              If oCP.IndexID <> "" Then
+                              If oCP.IndexID <> String.Empty Then
                                 If oArray.Count >= CInt(oCP.IndexID) Then
 
-                                  If oColumnPropeties.Format <> "" Then
+                                  If oColumnPropeties.Format <> String.Empty Then
                                     oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
                                   End If
 
@@ -2429,7 +2454,7 @@ Public Class frmMainMenu
   End Sub
 
   Public Sub ShowWaitDialog(Optional psStatus As String = "")
-    If psStatus = "" Then
+    If psStatus = String.Empty Then
       SplashScreenManager.CloseForm(False)
     Else
       SplashScreenManager.ShowForm(Me, GetType(frmWait), True, True, False)
@@ -2439,7 +2464,7 @@ Public Class frmMainMenu
 
   Public Sub UpdateProgressStatus(Optional psStatus As String = "")
 
-    If psStatus = "" Then
+    If psStatus = String.Empty Then
 
       Try
         SplashScreenManager.CloseOverlayForm(moOverlayHandle)
@@ -2452,15 +2477,15 @@ Public Class frmMainMenu
 
       If moOverlayHandle Is Nothing Then
         Try
-          moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(overlayLabel, overlayButton), opacity:=220)
+          moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel, moOverlayButton), opacity:=220)
         Catch ex As Exception
 
         End Try
       End If
 
-      overlayLabel.Text = psStatus
+      moOverlayLabel.Text = Replace(psStatus, vbNewLine, "")
 
-      End If
+    End If
 
     If mnCounter >= 10 Then
       Application.DoEvents()
@@ -2474,10 +2499,9 @@ Public Class frmMainMenu
   Private Sub OnCancelButtonClick()
     If mbCancel = False Then mbCancel = True
 
-    overlayLabel.Text = "Cancelling"
+    moOverlayLabel.Text = "Cancelling"
 
   End Sub
-
 
   Public Function SaveWorkbook(Optional pbSaveAs As Boolean = False, Optional psPath As String = "", Optional psFolder As String = "",
                           Optional psFileName As String = "", Optional psExtention As String = "", Optional pbIncreaseCounter As Boolean = True) As Boolean
@@ -2514,7 +2538,7 @@ Public Class frmMainMenu
 
           Else
 
-              Return False
+            Return False
 
           End If
         End Using
@@ -2530,7 +2554,7 @@ Public Class frmMainMenu
 
 
       If String.IsNullOrEmpty(psExtention) = False Then
-        If Path.GetExtension(sFileName) = "" Then
+        If Path.GetExtension(sFileName) = String.Empty Then
           sFileName = sFileName & psExtention
         Else
           sFileName = Replace(sFileName, Path.GetExtension(sFileName), psExtention)
@@ -2628,7 +2652,7 @@ Public Class frmMainMenu
     Try
 
       '
-      Dim oTemplate As clsDataImportTemplate = TryCast(poImportTemplate, clsDataImportTemplate)
+      Dim oTemplate As clsDataImportTemplate = poImportTemplate
       If oTemplate IsNot Nothing Then
 
 
@@ -2653,7 +2677,7 @@ Public Class frmMainMenu
             If goHTTPServer.TestConnection(True, UcConnectionDetails1._Connection) Then
 
               Dim oResponse As IRestResponse
-              Dim sNodeLoad As String = ""
+              Dim sNodeLoad As String = String.Empty
 
               If oTemplate.GraphQLQuery IsNot Nothing AndAlso String.IsNullOrEmpty(oTemplate.GraphQLQuery.ToString) = False Then
                 oResponse = goHTTPServer.CallGraphQL("apollo-server", oTemplate.GraphQLQuery.ToString)
@@ -2662,7 +2686,7 @@ Public Class frmMainMenu
                   sNodeLoad = sNodeLoad.Substring(0, sNodeLoad.Length - 1)
                 End If
               Else
-                oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint, "", oTemplate.SelectQuery.ToString)
+                oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint, String.Empty, oTemplate.SelectQuery.ToString)
                 sNodeLoad = "responsePayload.content"
               End If
 
@@ -2670,7 +2694,7 @@ Public Class frmMainMenu
               If jsServerResponse IsNot Nothing Then
 
                 If oResponse.StatusCode = HttpStatusCode.OK Then
-                  Dim oObject As JToken = TryCast(jsServerResponse.SelectToken(sNodeLoad), JToken)
+                  Dim oObject As JToken = jsServerResponse.SelectToken(sNodeLoad)
 
                   If oObject IsNot Nothing Then
                     If oObject.Count > 0 Then
@@ -2720,13 +2744,13 @@ Public Class frmMainMenu
 
                                 If mbCancel = True Then Exit For
 
-                                Dim sValue As String = ""
-                                Dim sColumnName As String = ""
+                                Dim sValue As String = String.Empty
+                                Dim sColumnName As String = String.Empty
 
                                 Dim oCell As Cell = .ActiveWorksheet.Cells(String.Format("{0}{1}", ocolumn.ColumnName, nRow))
 
                                 'check if this is a multi node array
-                                Dim sNodeName As String = ""
+                                Dim sNodeName As String = String.Empty
                                 If String.IsNullOrEmpty(ocolumn.Parent) = False Then
                                   sNodeName = ocolumn.Parent & "." & ocolumn.Name
                                 Else
@@ -2770,8 +2794,8 @@ Public Class frmMainMenu
 
                                   Case JTokenType.Array
 
-                                    Dim sValues As String = ""
-                                    oJsn = oRow.SelectToken(IIf(ocolumn.Parent = "", ocolumn.Name, ocolumn.Parent))
+                                    Dim sValues As String = String.Empty
+                                    oJsn = oRow.SelectToken(IIf(ocolumn.Parent = String.Empty, ocolumn.Name, ocolumn.Parent))
                                     If oJsn IsNot Nothing Then
                                       For Each oChildren In oJsn.Children
                                         If oChildren IsNot Nothing Then
@@ -2783,7 +2807,7 @@ Public Class frmMainMenu
                                             Case JTokenType.Object
 
                                               Dim sUsedProperties As New List(Of String)
-                                              If ocolumn.ChildNode <> "" Then
+                                              If ocolumn.ChildNode <> String.Empty Then
                                                 Dim oCols As List(Of clsImportColum) = oTemplate.ImportColumns.Where(Function(n) n.ColumnName = ocolumn.ColumnName).ToList
                                                 If oCols IsNot Nothing AndAlso oCols.Count > 0 Then
                                                   For Each oC As clsImportColum In oCols
@@ -2834,7 +2858,7 @@ Public Class frmMainMenu
 
 
                                 'format cell data to clean up some issues
-                                If oCell.Value.ToString.Contains("[]") Then oCell.Value = Replace(oCell.Value.ToString, "[]", "").ToString
+                                If oCell.Value.ToString.Contains("[]") Then oCell.Value = Replace(oCell.Value.ToString, "[]", String.Empty).ToString
 
 
                               Catch ex As Exception
@@ -2925,7 +2949,7 @@ Public Class frmMainMenu
 
                       If oListReferencedColumns IsNot Nothing And oListReferencedColumns.Count > 0 Then
                         For Each sKey As String In oListReferencedColumns.Keys
-                          Dim oValidation As clsValidation = TryCast(oListReferencedColumns.Item(sKey), clsValidation)
+                          Dim oValidation As clsValidation = oListReferencedColumns.Item(sKey)
 
                           Call UpdateProgressStatus(String.Format("Validating Key {0}", sKey))
 
@@ -2947,7 +2971,7 @@ Public Class frmMainMenu
                                   Dim sRootNode As String = ExtractRootFromNodes(oValidation.ReturnNodeValue)
                                   Dim oListValues As New Dictionary(Of String, String)
 
-                                  sQuery = Replace(sQuery, sDataSource, Replace(oValidation.ReturnNodeValue, sRootNode, ""))
+                                  sQuery = Replace(sQuery, sDataSource, Replace(oValidation.ReturnNodeValue, sRootNode, String.Empty))
 
                                   Dim oReturnNode As String = String.Format("{1}{0}", sDataSource, sRootNode)
 
@@ -2983,7 +3007,7 @@ Public Class frmMainMenu
                                         Next
 
 
-                                        Dim sValue As String = ""
+                                        Dim sValue As String = String.Empty
                                         If oListValues.ContainsKey(sNewQuery) Then
                                           sValue = oListValues(sNewQuery)
                                         Else
@@ -3016,8 +3040,8 @@ Public Class frmMainMenu
                               Case "4", "6" 'FindAndReplaceList
                                 Try
 
-                                  Dim sColumnCode As String = ""
-                                  Dim sIndex As String = ""
+                                  Dim sColumnCode As String = String.Empty
+                                  Dim sIndex As String = String.Empty
                                   If sKey.Contains(":") Then
                                     Dim sValues As String() = sKey.Split(":")
                                     If sValues IsNot Nothing And sValues.Count >= 2 Then
@@ -3028,8 +3052,8 @@ Public Class frmMainMenu
                                     sColumnCode = sKey
                                   End If
 
-                                  Dim sReturnCell As String = ""
-                                  Dim sReturnIndex As String = ""
+                                  Dim sReturnCell As String = String.Empty
+                                  Dim sReturnIndex As String = String.Empty
                                   If oValidation.ReturnCell.Contains(":") Then
                                     Dim sValues As String() = oValidation.ReturnCell.Split(":")
                                     If sValues IsNot Nothing And sValues.Count >= 2 Then
@@ -3049,7 +3073,7 @@ Public Class frmMainMenu
                                   Dim sRootNode As String = ExtractRootFromNodes(oValidation.ReturnNodeValue)
                                   Dim oListValues As New Dictionary(Of String, String)
 
-                                  sQuery = Replace(sQuery, sDataSource, Replace(oValidation.ReturnNodeValue, sRootNode, ""))
+                                  sQuery = Replace(sQuery, sDataSource, Replace(oValidation.ReturnNodeValue, sRootNode, String.Empty))
 
                                   Dim oReturnNode As String = String.Format("{1}{0}", sDataSource, sRootNode)
 
@@ -3064,7 +3088,7 @@ Public Class frmMainMenu
                                       If .ActiveWorksheet.Cells(String.Format("{0}{1}", sReturnCell, nRow)).Value IsNot Nothing AndAlso
                                      String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sReturnCell, nRow)).Value.ToString) = False Then
 
-                                        Dim sArray As String = ""
+                                        Dim sArray As String = String.Empty
 
                                         'check if destination cell have alreay been populated with values
                                         If .ActiveWorksheet.Cells(String.Format("{0}{1}", sColumnCode, nRow)).Value.IsEmpty = False Then
@@ -3081,9 +3105,9 @@ Public Class frmMainMenu
                                           If oListofKeys IsNot Nothing And oListofKeys.Count > 0 Then
                                             For Each sValueIDs As String In oListofKeys
                                               If String.IsNullOrEmpty(sValueIDs) = False Then
-                                                Dim sValueID As String = ""
+                                                Dim sValueID As String = String.Empty
 
-                                                If sReturnIndex <> "" Then
+                                                If sReturnIndex <> String.Empty Then
                                                   Dim oVal As String() = sValueIDs.Split(":").ToArray
                                                   If oVal IsNot Nothing And oVal.Count >= CInt(sReturnIndex) Then
                                                     sValueID = oVal(CInt(sReturnIndex) - 1)
@@ -3115,7 +3139,7 @@ Public Class frmMainMenu
                                                   sAPIendpoint = Replace(sAPIendpoint, String.Format("<!{0}!>", sColumn), .ActiveWorksheet.Cells(sCellAddress).Value.ToString.Trim)
                                                 Next
 
-                                                Dim sValue As String = ""
+                                                Dim sValue As String = String.Empty
 
                                                 If oListValues.ContainsKey(sNewQuery) Then
                                                   sValue = oListValues(sNewQuery)
@@ -3128,7 +3152,7 @@ Public Class frmMainMenu
 
                                                 End If
 
-                                                If sReturnIndex <> "" Then
+                                                If sReturnIndex <> String.Empty Then
                                                   sValue = Replace(sValueIDs, sValueID, sValue)
                                                 End If
 
@@ -3139,7 +3163,7 @@ Public Class frmMainMenu
 
                                           End If
 
-                                          Dim sNewArray As String = ""
+                                          Dim sNewArray As String = String.Empty
 
                                           For Each sValue In oListofValues
                                             sNewArray = String.Format("{0}{1},", sNewArray, sValue)
@@ -3261,7 +3285,7 @@ Public Class frmMainMenu
       spreadsheetControl.EndUpdate()
       bbiCancel.Enabled = False
       mbCancel = False
-      Call UpdateProgressStatus("")
+      Call UpdateProgressStatus(String.Empty)
       bbiQuery.Enabled = True
     End Try
 
@@ -3331,6 +3355,7 @@ Public Class frmMainMenu
 #End Region
 
 #Region "Objects"
+
   Private Sub lbxImportTemplates_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbxImportTemplates.SelectedIndexChanged
 
     With lbxImportTemplates
@@ -3419,6 +3444,7 @@ Public Class frmMainMenu
     End If
 
   End Sub
+
 
 
 #End Region

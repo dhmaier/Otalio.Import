@@ -1,16 +1,105 @@
 ﻿Imports System.IO
 
 Public Class ucDataImportProperties
+
+  Private moDataImportTemplate As New clsDataImportTemplate
+  Public msFileName As String = ""
+  Public msFilePath As String = ""
+
   Sub New()
 
     InitializeComponent()
 
   End Sub
 
-  Private moDataImportTemplate As New clsDataImportTemplate
-  Public msFilePath As String = ""
-  Public msFileName As String = ""
 
+  Private Sub gdValidators_DoubleClick(sender As Object, e As EventArgs) Handles gdValidators.DoubleClick
+    With gdValidators
+      If .SelectedRowsCount >= 0 Then
+        Dim oValidation As clsValidation = TryCast(.GetRow(.FocusedRowHandle), clsValidation)
+        If oValidation IsNot Nothing Then
+
+          Using oForm As New frmValidatorEdit
+            oForm._ucValidationProperties._Validation = oValidation
+            Select Case oForm.ShowDialog
+              Case DialogResult.OK 'ok edited
+              Case DialogResult.Cancel 'dont do nothing
+              Case DialogResult.Abort 'use to flag item to be deleted
+                Me._DataImportTemplate.Validators.Remove(oForm._ucValidationProperties._Validation)
+
+            End Select
+
+            Me.gridValidators.RefreshDataSource()
+            gdValidators.BestFitColumns()
+
+          End Using
+        End If
+      End If
+    End With
+  End Sub
+
+  Private Sub icbType_EditValueChanged(sender As Object, e As EventArgs) Handles icbType.EditValueChanged
+
+    Select Case moDataImportTemplate.ImportType
+
+      Case "3" 'file import
+
+        lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+        lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+        lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+        lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+
+      Case Else
+
+        lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+        lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+        lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+        lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+
+    End Select
+
+  End Sub
+
+  Public Sub SaveSettings(Optional pbSaveAs As Boolean = False)
+
+    Dim fd As SaveFileDialog = New SaveFileDialog
+    Me.gridImportColumns.Focus()
+
+    If pbSaveAs Or String.IsNullOrEmpty(msFilePath) Then
+
+      fd.Title = "Save a Otalio Dynamic import template."
+      fd.Filter = "Dynamic import Template |*.dit"
+      fd.FilterIndex = 1
+      fd.FileName = moDataImportTemplate.Name.ToString
+      fd.RestoreDirectory = True
+      If fd.ShowDialog() = DialogResult.OK Then
+
+        msFilePath = fd.FileName
+
+        If File.Exists(fd.FileName) = False Then
+          SaveFile(fd.FileName, moDataImportTemplate)
+        Else
+          SaveFile(fd.FileName, moDataImportTemplate)
+        End If
+
+      End If
+    Else
+
+      SaveFile(msFilePath, moDataImportTemplate)
+
+    End If
+
+
+    fd.Dispose()
+    fd = Nothing
+
+  End Sub
+
+  Public Sub SaveSettings(psPath As String, poImportTemplate As clsDataImportTemplate)
+
+    SaveFile(psPath, poImportTemplate)
+
+  End Sub
 
   Public Property _DataImportTemplate As clsDataImportTemplate
     Get
@@ -142,87 +231,4 @@ Public Class ucDataImportProperties
     End Set
   End Property
 
-
-  Public Sub SaveSettings(Optional pbSaveAs As Boolean = False)
-
-    Dim fd As SaveFileDialog = New SaveFileDialog
-    Me.gridImportColumns.Focus()
-
-    If pbSaveAs Or String.IsNullOrEmpty(msFilePath) Then
-
-      fd.Title = "Save a Otalio Dynamic import template."
-      fd.Filter = "Dynamic import Template |*.dit"
-      fd.FilterIndex = 1
-      fd.FileName = moDataImportTemplate.Name.ToString
-      fd.RestoreDirectory = True
-      If fd.ShowDialog() = DialogResult.OK Then
-
-        msFilePath = fd.FileName
-
-        If File.Exists(fd.FileName) = False Then
-          SaveFile(fd.FileName, moDataImportTemplate)
-        Else
-          SaveFile(fd.FileName, moDataImportTemplate)
-        End If
-
-      End If
-    Else
-
-      SaveFile(msFilePath, moDataImportTemplate)
-
-    End If
-
-
-    fd.Dispose()
-    fd = Nothing
-
-  End Sub
-
-
-  Private Sub gdValidators_DoubleClick(sender As Object, e As EventArgs) Handles gdValidators.DoubleClick
-    With gdValidators
-      If .SelectedRowsCount >= 0 Then
-        Dim oValidation As clsValidation = TryCast(.GetRow(.FocusedRowHandle), clsValidation)
-        If oValidation IsNot Nothing Then
-
-          Using oForm As New frmValidatorEdit
-            oForm._ucValidationProperties._Validation = oValidation
-            Select Case oForm.ShowDialog
-              Case DialogResult.OK 'ok editied
-              Case DialogResult.Cancel 'dont do nothing
-              Case DialogResult.Abort 'use to flag item to be deleted
-                Me._DataImportTemplate.Validators.Remove(oForm._ucValidationProperties._Validation)
-
-            End Select
-
-            Me.gridValidators.RefreshDataSource()
-            gdValidators.BestFitColumns()
-
-          End Using
-        End If
-      End If
-    End With
-  End Sub
-
-  Private Sub icbType_EditValueChanged(sender As Object, e As EventArgs) Handles icbType.EditValueChanged
-
-    Select Case moDataImportTemplate.ImportType
-
-      Case "3" 'file import
-
-        lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-        lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-        lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
-        lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-
-      Case Else
-
-        lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
-        lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
-        lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-        lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-
-    End Select
-
-  End Sub
 End Class
