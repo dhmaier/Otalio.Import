@@ -52,5 +52,18 @@ Public Class clsImportColum
   Public Property ColumnID As String = ""
   Public Property VariableName As String = ""
   Public Property ChildNode As String = ""
+  Public ReadOnly Property FormatName As String
+    Get
+      Select Case Formatted
+        Case "U" : Return "Upper Case"
+        Case "L" : Return "Lower Case"
+        Case "P" : Return "Proper Case"
+        Case Else : Return ""
+      End Select
+    End Get
+  End Property
+
+
+
 
 End Class

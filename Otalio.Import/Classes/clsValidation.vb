@@ -42,6 +42,8 @@ Public Class clsValidation
 
   Public Property GraphQLSourceNode As String = ""
 
+  Public Property PreloadData As Boolean = False
+
   Public Function Clone() As clsValidation
     Dim oObject As clsValidation = DirectCast(Me.MemberwiseClone(), clsValidation)
     oObject.ID = System.Guid.NewGuid.ToString

@@ -48,11 +48,14 @@ Partial Class ucDataImportProperties
         Me.RepositoryItemImageComboBox1 = New DevExpress.XtraEditors.Repository.RepositoryItemImageComboBox()
         Me.gcPriority = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcEnabled = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.rchkEnabled = New DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit()
         Me.gcVisibility = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcAPIEndpoint = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcComments = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcRetrunCell = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcHeader = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.gcPreloadData = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.RepositoryItemCheckEdit1 = New DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit()
         Me.gridImportColumns = New DevExpress.XtraGrid.GridControl()
         Me.gdImportColumns = New DevExpress.XtraGrid.Views.Grid.GridView()
         Me.colNo = New DevExpress.XtraGrid.Columns.GridColumn()
@@ -102,7 +105,6 @@ Partial Class ucDataImportProperties
         Me.SplitterItem3 = New DevExpress.XtraLayout.SplitterItem()
         Me.lciEntityColumn = New DevExpress.XtraLayout.LayoutControlItem()
         Me.lciFileLocationColumn = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.rchkEnabled = New DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
         CType(Me.txtFileLocationColumn.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -125,6 +127,8 @@ Partial Class ucDataImportProperties
         CType(Me.gridValidators, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gdValidators, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.RepositoryItemImageComboBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.rchkEnabled, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.RepositoryItemCheckEdit1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gridImportColumns, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gdImportColumns, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtDataTransportObject.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -165,7 +169,6 @@ Partial Class ucDataImportProperties
         CType(Me.SplitterItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciEntityColumn, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciFileLocationColumn, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.rchkEnabled, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'LayoutControl1
@@ -391,14 +394,14 @@ Partial Class ucDataImportProperties
         Me.gridValidators.Location = New System.Drawing.Point(24, 401)
         Me.gridValidators.MainView = Me.gdValidators
         Me.gridValidators.Name = "gridValidators"
-        Me.gridValidators.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.RepositoryItemImageComboBox1, Me.rchkEnabled})
+        Me.gridValidators.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.RepositoryItemImageComboBox1, Me.rchkEnabled, Me.RepositoryItemCheckEdit1})
         Me.gridValidators.Size = New System.Drawing.Size(558, 278)
         Me.gridValidators.TabIndex = 7
         Me.gridValidators.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdValidators})
         '
         'gdValidators
         '
-        Me.gdValidators.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.gcType, Me.gcPriority, Me.gcEnabled, Me.gcVisibility, Me.gcAPIEndpoint, Me.gcComments, Me.gcRetrunCell, Me.gcHeader})
+        Me.gdValidators.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.gcType, Me.gcPriority, Me.gcEnabled, Me.gcVisibility, Me.gcAPIEndpoint, Me.gcComments, Me.gcRetrunCell, Me.gcHeader, Me.gcPreloadData})
         Me.gdValidators.GridControl = Me.gridValidators
         Me.gdValidators.Name = "gdValidators"
         Me.gdValidators.OptionsSelection.MultiSelect = True
@@ -439,6 +442,14 @@ Partial Class ucDataImportProperties
         Me.gcEnabled.Name = "gcEnabled"
         Me.gcEnabled.Visible = True
         Me.gcEnabled.VisibleIndex = 3
+        '
+        'rchkEnabled
+        '
+        Me.rchkEnabled.AutoHeight = False
+        Me.rchkEnabled.Caption = "Enabled"
+        Me.rchkEnabled.Name = "rchkEnabled"
+        Me.rchkEnabled.ValueChecked = "1"
+        Me.rchkEnabled.ValueUnchecked = "0"
         '
         'gcVisibility
         '
@@ -482,6 +493,20 @@ Partial Class ucDataImportProperties
         Me.gcHeader.Visible = True
         Me.gcHeader.VisibleIndex = 8
         '
+        'gcPreloadData
+        '
+        Me.gcPreloadData.Caption = "Preload"
+        Me.gcPreloadData.ColumnEdit = Me.RepositoryItemCheckEdit1
+        Me.gcPreloadData.FieldName = "PreloadData"
+        Me.gcPreloadData.Name = "gcPreloadData"
+        Me.gcPreloadData.Visible = True
+        Me.gcPreloadData.VisibleIndex = 9
+        '
+        'RepositoryItemCheckEdit1
+        '
+        Me.RepositoryItemCheckEdit1.AutoHeight = False
+        Me.RepositoryItemCheckEdit1.Name = "RepositoryItemCheckEdit1"
+        '
         'gridImportColumns
         '
         Me.gridImportColumns.Location = New System.Drawing.Point(24, 401)
@@ -519,25 +544,25 @@ Partial Class ucDataImportProperties
         Me.colType.FieldName = "Type"
         Me.colType.Name = "colType"
         Me.colType.Visible = True
-        Me.colType.VisibleIndex = 2
+        Me.colType.VisibleIndex = 4
         '
         'colName
         '
         Me.colName.FieldName = "Name"
         Me.colName.Name = "colName"
         Me.colName.Visible = True
-        Me.colName.VisibleIndex = 3
+        Me.colName.VisibleIndex = 2
         '
         'colParent
         '
         Me.colParent.FieldName = "Parent"
         Me.colParent.Name = "colParent"
         Me.colParent.Visible = True
-        Me.colParent.VisibleIndex = 4
+        Me.colParent.VisibleIndex = 3
         '
         'colFormatted
         '
-        Me.colFormatted.FieldName = "Formatted"
+        Me.colFormatted.FieldName = "FormatName"
         Me.colFormatted.Name = "colFormatted"
         Me.colFormatted.Visible = True
         Me.colFormatted.VisibleIndex = 5
@@ -546,22 +571,16 @@ Partial Class ucDataImportProperties
         '
         Me.colColumnID.FieldName = "ColumnID"
         Me.colColumnID.Name = "colColumnID"
-        Me.colColumnID.Visible = True
-        Me.colColumnID.VisibleIndex = 6
         '
         'colVariableName
         '
         Me.colVariableName.FieldName = "VariableName"
         Me.colVariableName.Name = "colVariableName"
-        Me.colVariableName.Visible = True
-        Me.colVariableName.VisibleIndex = 7
         '
         'colChildNode
         '
         Me.colChildNode.FieldName = "ChildNode"
         Me.colChildNode.Name = "colChildNode"
-        Me.colChildNode.Visible = True
-        Me.colChildNode.VisibleIndex = 8
         '
         'txtDataTransportObject
         '
@@ -907,14 +926,6 @@ Partial Class ucDataImportProperties
         Me.lciFileLocationColumn.TextSize = New System.Drawing.Size(125, 13)
         Me.lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
         '
-        'rchkEnabled
-        '
-        Me.rchkEnabled.AutoHeight = False
-        Me.rchkEnabled.Caption = "Enabled"
-        Me.rchkEnabled.Name = "rchkEnabled"
-        Me.rchkEnabled.ValueChecked = "1"
-        Me.rchkEnabled.ValueUnchecked = "0"
-        '
         'ucDataImportProperties
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -944,6 +955,8 @@ Partial Class ucDataImportProperties
         CType(Me.gridValidators, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gdValidators, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.RepositoryItemImageComboBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.rchkEnabled, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.RepositoryItemCheckEdit1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gridImportColumns, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gdImportColumns, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtDataTransportObject.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -984,7 +997,6 @@ Partial Class ucDataImportProperties
         CType(Me.SplitterItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciEntityColumn, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciFileLocationColumn, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.rchkEnabled, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1070,4 +1082,6 @@ Partial Class ucDataImportProperties
     Friend WithEvents lciEntityColumn As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents lciFileLocationColumn As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents rchkEnabled As DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit
+    Friend WithEvents gcPreloadData As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents RepositoryItemCheckEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit
 End Class

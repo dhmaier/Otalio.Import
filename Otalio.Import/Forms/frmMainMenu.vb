@@ -1283,6 +1283,60 @@ Public Class frmMainMenu
 
       .Cells(String.Format("{0}{1}", poValidation.ReturnCell, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
 
+      If poValidation.PreloadData Then
+
+        Dim sQuerySelect As String = ""
+        If poValidation.Query.Contains("?") Then
+          sQuerySelect = poValidation.Query.Substring(poValidation.Query.IndexOf("?"))
+        End If
+        Dim sProperties As New Dictionary(Of String, String)
+        For Each ocolumn In psColumns
+          sProperties.Add(ocolumn, ExtractColumnDataField(poValidation.Query, ocolumn).ToString)
+        Next
+
+        Call UpdateProgressStatus(String.Format("Preloading data on {0}", poValidation.APIEndpoint))
+
+        'call the end point to get the query results
+        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuerySelect, poValidation.Sort)
+        Dim json As JObject = JObject.Parse(oResponse.Content)
+        If json IsNot Nothing Then
+
+          Dim sReturnValue As String = String.Empty
+
+          If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
+            Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
+            If oOjbect IsNot Nothing Then
+              If oOjbect.Count > 0 Then
+                For Each jnode As JToken In oOjbect.Children
+
+                  Dim sReturnKey As String = poValidation.ReturnNodeValue.Substring(poValidation.ReturnNodeValue.LastIndexOf("]") + 2)
+
+
+                  'Extract the value
+                  sReturnValue = jnode.SelectToken(sReturnKey).ToString
+
+                  'check if there is formating
+                  If poValidation.Formatted IsNot Nothing Then
+                    Select Case poValidation.Formatted.ToString
+                      Case "U" : sReturnValue = sReturnValue.ToUpper
+                      Case "L" : sReturnValue = sReturnValue.ToLower
+                      Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
+                    End Select
+                  End If
+
+                  Dim sNewQuery As String = poValidation.Query
+                  For Each oitem In sProperties
+                    sNewQuery = Replace(sNewQuery, String.Format("<!{0}!>", oitem.Key), jnode.SelectToken(oitem.Value).ToString)
+                  Next
+
+                  'add item to dictionary 
+                  oReturnValuesStore.Add(sNewQuery, sReturnValue)
+                Next
+              End If
+            End If
+          End If
+        End If
+      End If
 
       'loop though all rows in the excel sheet
       For nRow As Integer = 2 To nCountRows + 1
@@ -1321,62 +1375,67 @@ Public Class frmMainMenu
             End If
 
             If bSourceData = True Then
+
               'check if query has already been process to void duplicate calls
               If oReturnValuesStore.ContainsKey(sQuery) = False Then
 
-                'call the end point to get the query results
-                Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQuery.Trim, poValidation.Sort)
-                Dim json As JObject = JObject.Parse(oResponse.Content)
-                If json IsNot Nothing Then
+                If poValidation.PreloadData = False Then
+                  'call the end point to get the query results
+                  Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQuery.Trim, poValidation.Sort)
+                  Dim json As JObject = JObject.Parse(oResponse.Content)
+                  If json IsNot Nothing Then
 
-                  Dim sReturnValue As String = String.Empty
+                    Dim sReturnValue As String = String.Empty
 
-                  Try
+                    Try
 
-                    If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
-                      Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
-                      If oOjbect IsNot Nothing Then
-                        If oOjbect.Count > 0 Then
+                      If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
+                        Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
+                        If oOjbect IsNot Nothing Then
+                          If oOjbect.Count > 0 Then
 
-                          'Extract the value
-                          sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
+                            'Extract the value
+                            sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
 
-                          'check if there is formating
-                          If poValidation.Formatted IsNot Nothing Then
-                            Select Case poValidation.Formatted.ToString
-                              Case "U" : sReturnValue = sReturnValue.ToUpper
-                              Case "L" : sReturnValue = sReturnValue.ToLower
-                              Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
-                            End Select
+                            'check if there is formating
+                            If poValidation.Formatted IsNot Nothing Then
+                              Select Case poValidation.Formatted.ToString
+                                Case "U" : sReturnValue = sReturnValue.ToUpper
+                                Case "L" : sReturnValue = sReturnValue.ToLower
+                                Case "P" : sReturnValue = StrConv(sReturnValue, VbStrConv.ProperCase)
+                              End Select
+                            End If
                           End If
+
                         End If
 
+                      Else
+                        sReturnValue = String.Format("Error:{0}", json.SelectToken("message"))
+                        If bHasErrors = False Then
+                          bHasErrors = True
+                        End If
                       End If
 
-                    Else
-                      sReturnValue = String.Format("Error:{0}", json.SelectToken("message"))
+                    Catch ex As Exception
+                      sReturnValue = String.Format("Error: {0}", ex.Message)
                       If bHasErrors = False Then
                         bHasErrors = True
                       End If
-                    End If
+                    End Try
 
-                  Catch ex As Exception
-                    sReturnValue = String.Format("Error: {0}", ex.Message)
-                    If bHasErrors = False Then
-                      bHasErrors = True
-                    End If
-                  End Try
+                    'add item to dictionary 
+                    oReturnValuesStore.Add(sQuery, sReturnValue)
 
-                  'add item to dictionary 
-                  oReturnValuesStore.Add(sQuery, sReturnValue)
+                    oCell.Value = sReturnValue.ToString
 
-                  oCell.Value = sReturnValue.ToString
-
+                  End If
+                Else
+                  oCell.Value = ""
                 End If
               Else
 
-                'item was already validated, post same results
-                oCell.Value = oReturnValuesStore.Item(sQuery)
+                  'item was already validated, post same results
+                  oCell.Value = oReturnValuesStore.Item(sQuery)
               End If
             End If
           End If
@@ -1967,7 +2026,7 @@ Public Class frmMainMenu
               Dim sColumns As List(Of String) = ExtractColumnDetails(sQuery)
 
 
-              'find all colunms that are reference from the excel sheet to do the query
+              'find all columns that are reference from the excel sheet to do the query
               For Each sColumn As String In sColumns
                 Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
                 sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
@@ -2484,6 +2543,7 @@ Public Class frmMainMenu
       End If
 
       moOverlayLabel.Text = Replace(psStatus, vbNewLine, "")
+
 
     End If
 
