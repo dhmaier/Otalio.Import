@@ -236,7 +236,7 @@ Public Class clsAPI
 
   End Function
 
-  Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "") As IRestResponse
+  Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "", Optional psColumnsInclude As String = "") As IRestResponse
     Try
       psEndPoint = ExtractSystemVariables(psEndPoint)
       psHeader = ExtractSystemVariables(psHeader)
@@ -284,6 +284,13 @@ Public Class clsAPI
       Dim oRequest = New RestRequest(Method.GET)
       oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
       oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+
+      'include fields
+      If String.IsNullOrEmpty(psColumnsInclude) = False Then
+        oRequest.AddParameter("include-fields", psColumnsInclude, ParameterType.HttpHeader)
+
+      End If
+
 
       If psHeader IsNot Nothing AndAlso String.IsNullOrEmpty(psHeader) = False Then
         Dim oJObject As JObject = JObject.Parse(psHeader)

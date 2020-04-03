@@ -2023,6 +2023,46 @@
   <metadata name="appMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>196, 17</value>
   </metadata>
+  <data name="UcConnectionDetails1._Connection" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAERPdGFsaW8uSW1wb3J0LCBWZXJzaW9uPTEuMS4wLjgsIEN1bHR1
+        cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAIk90YWxpby5JbXBvcnQuY2xzQ29ubmVj
+        dGlvbkRldGFpbHMHAAAABF9fSUQPX19TZXJ2ZXJBZGRyZXNzCl9fVXNlck5hbWUJX19Vc2VyUHdkDl9f
+        RGF0ZUxhc3RVc2VkDl9fSFRUUFVzZXJOYW1lDl9fSFRUUFBhc3N3b3JkAQEBAQABAQ0CAAAABgMAAAAk
+        MGQzZmRkNTktMzlhOC00OWFlLWIzM2EtYjNmZjQwMDU2MjUyBgQAAAAACQQAAAAJBAAAAHaUvfLB19eI
+        CQQAAAAJBAAAAAs=
+</value>
+  </data>
+  <data name="UcProperties1._DataImportTemplate" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAERPdGFsaW8uSW1wb3J0LCBWZXJzaW9uPTEuMS4wLjgsIEN1bHR1
+        cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAwDAAAAkwFPdGFsaW8uSW1wb3J0LCBWZXJzaW9u
+        PTEuMS4wLjgsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbF1dLCBtc2NvcmxpYiwg
+        VmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkz
+        NGUwODkFAQAAACNPdGFsaW8uSW1wb3J0LmNsc0RhdGFJbXBvcnRUZW1wbGF0ZRYAAAADX0lEC19JbXBv
+        cnRUeXBlBV9OYW1lDF9BUElFbmRwb2ludApfRFRPT2JqZWN0C19WYWxpZGF0b3JzDl9JbXBvcnRDb2x1
+        bW5zEl9Xb3JrYm9va1NoZWV0TmFtZRFfU3RhdHVzQ29kZUNvbHVtbhhfU3RhdHVzRGVzY2lycHRpb25D
+        b2x1bW4GX05vdGVzEF9SZXR1cm5Ob2RlVmFsdWULX1JldHVybkNlbGwOX1JldHVybkNlbGxEVE8MX1Vw
+        ZGF0ZVF1ZXJ5CV9Qcmlvcml0eQxfU2VsZWN0UXVlcnkKX1ZhcmlhYmxlcw1fR3JhcGhRTFF1ZXJ5EF9H
+        cmFwaFFMUm9vdE5vZGUNX0VudGl0eUNvbHVtbhNfRmlsZUxvY2F0aW9uQ29sdW1uAQEBAQEEBAEBAQEB
+        AQEBAAEEAQEBAT5TeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW090YWxpby5JbXBvcnQu
+        Y2xzVmFsaWRhdGlvbgMAAAA/U3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAxW1tPdGFsaW8u
+        SW1wb3J0LmNsc0ltcG9ydENvbHVtAwAAAAg9U3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAx
+        W1tPdGFsaW8uSW1wb3J0LmNsc1ZhcmlhYmxlcwMAAAACAAAABgQAAAAkOTc4YjdhNGUtNTA2MS00Zjhl
+        LWE4NTItYjQ2ODVhNTBlZjZkBgUAAAABMgYGAAAAAAkGAAAACQYAAAAJBwAAAAkIAAAACQYAAAAJBgAA
+        AAkGAAAACQYAAAAJBgAAAAkGAAAACQYAAAAJBgAAAAAAAAAJBgAAAAkKAAAACQYAAAAJBgAAAAkGAAAA
+        CQYAAAAFBwAAAD5TeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW090YWxpby5JbXBvcnQu
+        Y2xzVmFsaWRhdGlvbgMAAAAGX2l0ZW1zBV9zaXplCF92ZXJzaW9uBAAAHU90YWxpby5JbXBvcnQuY2xz
+        VmFsaWRhdGlvbltdAgAAAAgIAwAAAAkMAAAAAAAAAAAAAAAFCAAAAD9TeXN0ZW0uQ29sbGVjdGlvbnMu
+        R2VuZXJpYy5MaXN0YDFbW090YWxpby5JbXBvcnQuY2xzSW1wb3J0Q29sdW0DAAAABl9pdGVtcwVfc2l6
+        ZQhfdmVyc2lvbgQAAB5PdGFsaW8uSW1wb3J0LmNsc0ltcG9ydENvbHVtW10CAAAACAgDAAAACQ0AAAAA
+        AAAAAAAAAAUKAAAAPVN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkxpc3RgMVtbT3RhbGlvLkltcG9y
+        dC5jbHNWYXJpYWJsZXMDAAAABl9pdGVtcwVfc2l6ZQhfdmVyc2lvbgQAABxPdGFsaW8uSW1wb3J0LmNs
+        c1ZhcmlhYmxlc1tdAgAAAAgIAwAAAAkOAAAAAAAAAAAAAAAHDAAAAAABAAAAAAAAAAQbT3RhbGlvLklt
+        cG9ydC5jbHNWYWxpZGF0aW9uAgAAAAcNAAAAAAEAAAAAAAAABBxPdGFsaW8uSW1wb3J0LmNsc0ltcG9y
+        dENvbHVtAgAAAAcOAAAAAAEAAAAAAAAABBpPdGFsaW8uSW1wb3J0LmNsc1ZhcmlhYmxlcwIAAAAL
+</value>
+  </data>
   <metadata name="SpreadsheetBarController1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>682, 17</value>
   </metadata>
