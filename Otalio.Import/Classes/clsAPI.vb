@@ -536,7 +536,11 @@ Public Class clsAPI
       psEndPoint = ExtractSystemVariables(psEndPoint)
       psDTOJson = ExtractSystemVariables(psDTOJson)
 
-      Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+               psDTOJson = Replace(psDTOJson, vbNewLine, "")
+               psDTOJson = Replace(psDTOJson, ControlChars.Quote, "\" & ControlChars.Quote)
+
+
+               Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
       Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
       Dim serialized = jsSerializer.Serialize(psDTOJson)

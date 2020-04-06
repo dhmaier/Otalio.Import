@@ -260,6 +260,26 @@ Partial Class frmMainMenu
         Dim SpreadsheetCommandGalleryItem186 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandGalleryItem = New DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandGalleryItem()
         Dim ReduceOperation1 As DevExpress.XtraBars.Ribbon.ReduceOperation = New DevExpress.XtraBars.Ribbon.ReduceOperation()
         Dim ReduceOperation2 As DevExpress.XtraBars.Ribbon.ReduceOperation = New DevExpress.XtraBars.Ribbon.ReduceOperation()
+        Dim EditorButtonImageOptions1 As DevExpress.XtraEditors.Controls.EditorButtonImageOptions = New DevExpress.XtraEditors.Controls.EditorButtonImageOptions()
+        Dim SerializableAppearanceObject1 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject2 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject3 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject4 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim EditorButtonImageOptions2 As DevExpress.XtraEditors.Controls.EditorButtonImageOptions = New DevExpress.XtraEditors.Controls.EditorButtonImageOptions()
+        Dim SerializableAppearanceObject5 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject6 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject7 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject8 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim EditorButtonImageOptions3 As DevExpress.XtraEditors.Controls.EditorButtonImageOptions = New DevExpress.XtraEditors.Controls.EditorButtonImageOptions()
+        Dim SerializableAppearanceObject9 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject10 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject11 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject12 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim EditorButtonImageOptions4 As DevExpress.XtraEditors.Controls.EditorButtonImageOptions = New DevExpress.XtraEditors.Controls.EditorButtonImageOptions()
+        Dim SerializableAppearanceObject13 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject14 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject15 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject16 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
         Me.rpgWorkbook = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.bbiOpenWorkbook = New DevExpress.XtraBars.BarButtonItem()
         Me.bbiSaveWorkbook = New DevExpress.XtraBars.BarButtonItem()
@@ -676,6 +696,12 @@ Partial Class frmMainMenu
         Me.appMenu = New DevExpress.XtraBars.Ribbon.ApplicationMenu(Me.components)
         Me.spreadsheetFormulaBarPanel = New System.Windows.Forms.Panel()
         Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
+        Me.gridWorkbook = New DevExpress.XtraGrid.GridControl()
+        Me.gdWorkbook = New DevExpress.XtraGrid.Views.Grid.GridView()
+        Me.gcPriority = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.gcTemplateName = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.gcActions = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.beAction = New DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit()
         Me.txtErrors = New DevExpress.XtraEditors.MemoEdit()
         Me.lueHierarchies = New DevExpress.XtraEditors.LookUpEdit()
         Me.txtMinor = New DevExpress.XtraEditors.TextEdit()
@@ -687,11 +713,11 @@ Partial Class frmMainMenu
         Me.lbxImportTemplates = New DevExpress.XtraEditors.CheckedListBoxControl()
         Me.UcConnectionDetails1 = New Otalio.Import.ucConnectionDetails()
         Me.UcProperties1 = New Otalio.Import.ucDataImportProperties()
+        Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup1 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.tcgTabs = New DevExpress.XtraLayout.TabbedControlGroup()
         Me.LayoutControlGroup2 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem1 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.SplitterItem1 = New DevExpress.XtraLayout.SplitterItem()
         Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem6 = New DevExpress.XtraLayout.LayoutControlItem()
@@ -700,6 +726,7 @@ Partial Class frmMainMenu
         Me.lciMinor = New DevExpress.XtraLayout.LayoutControlItem()
         Me.lciBuild = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem8 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlItem10 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup3 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem2 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.SplitterItem2 = New DevExpress.XtraLayout.SplitterItem()
@@ -774,6 +801,9 @@ Partial Class frmMainMenu
         Me.spreadsheetFormulaBarPanel.SuspendLayout()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
+        CType(Me.gridWorkbook, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.gdWorkbook, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.beAction, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtErrors.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lueHierarchies.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtMinor.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -782,11 +812,11 @@ Partial Class frmMainMenu
         CType(Me.txtLogs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtWorkbookName.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lbxImportTemplates, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tcgTabs, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitterItem1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -795,6 +825,7 @@ Partial Class frmMainMenu
         CType(Me.lciMinor, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciBuild, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem10, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitterItem2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1040,7 +1071,7 @@ Partial Class frmMainMenu
         Me.ribbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.ribbonControl.ExpandCollapseItem, Me.ribbonControl.SearchEditItem, Me.iExit, Me.iHelp, Me.iAbout, Me.siStatus, Me.siInfo, Me.rgbiSkins, Me.SpreadsheetCommandBarSubItem1, Me.SpreadsheetCommandBarButtonItem1, Me.SpreadsheetCommandBarButtonItem2, Me.SpreadsheetCommandBarSubItem2, Me.SpreadsheetCommandBarButtonItem3, Me.SpreadsheetCommandBarButtonItem4, Me.RenameTableItemCaption1, Me.RenameTableItem1, Me.SpreadsheetCommandBarCheckItem1, Me.SpreadsheetCommandBarCheckItem2, Me.SpreadsheetCommandBarCheckItem3, Me.SpreadsheetCommandBarCheckItem4, Me.SpreadsheetCommandBarCheckItem5, Me.SpreadsheetCommandBarCheckItem6, Me.SpreadsheetCommandBarCheckItem7, Me.GalleryTableStylesItem1, Me.SpreadsheetCommandBarButtonItem5, Me.SpreadsheetCommandBarButtonItem6, Me.SpreadsheetCommandBarButtonItem7, Me.GalleryChartLayoutItem1, Me.GalleryChartStyleItem1, Me.SpreadsheetCommandBarButtonGalleryDropDownItem1, Me.SpreadsheetCommandBarSubItem3, Me.SpreadsheetCommandBarButtonGalleryDropDownItem2, Me.SpreadsheetCommandBarButtonGalleryDropDownItem3, Me.SpreadsheetCommandBarButtonGalleryDropDownItem4, Me.SpreadsheetCommandBarButtonGalleryDropDownItem5, Me.SpreadsheetCommandBarSubItem4, Me.SpreadsheetCommandBarButtonGalleryDropDownItem6, Me.SpreadsheetCommandBarButtonGalleryDropDownItem7, Me.SpreadsheetCommandBarSubItem5, Me.SpreadsheetCommandBarButtonGalleryDropDownItem8, Me.SpreadsheetCommandBarButtonGalleryDropDownItem9, Me.SpreadsheetCommandBarButtonGalleryDropDownItem10, Me.SpreadsheetCommandBarButtonGalleryDropDownItem11, Me.SpreadsheetCommandBarButtonGalleryDropDownItem12, Me.SpreadsheetCommandBarCheckItem8, Me.SpreadsheetCommandBarCheckItem9, Me.SpreadsheetCommandBarButtonItem8, Me.SpreadsheetCommandBarButtonItem9, Me.SpreadsheetCommandBarButtonItem10, Me.SpreadsheetCommandBarSubItem6, Me.SpreadsheetCommandBarButtonItem11, Me.SpreadsheetCommandBarButtonItem12, Me.SpreadsheetCommandBarButtonItem13, Me.SpreadsheetCommandBarButtonItem14, Me.SpreadsheetCommandBarButtonItem15, Me.SpreadsheetCommandBarButtonItem16, Me.SpreadsheetCommandBarButtonItem17, Me.SpreadsheetCommandBarButtonItem18, Me.SpreadsheetCommandBarButtonItem19, Me.SpreadsheetCommandBarButtonItem20, Me.SpreadsheetCommandBarButtonItem21, Me.SpreadsheetCommandBarButtonItem22, Me.SpreadsheetCommandBarButtonItem23, Me.SpreadsheetCommandBarButtonItem24, Me.SpreadsheetCommandBarButtonItem25, Me.SpreadsheetCommandBarCheckItem10, Me.SpreadsheetCommandBarButtonItem26, Me.SpreadsheetCommandBarButtonItem27, Me.SpreadsheetCommandBarSubItem7, Me.SpreadsheetCommandBarButtonItem28, Me.SpreadsheetCommandBarButtonItem29, Me.SpreadsheetCommandBarButtonItem30, Me.SpreadsheetCommandBarSubItem8, Me.SpreadsheetCommandBarButtonItem31, Me.SpreadsheetCommandBarButtonItem32, Me.SpreadsheetCommandBarSubItem9, Me.SpreadsheetCommandBarButtonItem33, Me.SpreadsheetCommandBarButtonItem34, Me.SpreadsheetCommandBarButtonItem35, Me.SpreadsheetCommandBarButtonItem36, Me.SpreadsheetCommandBarButtonItem37, Me.SpreadsheetCommandBarSubItem10, Me.SpreadsheetCommandBarButtonItem38, Me.SpreadsheetCommandBarButtonItem39, Me.SpreadsheetCommandBarButtonItem40, Me.SpreadsheetCommandBarButtonItem41, Me.SpreadsheetCommandBarButtonItem42, Me.FunctionsFinancialItem1, Me.FunctionsLogicalItem1, Me.FunctionsTextItem1, Me.FunctionsDateAndTimeItem1, Me.FunctionsLookupAndReferenceItem1, Me.FunctionsMathAndTrigonometryItem1, Me.SpreadsheetCommandBarSubItem11, Me.FunctionsStatisticalItem1, Me.FunctionsEngineeringItem1, Me.FunctionsInformationItem1, Me.FunctionsCompatibilityItem1, Me.FunctionsWebItem1, Me.SpreadsheetCommandBarButtonItem43, Me.SpreadsheetCommandBarButtonItem44, Me.DefinedNameListItem1, Me.SpreadsheetCommandBarButtonItem45, Me.SpreadsheetCommandBarCheckItem11, Me.SpreadsheetCommandBarSubItem12, Me.SpreadsheetCommandBarCheckItem12, Me.SpreadsheetCommandBarCheckItem13, Me.SpreadsheetCommandBarButtonItem46, Me.SpreadsheetCommandBarButtonItem47, Me.SpreadsheetCommandBarSubItem13, Me.SpreadsheetCommandBarCheckItem14, Me.SpreadsheetCommandBarCheckItem15, Me.SpreadsheetCommandBarCheckItem16, Me.SpreadsheetCommandBarButtonItem48, Me.SpreadsheetCommandBarSubItem14, Me.SpreadsheetCommandBarCheckItem17, Me.SpreadsheetCommandBarCheckItem18, Me.PageSetupPaperKindItem1, Me.SpreadsheetCommandBarSubItem15, Me.SpreadsheetCommandBarButtonItem49, Me.SpreadsheetCommandBarButtonItem50, Me.SpreadsheetCommandBarButtonItem51, Me.SpreadsheetCommandBarCheckItem19, Me.SpreadsheetCommandBarCheckItem20, Me.SpreadsheetCommandBarButtonItem52, Me.SpreadsheetCommandBarButtonItem53, Me.SpreadsheetCommandBarButtonGalleryDropDownItem13, Me.SpreadsheetCommandBarButtonGalleryDropDownItem14, Me.SpreadsheetCommandBarButtonGalleryDropDownItem15, Me.SpreadsheetCommandBarButtonGalleryDropDownItem16, Me.SpreadsheetCommandBarButtonGalleryDropDownItem17, Me.SpreadsheetCommandBarButtonGalleryDropDownItem18, Me.SpreadsheetCommandBarButtonGalleryDropDownItem19, Me.SpreadsheetCommandBarButtonItem54, Me.SpreadsheetCommandBarButtonItem55, Me.SpreadsheetCommandBarButtonItem56, Me.SpreadsheetCommandBarButtonItem57, Me.SpreadsheetCommandBarButtonItem58, Me.SpreadsheetCommandBarButtonItem59, Me.BarButtonGroup1, Me.ChangeFontNameItem1, Me.ChangeFontSizeItem1, Me.SpreadsheetCommandBarButtonItem60, Me.SpreadsheetCommandBarButtonItem61, Me.BarButtonGroup2, Me.SpreadsheetCommandBarCheckItem21, Me.SpreadsheetCommandBarCheckItem22, Me.SpreadsheetCommandBarCheckItem23, Me.SpreadsheetCommandBarCheckItem24, Me.BarButtonGroup3, Me.SpreadsheetCommandBarSubItem16, Me.SpreadsheetCommandBarButtonItem62, Me.SpreadsheetCommandBarButtonItem63, Me.SpreadsheetCommandBarButtonItem64, Me.SpreadsheetCommandBarButtonItem65, Me.SpreadsheetCommandBarButtonItem66, Me.SpreadsheetCommandBarButtonItem67, Me.SpreadsheetCommandBarButtonItem68, Me.SpreadsheetCommandBarButtonItem69, Me.SpreadsheetCommandBarButtonItem70, Me.SpreadsheetCommandBarButtonItem71, Me.SpreadsheetCommandBarButtonItem72, Me.SpreadsheetCommandBarButtonItem73, Me.SpreadsheetCommandBarButtonItem74, Me.ChangeBorderLineColorItem1, Me.ChangeBorderLineStyleItem1, Me.BarButtonGroup4, Me.ChangeCellFillColorItem1, Me.ChangeFontColorItem1, Me.BarButtonGroup5, Me.SpreadsheetCommandBarCheckItem25, Me.SpreadsheetCommandBarCheckItem26, Me.SpreadsheetCommandBarCheckItem27, Me.BarButtonGroup6, Me.SpreadsheetCommandBarCheckItem28, Me.SpreadsheetCommandBarCheckItem29, Me.SpreadsheetCommandBarCheckItem30, Me.BarButtonGroup7, Me.SpreadsheetCommandBarButtonItem75, Me.SpreadsheetCommandBarButtonItem76, Me.SpreadsheetCommandBarCheckItem31, Me.SpreadsheetCommandBarSubItem17, Me.SpreadsheetCommandBarCheckItem32, Me.SpreadsheetCommandBarButtonItem77, Me.SpreadsheetCommandBarButtonItem78, Me.SpreadsheetCommandBarButtonItem79, Me.BarButtonGroup8, Me.ChangeNumberFormatItem1, Me.BarButtonGroup9, Me.SpreadsheetCommandBarSubItem18, Me.SpreadsheetCommandBarButtonItem80, Me.SpreadsheetCommandBarButtonItem81, Me.SpreadsheetCommandBarButtonItem82, Me.SpreadsheetCommandBarButtonItem83, Me.SpreadsheetCommandBarButtonItem84, Me.SpreadsheetCommandBarButtonItem85, Me.SpreadsheetCommandBarButtonItem86, Me.BarButtonGroup10, Me.SpreadsheetCommandBarButtonItem87, Me.SpreadsheetCommandBarButtonItem88, Me.SpreadsheetCommandBarSubItem19, Me.SpreadsheetCommandBarButtonItem89, Me.SpreadsheetCommandBarButtonItem90, Me.SpreadsheetCommandBarButtonItem91, Me.SpreadsheetCommandBarButtonItem92, Me.SpreadsheetCommandBarButtonItem93, Me.SpreadsheetCommandBarButtonItem94, Me.SpreadsheetCommandBarButtonItem95, Me.SpreadsheetCommandBarSubItem20, Me.SpreadsheetCommandBarButtonItem96, Me.SpreadsheetCommandBarButtonItem97, Me.SpreadsheetCommandBarButtonItem98, Me.SpreadsheetCommandBarButtonItem99, Me.SpreadsheetCommandBarButtonItem100, Me.SpreadsheetCommandBarButtonItem101, Me.SpreadsheetCommandBarSubItem21, Me.SpreadsheetCommandBarButtonGalleryDropDownItem20, Me.SpreadsheetCommandBarButtonGalleryDropDownItem21, Me.SpreadsheetCommandBarButtonGalleryDropDownItem22, Me.SpreadsheetCommandBarButtonItem102, Me.SpreadsheetCommandBarButtonItem103, Me.SpreadsheetCommandBarSubItem22, Me.GalleryFormatAsTableItem1, Me.GalleryChangeStyleItem1, Me.SpreadsheetCommandBarSubItem23, Me.SpreadsheetCommandBarButtonItem104, Me.SpreadsheetCommandBarButtonItem105, Me.SpreadsheetCommandBarButtonItem106, Me.SpreadsheetCommandBarSubItem24, Me.SpreadsheetCommandBarButtonItem107, Me.SpreadsheetCommandBarButtonItem108, Me.SpreadsheetCommandBarButtonItem109, Me.SpreadsheetCommandBarSubItem25, Me.SpreadsheetCommandBarButtonItem110, Me.SpreadsheetCommandBarButtonItem111, Me.SpreadsheetCommandBarButtonItem112, Me.SpreadsheetCommandBarButtonItem113, Me.SpreadsheetCommandBarButtonItem114, Me.SpreadsheetCommandBarButtonItem115, Me.SpreadsheetCommandBarButtonItem116, Me.SpreadsheetCommandBarButtonItem117, Me.SpreadsheetCommandBarButtonItem118, Me.SpreadsheetCommandBarButtonItem119, Me.SpreadsheetCommandBarButtonItem120, Me.SpreadsheetCommandBarSubItem26, Me.SpreadsheetCommandBarButtonItem121, Me.SpreadsheetCommandBarButtonItem122, Me.ChangeSheetTabColorItem1, Me.SpreadsheetCommandBarCheckItem33, Me.SpreadsheetCommandBarButtonItem124, Me.SpreadsheetCommandBarSubItem27, Me.SpreadsheetCommandBarSubItem28, Me.SpreadsheetCommandBarButtonItem130, Me.SpreadsheetCommandBarButtonItem131, Me.SpreadsheetCommandBarButtonItem132, Me.SpreadsheetCommandBarButtonItem133, Me.SpreadsheetCommandBarSubItem29, Me.SpreadsheetCommandBarButtonItem134, Me.SpreadsheetCommandBarButtonItem135, Me.SpreadsheetCommandBarButtonItem136, Me.SpreadsheetCommandBarButtonItem137, Me.SpreadsheetCommandBarButtonItem138, Me.SpreadsheetCommandBarButtonItem139, Me.SpreadsheetCommandBarSubItem30, Me.SpreadsheetCommandBarSubItem31, Me.SpreadsheetCommandBarButtonItem144, Me.SpreadsheetCommandBarButtonItem145, Me.SpreadsheetCommandBarButtonItem146, Me.SpreadsheetCommandBarButtonItem147, Me.SpreadsheetCommandBarButtonItem148, Me.SpreadsheetCommandBarButtonItem149, Me.SpreadsheetCommandBarButtonItem150, Me.SpreadsheetCommandBarButtonItem151, Me.SpreadsheetCommandBarButtonItem152, Me.SpreadsheetCommandBarButtonItem153, Me.SpreadsheetCommandBarButtonItem154, Me.SpreadsheetCommandBarButtonItem155, Me.SpreadsheetCommandBarButtonItem156, Me.SpreadsheetCommandBarButtonItem157, Me.SpreadsheetCommandBarButtonItem158, Me.SpreadsheetCommandBarButtonItem159, Me.SpreadsheetCommandBarButtonItem160, Me.bbiImportOpen, Me.bbiSaveImport, Me.bbiCreateEmptyExcelDocument, Me.bbiImportExcel, Me.bbiValidateData, Me.bbiValidatorAdd, Me.bbiValidatorDelete, Me.bbiFormatJsonCode, Me.bbiSaveImportAs, Me.bbiDuplicate, Me.bbiOpenWorkbook, Me.bbiSaveWorkbook, Me.bbiSaveAsWorkbook, Me.bbiAddTemplate, Me.bbiRemoveTemplate, Me.bbiCopyValidator, Me.bbiCancel, Me.bbiSaveAll, Me.bbiQuery, Me.BarDockingMenuItem1, Me.bbiVersions, Me.bbiCheckAll, Me.bbiUncheckAll})
         Me.ribbonControl.LargeImages = Me.ribbonImageCollectionLarge
         Me.ribbonControl.Location = New System.Drawing.Point(0, 0)
-        Me.ribbonControl.MaxItemId = 318
+        Me.ribbonControl.MaxItemId = 332
         Me.ribbonControl.MiniToolbars.Add(Me.RibbonMiniToolbar1)
         Me.ribbonControl.Name = "ribbonControl"
         Me.ribbonControl.PageCategories.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageCategory() {Me.DrawingToolsRibbonPageCategory1, Me.PictureToolsRibbonPageCategory1, Me.TableToolsRibbonPageCategory1, Me.ChartToolsRibbonPageCategory1})
@@ -4306,6 +4337,7 @@ Partial Class frmMainMenu
         '
         'LayoutControl1
         '
+        Me.LayoutControl1.Controls.Add(Me.gridWorkbook)
         Me.LayoutControl1.Controls.Add(Me.txtErrors)
         Me.LayoutControl1.Controls.Add(Me.lueHierarchies)
         Me.LayoutControl1.Controls.Add(Me.txtMinor)
@@ -4319,6 +4351,7 @@ Partial Class frmMainMenu
         Me.LayoutControl1.Controls.Add(Me.UcConnectionDetails1)
         Me.LayoutControl1.Controls.Add(Me.UcProperties1)
         Me.LayoutControl1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.LayoutControl1.HiddenItems.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem4})
         Me.LayoutControl1.Location = New System.Drawing.Point(0, 34)
         Me.LayoutControl1.Margin = New System.Windows.Forms.Padding(1)
         Me.LayoutControl1.Name = "LayoutControl1"
@@ -4328,6 +4361,73 @@ Partial Class frmMainMenu
         Me.LayoutControl1.Size = New System.Drawing.Size(1138, 583)
         Me.LayoutControl1.TabIndex = 6
         Me.LayoutControl1.Text = "LayoutControl1"
+        '
+        'gridWorkbook
+        '
+        Me.gridWorkbook.Location = New System.Drawing.Point(7, 147)
+        Me.gridWorkbook.MainView = Me.gdWorkbook
+        Me.gridWorkbook.MenuManager = Me.ribbonControl
+        Me.gridWorkbook.Name = "gridWorkbook"
+        Me.gridWorkbook.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.beAction})
+        Me.gridWorkbook.Size = New System.Drawing.Size(314, 406)
+        Me.gridWorkbook.TabIndex = 25
+        Me.gridWorkbook.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdWorkbook})
+        '
+        'gdWorkbook
+        '
+        Me.gdWorkbook.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.gcPriority, Me.gcTemplateName, Me.gcActions})
+        Me.gdWorkbook.GridControl = Me.gridWorkbook
+        Me.gdWorkbook.Name = "gdWorkbook"
+        Me.gdWorkbook.OptionsSelection.CheckBoxSelectorColumnWidth = 40
+        Me.gdWorkbook.OptionsSelection.EnableAppearanceFocusedCell = False
+        Me.gdWorkbook.OptionsSelection.EnableAppearanceFocusedRow = False
+        Me.gdWorkbook.OptionsSelection.MultiSelect = True
+        Me.gdWorkbook.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CheckBoxRowSelect
+        Me.gdWorkbook.OptionsSelection.UseIndicatorForSelection = False
+        Me.gdWorkbook.OptionsView.ShowAutoFilterRow = True
+        Me.gdWorkbook.OptionsView.ShowDetailButtons = False
+        Me.gdWorkbook.OptionsView.ShowIndicator = False
+        '
+        'gcPriority
+        '
+        Me.gcPriority.Caption = "Priority"
+        Me.gcPriority.FieldName = "Priority"
+        Me.gcPriority.Name = "gcPriority"
+        Me.gcPriority.Visible = True
+        Me.gcPriority.VisibleIndex = 1
+        '
+        'gcTemplateName
+        '
+        Me.gcTemplateName.Caption = "Name"
+        Me.gcTemplateName.FieldName = "Name"
+        Me.gcTemplateName.Name = "gcTemplateName"
+        Me.gcTemplateName.OptionsColumn.AllowEdit = False
+        Me.gcTemplateName.Visible = True
+        Me.gcTemplateName.VisibleIndex = 2
+        Me.gcTemplateName.Width = 232
+        '
+        'gcActions
+        '
+        Me.gcActions.ColumnEdit = Me.beAction
+        Me.gcActions.MaxWidth = 40
+        Me.gcActions.MinWidth = 40
+        Me.gcActions.Name = "gcActions"
+        Me.gcActions.Visible = True
+        Me.gcActions.VisibleIndex = 3
+        Me.gcActions.Width = 40
+        '
+        'beAction
+        '
+        Me.beAction.AllowGlyphSkinning = DevExpress.Utils.DefaultBoolean.[False]
+        Me.beAction.AutoHeight = False
+        EditorButtonImageOptions1.Image = CType(resources.GetObject("EditorButtonImageOptions1.Image"), System.Drawing.Image)
+        EditorButtonImageOptions2.Image = CType(resources.GetObject("EditorButtonImageOptions2.Image"), System.Drawing.Image)
+        EditorButtonImageOptions3.Image = CType(resources.GetObject("EditorButtonImageOptions3.Image"), System.Drawing.Image)
+        EditorButtonImageOptions4.Image = CType(resources.GetObject("EditorButtonImageOptions4.Image"), System.Drawing.Image)
+        Me.beAction.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Glyph, "View", 75, True, True, False, EditorButtonImageOptions1, New DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), SerializableAppearanceObject1, SerializableAppearanceObject2, SerializableAppearanceObject3, SerializableAppearanceObject4, "", Nothing, Nothing, DevExpress.Utils.ToolTipAnchor.[Default]), New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Glyph, "Validate", 75, True, False, False, EditorButtonImageOptions2, New DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), SerializableAppearanceObject5, SerializableAppearanceObject6, SerializableAppearanceObject7, SerializableAppearanceObject8, "", Nothing, Nothing, DevExpress.Utils.ToolTipAnchor.[Default]), New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Glyph, "Query", 75, True, False, False, EditorButtonImageOptions3, New DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), SerializableAppearanceObject9, SerializableAppearanceObject10, SerializableAppearanceObject11, SerializableAppearanceObject12, "", Nothing, Nothing, DevExpress.Utils.ToolTipAnchor.[Default]), New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Glyph, "Import", 75, True, False, False, EditorButtonImageOptions4, New DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), SerializableAppearanceObject13, SerializableAppearanceObject14, SerializableAppearanceObject15, SerializableAppearanceObject16, "", Nothing, Nothing, DevExpress.Utils.ToolTipAnchor.[Default])})
+        Me.beAction.ContextImageOptions.AllowGlyphSkinning = DevExpress.Utils.DefaultBoolean.[False]
+        Me.beAction.Name = "beAction"
+        Me.beAction.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.HideTextEditor
         '
         'txtErrors
         '
@@ -4353,7 +4453,7 @@ Partial Class frmMainMenu
         Me.lueHierarchies.Properties.SearchMode = DevExpress.XtraEditors.Controls.SearchMode.AutoSearch
         Me.lueHierarchies.Properties.SortColumnIndex = 3
         Me.lueHierarchies.Properties.ValueMember = "Id"
-        Me.lueHierarchies.Size = New System.Drawing.Size(214, 20)
+        Me.lueHierarchies.Size = New System.Drawing.Size(259, 20)
         Me.lueHierarchies.StyleController = Me.LayoutControl1
         Me.lueHierarchies.TabIndex = 23
         '
@@ -4380,7 +4480,7 @@ Partial Class frmMainMenu
         Me.txtBuild.Location = New System.Drawing.Point(220, 91)
         Me.txtBuild.MenuManager = Me.ribbonControl
         Me.txtBuild.Name = "txtBuild"
-        Me.txtBuild.Size = New System.Drawing.Size(53, 20)
+        Me.txtBuild.Size = New System.Drawing.Size(98, 20)
         Me.txtBuild.StyleController = Me.LayoutControl1
         Me.txtBuild.TabIndex = 12
         '
@@ -4397,7 +4497,7 @@ Partial Class frmMainMenu
         '
         Me.labVersion.Location = New System.Drawing.Point(62, 124)
         Me.labVersion.Name = "labVersion"
-        Me.labVersion.Size = New System.Drawing.Size(214, 13)
+        Me.labVersion.Size = New System.Drawing.Size(259, 13)
         Me.labVersion.StyleController = Me.LayoutControl1
         Me.labVersion.TabIndex = 10
         '
@@ -4407,7 +4507,7 @@ Partial Class frmMainMenu
         Me.txtWorkbookName.MenuManager = Me.ribbonControl
         Me.txtWorkbookName.Name = "txtWorkbookName"
         Me.txtWorkbookName.Properties.ReadOnly = True
-        Me.txtWorkbookName.Size = New System.Drawing.Size(214, 20)
+        Me.txtWorkbookName.Size = New System.Drawing.Size(259, 20)
         Me.txtWorkbookName.StyleController = Me.LayoutControl1
         Me.txtWorkbookName.TabIndex = 9
         '
@@ -4416,7 +4516,7 @@ Partial Class frmMainMenu
         Me.lbxImportTemplates.DisplayMember = "SortedName"
         Me.lbxImportTemplates.Location = New System.Drawing.Point(7, 147)
         Me.lbxImportTemplates.Name = "lbxImportTemplates"
-        Me.lbxImportTemplates.Size = New System.Drawing.Size(269, 406)
+        Me.lbxImportTemplates.Size = New System.Drawing.Size(314, 198)
         Me.lbxImportTemplates.StyleController = Me.LayoutControl1
         Me.lbxImportTemplates.TabIndex = 8
         Me.lbxImportTemplates.ValueMember = "ID"
@@ -4432,10 +4532,23 @@ Partial Class frmMainMenu
         'UcProperties1
         '
         Me.UcProperties1._DataImportTemplate = CType(resources.GetObject("UcProperties1._DataImportTemplate"), Otalio.Import.clsDataImportTemplate)
-        Me.UcProperties1.Location = New System.Drawing.Point(296, 7)
+        Me.UcProperties1.Location = New System.Drawing.Point(341, 7)
         Me.UcProperties1.Name = "UcProperties1"
-        Me.UcProperties1.Size = New System.Drawing.Size(835, 546)
+        Me.UcProperties1.Size = New System.Drawing.Size(790, 546)
         Me.UcProperties1.TabIndex = 6
+        '
+        'LayoutControlItem4
+        '
+        Me.LayoutControlItem4.Control = Me.lbxImportTemplates
+        Me.LayoutControlItem4.Location = New System.Drawing.Point(0, 140)
+        Me.LayoutControlItem4.MinSize = New System.Drawing.Size(60, 10)
+        Me.LayoutControlItem4.Name = "LayoutControlItem4"
+        Me.LayoutControlItem4.Size = New System.Drawing.Size(324, 208)
+        Me.LayoutControlItem4.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
+        Me.LayoutControlItem4.Text = "Workbook"
+        Me.LayoutControlItem4.TextLocation = DevExpress.Utils.Locations.Top
+        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
+        Me.LayoutControlItem4.TextVisible = False
         '
         'LayoutControlGroup1
         '
@@ -4458,7 +4571,7 @@ Partial Class frmMainMenu
         '
         'LayoutControlGroup2
         '
-        Me.LayoutControlGroup2.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem4, Me.SplitterItem1, Me.LayoutControlItem5, Me.LayoutControlItem6, Me.LcgVersions, Me.LayoutControlItem8})
+        Me.LayoutControlGroup2.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.SplitterItem1, Me.LayoutControlItem5, Me.LayoutControlItem6, Me.LcgVersions, Me.LayoutControlItem8, Me.LayoutControlItem10})
         Me.LayoutControlGroup2.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup2.Name = "LayoutControlGroup2"
         Me.LayoutControlGroup2.OptionsItemText.TextToControlDistance = 5
@@ -4469,30 +4582,16 @@ Partial Class frmMainMenu
         'LayoutControlItem1
         '
         Me.LayoutControlItem1.Control = Me.UcProperties1
-        Me.LayoutControlItem1.Location = New System.Drawing.Point(289, 0)
+        Me.LayoutControlItem1.Location = New System.Drawing.Point(334, 0)
         Me.LayoutControlItem1.Name = "LayoutControlItem1"
-        Me.LayoutControlItem1.Size = New System.Drawing.Size(845, 556)
+        Me.LayoutControlItem1.Size = New System.Drawing.Size(800, 556)
         Me.LayoutControlItem1.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem1.TextVisible = False
-        '
-        'LayoutControlItem4
-        '
-        Me.LayoutControlItem4.Control = Me.lbxImportTemplates
-        Me.LayoutControlItem4.Location = New System.Drawing.Point(0, 140)
-        Me.LayoutControlItem4.MaxSize = New System.Drawing.Size(279, 0)
-        Me.LayoutControlItem4.MinSize = New System.Drawing.Size(279, 10)
-        Me.LayoutControlItem4.Name = "LayoutControlItem4"
-        Me.LayoutControlItem4.Size = New System.Drawing.Size(279, 416)
-        Me.LayoutControlItem4.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
-        Me.LayoutControlItem4.Text = "Workbook"
-        Me.LayoutControlItem4.TextLocation = DevExpress.Utils.Locations.Top
-        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
-        Me.LayoutControlItem4.TextVisible = False
         '
         'SplitterItem1
         '
         Me.SplitterItem1.AllowHotTrack = True
-        Me.SplitterItem1.Location = New System.Drawing.Point(279, 0)
+        Me.SplitterItem1.Location = New System.Drawing.Point(324, 0)
         Me.SplitterItem1.Name = "SplitterItem1"
         Me.SplitterItem1.Size = New System.Drawing.Size(10, 556)
         '
@@ -4501,7 +4600,7 @@ Partial Class frmMainMenu
         Me.LayoutControlItem5.Control = Me.txtWorkbookName
         Me.LayoutControlItem5.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlItem5.Name = "LayoutControlItem5"
-        Me.LayoutControlItem5.Size = New System.Drawing.Size(279, 30)
+        Me.LayoutControlItem5.Size = New System.Drawing.Size(324, 30)
         Me.LayoutControlItem5.Text = "Name:"
         Me.LayoutControlItem5.TextSize = New System.Drawing.Size(50, 13)
         '
@@ -4509,10 +4608,10 @@ Partial Class frmMainMenu
         '
         Me.LayoutControlItem6.Control = Me.labVersion
         Me.LayoutControlItem6.Location = New System.Drawing.Point(0, 117)
-        Me.LayoutControlItem6.MaxSize = New System.Drawing.Size(0, 23)
-        Me.LayoutControlItem6.MinSize = New System.Drawing.Size(116, 23)
+        Me.LayoutControlItem6.MaxSize = New System.Drawing.Size(324, 23)
+        Me.LayoutControlItem6.MinSize = New System.Drawing.Size(324, 23)
         Me.LayoutControlItem6.Name = "LayoutControlItem6"
-        Me.LayoutControlItem6.Size = New System.Drawing.Size(279, 23)
+        Me.LayoutControlItem6.Size = New System.Drawing.Size(324, 23)
         Me.LayoutControlItem6.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.LayoutControlItem6.Text = "Version"
         Me.LayoutControlItem6.TextSize = New System.Drawing.Size(50, 13)
@@ -4523,7 +4622,7 @@ Partial Class frmMainMenu
         Me.LcgVersions.Location = New System.Drawing.Point(0, 60)
         Me.LcgVersions.Name = "LcgVersions"
         Me.LcgVersions.OptionsItemText.TextToControlDistance = 5
-        Me.LcgVersions.Size = New System.Drawing.Size(279, 57)
+        Me.LcgVersions.Size = New System.Drawing.Size(324, 57)
         Me.LcgVersions.Text = "Version"
         Me.LcgVersions.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
         '
@@ -4554,7 +4653,7 @@ Partial Class frmMainMenu
         Me.lciBuild.Control = Me.txtBuild
         Me.lciBuild.Location = New System.Drawing.Point(183, 0)
         Me.lciBuild.Name = "lciBuild"
-        Me.lciBuild.Size = New System.Drawing.Size(90, 30)
+        Me.lciBuild.Size = New System.Drawing.Size(135, 30)
         Me.lciBuild.Text = "Build"
         Me.lciBuild.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize
         Me.lciBuild.TextSize = New System.Drawing.Size(22, 13)
@@ -4565,9 +4664,18 @@ Partial Class frmMainMenu
         Me.LayoutControlItem8.Control = Me.lueHierarchies
         Me.LayoutControlItem8.Location = New System.Drawing.Point(0, 30)
         Me.LayoutControlItem8.Name = "LayoutControlItem8"
-        Me.LayoutControlItem8.Size = New System.Drawing.Size(279, 30)
+        Me.LayoutControlItem8.Size = New System.Drawing.Size(324, 30)
         Me.LayoutControlItem8.Text = "Hierarchy:"
         Me.LayoutControlItem8.TextSize = New System.Drawing.Size(50, 13)
+        '
+        'LayoutControlItem10
+        '
+        Me.LayoutControlItem10.Control = Me.gridWorkbook
+        Me.LayoutControlItem10.Location = New System.Drawing.Point(0, 140)
+        Me.LayoutControlItem10.Name = "LayoutControlItem10"
+        Me.LayoutControlItem10.Size = New System.Drawing.Size(324, 416)
+        Me.LayoutControlItem10.TextSize = New System.Drawing.Size(0, 0)
+        Me.LayoutControlItem10.TextVisible = False
         '
         'LayoutControlGroup3
         '
@@ -5155,6 +5263,9 @@ Partial Class frmMainMenu
         Me.spreadsheetFormulaBarPanel.ResumeLayout(False)
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LayoutControl1.ResumeLayout(False)
+        CType(Me.gridWorkbook, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.gdWorkbook, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.beAction, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtErrors.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lueHierarchies.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtMinor.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5163,11 +5274,11 @@ Partial Class frmMainMenu
         CType(Me.txtLogs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtWorkbookName.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lbxImportTemplates, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tcgTabs, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.SplitterItem1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5176,6 +5287,7 @@ Partial Class frmMainMenu
         CType(Me.lciMinor, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciBuild, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem10, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.SplitterItem2, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5673,4 +5785,11 @@ Partial Class frmMainMenu
     Friend WithEvents txtErrors As DevExpress.XtraEditors.MemoEdit
     Friend WithEvents LayoutControlItem9 As DevExpress.XtraLayout.LayoutControlItem
   Friend WithEvents SplashScreenManager1 As DevExpress.XtraSplashScreen.SplashScreenManager
+    Friend WithEvents gridWorkbook As DevExpress.XtraGrid.GridControl
+    Friend WithEvents gdWorkbook As DevExpress.XtraGrid.Views.Grid.GridView
+    Friend WithEvents gcTemplateName As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents gcActions As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents beAction As DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit
+    Friend WithEvents LayoutControlItem10 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents gcPriority As DevExpress.XtraGrid.Columns.GridColumn
 End Class

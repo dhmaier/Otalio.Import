@@ -1,5 +1,7 @@
 ﻿Imports DevExpress.Spreadsheet
 Imports DevExpress.XtraBars.Helpers
+Imports DevExpress.XtraEditors.Controls
+Imports DevExpress.XtraGrid.Views.Base
 Imports DevExpress.XtraSplashScreen
 Imports DevExpress.XtraSpreadsheet
 Imports Newtonsoft.Json.Linq
@@ -96,45 +98,55 @@ Public Class frmMainMenu
 
      Private Sub bbiImportOpen_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiImportOpen.ItemClick
 
+          Try
 
-          Dim fd As OpenFileDialog = New OpenFileDialog
-          fd.Multiselect = False
-          fd.Title = "Select a Otalio Dynamic import template."
-          fd.Filter = "Dynamic import Template |*.dit"
-          fd.FilterIndex = 1
-          fd.FileName = String.Empty
-          fd.RestoreDirectory = True
-          If fd.ShowDialog() = DialogResult.OK Then
 
-               Dim sFilename As String = fd.FileName
+               Dim fd As OpenFileDialog = New OpenFileDialog
+               fd.Multiselect = False
+               fd.Title = "Select a Otalio Dynamic import template."
+               fd.Filter = "Dynamic import Template |*.dit"
+               fd.FilterIndex = 1
+               fd.FileName = String.Empty
+               fd.RestoreDirectory = True
+               If fd.ShowDialog() = DialogResult.OK Then
 
-               If File.Exists(sFilename) Then
+                    UpdateProgressStatus("Opening Import", False)
 
-                    Dim oDataimportTemplate As clsDataImportTemplate = TryCast(LoadFile(sFilename), clsDataImportTemplate)
+                    Dim sFilename As String = fd.FileName
 
-                    If oDataimportTemplate IsNot Nothing Then
+                    If File.Exists(sFilename) Then
 
-                         UcProperties1.msFilePath = sFilename
-                         UcProperties1.msFileName = fd.SafeFileName
+                         Dim oDataimportTemplate As clsDataImportTemplate = TryCast(LoadFile(sFilename), clsDataImportTemplate)
 
-                         If oDataimportTemplate.Validators Is Nothing Then
-                              oDataimportTemplate.Validators = New List(Of clsValidation)
+                         If oDataimportTemplate IsNot Nothing Then
+
+                              UcProperties1.msFilePath = sFilename
+                              UcProperties1.msFileName = fd.SafeFileName
+
+                              If oDataimportTemplate.Validators Is Nothing Then
+                                   oDataimportTemplate.Validators = New List(Of clsValidation)
+                              End If
+
+                              goOpenWorkBook.Templates.Add(oDataimportTemplate)
+                              loadWorkbook()
+
+
+
+                         Else
+                              MsgBox("Failed to load Data import template file")
                          End If
 
-                         goOpenWorkBook.Templates.Add(oDataimportTemplate)
-                         loadWorkbook()
-
-
-
-                    Else
-                         MsgBox("Failed to load Data import template file")
                     End If
 
+
                End If
+          Catch ex As Exception
 
+          Finally
 
-          End If
+               UpdateProgressStatus("")
 
+          End Try
      End Sub
 
      Private Sub bbiSaveImport_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiSaveImport.ItemClick
@@ -211,14 +223,15 @@ Public Class frmMainMenu
 
      Private Sub bbiImportExcel_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiImportExcel.ItemClick
 
-          If lbxImportTemplates.CheckedItemsCount = 0 Then
+          If gdWorkbook.SelectedRowsCount = 0 Then
                MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
                Exit Sub
           End If
 
           If MsgBox("You are about to import data from the Excel sheet.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
 
-               For Each oItem In lbxImportTemplates.CheckedItems
+               For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
                     Select Case TryCast(oItem, clsDataImportTemplate).ImportType
                          Case "XX"
                               ImportFiles(TryCast(oItem, clsDataImportTemplate))
@@ -240,12 +253,13 @@ Public Class frmMainMenu
           Try
 
 
-               If lbxImportTemplates.CheckedItemsCount = 0 Then
+               If gdWorkbook.SelectedRowsCount = 0 Then
                     MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
                     Exit Sub
                End If
 
-               For Each oItem In lbxImportTemplates.CheckedItems
+               For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
                     If oItem IsNot Nothing Then
                          Try
                               Call ValidateDataTempalte(TryCast(oItem, clsDataImportTemplate))
@@ -366,7 +380,7 @@ Public Class frmMainMenu
                          msFileName = fd.SafeFileName
                          txtWorkbookName.EditValue = msFileName
 
-                         ShowWaitDialog("Opening Document")
+                         UpdateProgressStatus("Opening Document", False)
 
                          Dim oWorkbook As clsWorkbook = TryCast(LoadFile(sFilename), clsWorkbook)
 
@@ -394,7 +408,7 @@ Public Class frmMainMenu
 
           Catch ex As Exception
           Finally
-               ShowWaitDialog()
+               UpdateProgressStatus()
           End Try
 
      End Sub
@@ -433,7 +447,7 @@ Public Class frmMainMenu
 
      Private Sub bbiSaveAll_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiSaveAll.ItemClick
 
-          ShowWaitDialog("Saving Files")
+          UpdateProgressStatus("Saving Files", False)
 
           If String.IsNullOrEmpty(msFilePath) = False Then
                lbxImportTemplates.Focus()
@@ -464,28 +478,42 @@ Public Class frmMainMenu
                spreadsheetControl.SaveDocument(sCurrentFilename)
           End If
 
-          ShowWaitDialog()
+          UpdateProgressStatus()
 
      End Sub
 
      Private Sub bbiQuery_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiQuery.ItemClick
 
-          If lbxImportTemplates.CheckedItemsCount = 0 Then
+          If gdWorkbook.SelectedRowsCount = 0 Then
                MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
                Exit Sub
           End If
 
           If MsgBox("Running the query will remove all existing data from the excel worksheet.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
 
-               For Each oItem In lbxImportTemplates.CheckedItems
+               For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
                     QueryandLoad(TryCast(oItem, clsDataImportTemplate))
                     Application.DoEvents()
                Next
-
-
           End If
 
 
+     End Sub
+
+     Private Sub beAction_ButtonPressed(sender As Object, e As ButtonPressedEventArgs) Handles beAction.ButtonPressed
+
+          Dim otemplate As clsDataImportTemplate = CType(gdWorkbook.GetRow(gdWorkbook.FocusedRowHandle), clsDataImportTemplate)
+          If otemplate IsNot Nothing Then
+
+               Select Case e.Button.Caption.ToUpper
+                    Case "VIEW"
+                         Call ViewExcelDocument(otemplate)
+                    Case "VALIDATE"
+                    Case "IMPORT"
+                    Case "QUERY"
+               End Select
+          End If
      End Sub
 
 
@@ -2264,15 +2292,19 @@ Public Class frmMainMenu
 
                                                   End Select
 
+                                                  FormatCells(False, nRow - 1, nCountColumns)
+
+
 
                                              Case HttpStatusCode.BadRequest
 
                                                   Dim json As JObject = JObject.Parse(oResponse.Content)
                                                   .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
                                                   .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
+                                                  FormatCells(True, nRow - 1, nCountColumns)
 
                                                   If mbIgnore = False Then
-                                                       'located the beging of the stack trace
+                                                       'located the begining of the stack trace
                                                        Dim sMessage As String = oResponse.Content.ToString.Substring(0, oResponse.Content.ToString.IndexOf("stackTrace"))
 
                                                        Select Case MsgBox(String.Format("Error, do you which to continue?{0}{0}{1}{0}{0}If you exit, error message will be copied to clipboard.", vbNewLine, sMessage), MsgBoxStyle.AbortRetryIgnore)
@@ -2284,6 +2316,7 @@ Public Class frmMainMenu
                                                                  mbIgnore = True
                                                        End Select
                                                   End If
+
                                                   sReplyMessage = json.SelectToken("message").ToString
 
                                              Case HttpStatusCode.NotFound
@@ -2292,11 +2325,12 @@ Public Class frmMainMenu
 
                                                   sReplyMessage = "Record Not Found"
 
+                                                  FormatCells(True, nRow - 1, nCountColumns)
                                              Case Else
                                                   Dim json As JObject = JObject.Parse(oResponse.Content)
                                                   .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
                                                   .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
-
+                                                  FormatCells(True, nRow - 1, nCountColumns)
                                         End Select
 
                                         Call UpdateProgressStatus(String.Format("Importing row {0} of {1} with {2} - {3}", nRow, nCountRows + 2, oResponse.StatusCode, sReplyMessage))
@@ -2307,6 +2341,8 @@ Public Class frmMainMenu
                                         .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Unknown Error has occurred"
 
                                         Call UpdateProgressStatus(String.Format("Importing row {0} of {1} with {2} - {3}", nRow, nCountRows + 2, "Error", "Unknown Error has occured"))
+
+                                        FormatCells(True, nRow - 1, nCountColumns)
 
                                    End If
 
@@ -2472,6 +2508,8 @@ Public Class frmMainMenu
                                                   'End If
                                              End If
 
+                                             FormatCells(False, nRow - 1, nCountColumns)
+
                                         Case HttpStatusCode.BadRequest
 
                                              Dim json As JObject = JObject.Parse(oResponse.Content)
@@ -2491,15 +2529,24 @@ Public Class frmMainMenu
                                                             mbIgnore = True
                                                   End Select
                                              End If
+
+
+                                             FormatCells(True, nRow - 1, nCountColumns)
+
                                         Case HttpStatusCode.NotFound
+
                                              .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
                                              .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Record not Found"
 
+                                             FormatCells(True, nRow - 1, nCountColumns)
 
                                         Case Else
                                              Dim json As JObject = JObject.Parse(oResponse.Content)
                                              .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
                                              .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
+
+                                             FormatCells(True, nRow - 1, nCountColumns)
+
 
                                    End Select
 
@@ -2525,6 +2572,30 @@ Public Class frmMainMenu
                mbCancel = False
           End Try
 
+
+     End Sub
+
+     Private Sub FormatCells(pbError As Boolean, pnRow As Integer, pnLastColumn As Integer)
+
+          With spreadsheetControl.ActiveWorksheet
+
+               With .Range.FromLTRB(0, pnRow, pnLastColumn, pnRow)
+                    If pbError = False Then
+                         .Font.Bold = False
+                         .Font.Italic = False
+                         .Borders.RemoveBorders()
+                         .FillColor = Color.Transparent
+
+                    Else
+                         .Font.Italic = True
+                         .Font.Bold = True
+                         .Borders.SetOutsideBorders(Color.Red, BorderLineStyle.Thin)
+                         .FillColor = Color.LightPink
+
+                    End If
+               End With
+
+          End With
 
      End Sub
 
@@ -2689,7 +2760,7 @@ Public Class frmMainMenu
           End If
      End Sub
 
-     Public Sub UpdateProgressStatus(Optional psStatus As String = "")
+     Public Sub UpdateProgressStatus(Optional psStatus As String = "", Optional mbCacelEnabled As Boolean = True)
 
           If psStatus = String.Empty Then
 
@@ -2704,7 +2775,13 @@ Public Class frmMainMenu
 
                If moOverlayHandle Is Nothing Then
                     Try
-                         moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel, moOverlayButton), opacity:=220)
+
+                         If mbCacelEnabled Then
+                              moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel, moOverlayButton), opacity:=220)
+                         Else
+                              moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel), opacity:=220)
+                         End If
+
                     Catch ex As Exception
 
                     End Try
@@ -2834,6 +2911,7 @@ Public Class frmMainMenu
           If goOpenWorkBook IsNot Nothing Then
 
                lbxImportTemplates.DataSource = goOpenWorkBook.Templates.OrderBy(Function(x) x.Priority).ToList
+               gridWorkbook.DataSource = goOpenWorkBook.Templates.OrderBy(Function(x) x.Priority).ToList
                lbxImportTemplates.Refresh()
                labVersion.Text = goOpenWorkBook.WorkbookVersion
                txtWorkbookName.EditValue = goOpenWorkBook.WorkbookName
@@ -2908,17 +2986,33 @@ Public Class frmMainMenu
                                    Dim sNodeLoad As String = String.Empty
                                    Dim nPages As Integer = 1
                                    Dim bPaged As Boolean = False
+                                   Dim bGraphQL As Boolean = False
+
 
                                    If oTemplate.GraphQLQuery IsNot Nothing AndAlso String.IsNullOrEmpty(oTemplate.GraphQLQuery.ToString) = False Then
-                                        oResponse = goHTTPServer.CallGraphQL("apollo-server", oTemplate.GraphQLQuery.ToString)
-                                        sNodeLoad = String.Format("data.{0}", oTemplate.GraphQLRootNode)
+
+                                        bGraphQL = True
+
+                                        Dim sQuery As String = oTemplate.GraphQLQuery.ToString
+
+                                        If sQuery.Contains("@@PAGE@@") Then
+                                             sQuery = Replace(sQuery, "@@PAGE@@", "0")
+                                             bPaged = True
+                                        End If
+
+                                        oResponse = goHTTPServer.CallGraphQL("apollo-server", sQuery)
+                                        sNodeLoad = String.Format("data.{0}.content", oTemplate.GraphQLRootNode)
                                         If sNodeLoad.EndsWith(".") Then
                                              sNodeLoad = sNodeLoad.Substring(0, sNodeLoad.Length - 1)
                                         End If
+
+
                                    Else
+
                                         oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint, String.Empty, oTemplate.SelectQuery.ToString)
                                         sNodeLoad = "responsePayload.content"
                                         bPaged = True
+
                                    End If
 
                                    Dim jsServerResponse As JObject = JObject.Parse(oResponse.Content)
@@ -2928,7 +3022,12 @@ Public Class frmMainMenu
                                              Dim oObject As JToken = jsServerResponse.SelectToken(sNodeLoad)
 
                                              If bPaged Then
-                                                  nPages = CInt(jsServerResponse.SelectToken("responsePayload.totalPages"))
+                                                  If bGraphQL Then
+                                                       nPages = CInt(jsServerResponse.SelectToken(String.Format("data.{0}.totalPages", oTemplate.GraphQLRootNode)))
+                                                  Else
+                                                       nPages = CInt(jsServerResponse.SelectToken("responsePayload.totalPages"))
+                                                  End If
+
                                              End If
 
 
@@ -2965,15 +3064,35 @@ Public Class frmMainMenu
                                                        Dim nRow As Integer = 1
                                                        Dim nCounter As Integer = 0
 
-                                                       For nPage = 1 To nPages
+                                                       For nPage = IIf(bGraphQL, 0, 1) To IIf(bGraphQL, nPages - 1, nPages)
 
-                                                            If nPage > 1 Then
+                                                            If nPage > IIf(bGraphQL, 0, 1) Then
 
-                                                                 'call the end point to get the query results
-                                                                 oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint & String.Format("?page={0}", nPage), String.Empty, oTemplate.SelectQuery.ToString)
+                                                                 If bGraphQL Then
+
+
+                                                                      Dim sQuery As String = oTemplate.GraphQLQuery.ToString
+
+                                                                      If sQuery.Contains("@@PAGE@@") Then
+                                                                           sQuery = Replace(sQuery, "@@PAGE@@", nPage.ToString)
+                                                                           bPaged = True
+                                                                      End If
+
+                                                                      oResponse = goHTTPServer.CallGraphQL("apollo-server", sQuery)
+
+                                                                 Else
+
+                                                                      'call the end point to get the query results
+                                                                      oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint & String.Format("?page={0}", nPage), String.Empty, oTemplate.SelectQuery.ToString)
+
+
+                                                                 End If
+
+                                                                 jsServerResponse = JObject.Parse(oResponse.Content)
                                                                  oObject = jsServerResponse.SelectToken(sNodeLoad)
 
                                                             End If
+
                                                             If oObject IsNot Nothing Then
                                                                  For Each oRow In oObject
 
@@ -2983,7 +3102,7 @@ Public Class frmMainMenu
                                                                                 nRow += 1
                                                                                 nCounter += 1
 
-                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0} of {1} objects ", nCounter, oObject.Count))
+                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} objects ", nCounter, IIf(bGraphQL, nPage + 1, nPages), IIf(bGraphQL, nPages + 1, nPages)))
 
                                                                                 For Each ocolumn In oTemplate.ImportColumns.OrderBy(Function(n) n.No).ToList
 
@@ -3142,9 +3261,22 @@ Public Class frmMainMenu
                                                                            MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
                                                                       End Try
 
+                                                                      If mbCancel Then
+                                                                           Exit For
+                                                                      End If
+
                                                                  Next
                                                             End If
+
+                                                            If mbCancel Then
+                                                                 Exit For
+                                                            End If
+
                                                        Next
+
+                                                       If mbCancel Then
+                                                            Exit Sub
+                                                       End If
 
 
                                                        Call UpdateProgressStatus(String.Format("Formating document"))
@@ -3269,6 +3401,12 @@ Public Class frmMainMenu
 
                                                                                                End If
                                                                                           End If
+
+
+                                                                                          If mbCancel Then
+                                                                                               Exit Sub
+                                                                                          End If
+
                                                                                      Next nRow
 
                                                                                 Catch ex As Exception
@@ -3426,6 +3564,12 @@ Public Class frmMainMenu
                                                                                                     End If
                                                                                                End If
                                                                                           End If
+
+
+                                                                                          If mbCancel Then
+                                                                                               Exit Sub
+                                                                                          End If
+
                                                                                      Next nRow
 
                                                                                 Catch ex As Exception
@@ -3461,6 +3605,11 @@ Public Class frmMainMenu
 
                                                                                           .ActiveWorksheet.Cells(String.Format("{0}{1}", sKey, nRow)).Value = sArray
 
+                                                                                     End If
+
+
+                                                                                     If mbCancel Then
+                                                                                          Exit Sub
                                                                                      End If
 
                                                                                 Next nRow
@@ -3599,7 +3748,25 @@ Public Class frmMainMenu
           End If
      End Function
 
+     Private Sub ViewExcelDocument(poImportTemplate As clsDataImportTemplate)
+          If poImportTemplate IsNot Nothing Then
+               UcProperties1._DataImportTemplate = poImportTemplate
+               Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
 
+               With spreadsheetControl
+                    If .Document.Worksheets.Contains(UcProperties1._DataImportTemplate.WorkbookSheetName) = False Then
+                         .Document.Worksheets.Add(StrConv(UcProperties1._DataImportTemplate.WorkbookSheetName, vbProperCase))
+                         .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
+                    Else
+                         'if its found make it the active worksheet
+                         .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
+                    End If
+               End With
+
+               tcgTabs.SelectedTabPage = lcgSpreedsheet
+
+          End If
+     End Sub
 
 #End Region
 
@@ -3693,6 +3860,37 @@ Public Class frmMainMenu
           End If
 
      End Sub
+
+     Private Sub gdWorkbook_FocusedRowChanged(sender As Object, e As FocusedRowChangedEventArgs) Handles gdWorkbook.FocusedRowChanged
+
+          If e.FocusedRowHandle >= 0 Then
+
+               Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(e.FocusedRowHandle), clsDataImportTemplate)
+               If oItem IsNot Nothing Then
+
+                    UcProperties1._DataImportTemplate = oItem
+
+                    Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
+
+                    If String.IsNullOrEmpty(UcProperties1._DataImportTemplate.WorkbookSheetName) = False Then
+                         With spreadsheetControl
+                              If .Document.Worksheets.Contains(UcProperties1._DataImportTemplate.WorkbookSheetName) = False Then
+                                   .Document.Worksheets.Add(StrConv(UcProperties1._DataImportTemplate.WorkbookSheetName, vbProperCase))
+                                   .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
+                              Else
+                                   'if its found make it the active worksheet
+                                   .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
+                              End If
+                         End With
+                    End If
+               End If
+          End If
+
+
+     End Sub
+
+
+
 
 
 
