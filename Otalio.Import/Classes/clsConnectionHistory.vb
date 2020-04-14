@@ -11,6 +11,8 @@ Public Class clsConnectionHistory
 
   Public Property LoggedEvents As Boolean = True
 
-  Public Property LastUsedFolder As String = ""
+     Public Property LastUsedExportFolder As String = ""
+
+     Public Property LastUsedWorkbookFolder As String = ""
 
 End Class

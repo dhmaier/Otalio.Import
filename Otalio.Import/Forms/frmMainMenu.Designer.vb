@@ -7,28 +7,28 @@ Imports DevExpress.XtraBars.Ribbon
 
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class frmMainMenu
-  Inherits RibbonForm
+    Inherits RibbonForm
 
-  'Form overrides dispose to clean up the component list.
-  <System.Diagnostics.DebuggerNonUserCode()>
-  Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-    Try
-      If disposing AndAlso components IsNot Nothing Then
-        components.Dispose()
-      End If
-    Finally
-      MyBase.Dispose(disposing)
-    End Try
-  End Sub
+    'Form overrides dispose to clean up the component list.
+    <System.Diagnostics.DebuggerNonUserCode()>
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If disposing AndAlso components IsNot Nothing Then
+                components.Dispose()
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
 
-  'Required by the Windows Form Designer
-  Private components As System.ComponentModel.IContainer
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
 
-  'NOTE: The following procedure is required by the Windows Form Designer
-  'It can be modified using the Windows Form Designer.  
-  'Do not modify it using the code editor.
-  <System.Diagnostics.DebuggerStepThrough()>
-  Private Sub InitializeComponent()
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()>
+    Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMainMenu))
         Dim SpreadsheetCommandGalleryItemGroup1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandGalleryItemGroup = New DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandGalleryItemGroup()
@@ -282,6 +282,7 @@ Partial Class frmMainMenu
         Dim SerializableAppearanceObject16 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
         Me.rpgWorkbook = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.bbiOpenWorkbook = New DevExpress.XtraBars.BarButtonItem()
+        Me.butNewWorkbook = New DevExpress.XtraBars.BarButtonItem()
         Me.bbiSaveWorkbook = New DevExpress.XtraBars.BarButtonItem()
         Me.bbiSaveAsWorkbook = New DevExpress.XtraBars.BarButtonItem()
         Me.bbiSaveAll = New DevExpress.XtraBars.BarButtonItem()
@@ -702,6 +703,10 @@ Partial Class frmMainMenu
         Me.gcTemplateName = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcActions = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.beAction = New DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit()
+        Me.gcIsHierarchal = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.RepositoryItemCheckEdit1 = New DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit()
+        Me.gcIsShipEntity = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.gcGroup = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.txtErrors = New DevExpress.XtraEditors.MemoEdit()
         Me.lueHierarchies = New DevExpress.XtraEditors.LookUpEdit()
         Me.txtMinor = New DevExpress.XtraEditors.TextEdit()
@@ -710,10 +715,8 @@ Partial Class frmMainMenu
         Me.txtLogs = New DevExpress.XtraEditors.MemoEdit()
         Me.labVersion = New DevExpress.XtraEditors.LabelControl()
         Me.txtWorkbookName = New DevExpress.XtraEditors.TextEdit()
-        Me.lbxImportTemplates = New DevExpress.XtraEditors.CheckedListBoxControl()
         Me.UcConnectionDetails1 = New Otalio.Import.ucConnectionDetails()
         Me.UcProperties1 = New Otalio.Import.ucDataImportProperties()
-        Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup1 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.tcgTabs = New DevExpress.XtraLayout.TabbedControlGroup()
         Me.LayoutControlGroup2 = New DevExpress.XtraLayout.LayoutControlGroup()
@@ -804,6 +807,7 @@ Partial Class frmMainMenu
         CType(Me.gridWorkbook, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gdWorkbook, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.beAction, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.RepositoryItemCheckEdit1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtErrors.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lueHierarchies.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtMinor.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -811,8 +815,6 @@ Partial Class frmMainMenu
         CType(Me.txtBuild.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtLogs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtWorkbookName.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.lbxImportTemplates, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tcgTabs, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -850,6 +852,7 @@ Partial Class frmMainMenu
         'rpgWorkbook
         '
         Me.rpgWorkbook.ItemLinks.Add(Me.bbiOpenWorkbook)
+        Me.rpgWorkbook.ItemLinks.Add(Me.butNewWorkbook, True)
         Me.rpgWorkbook.ItemLinks.Add(Me.bbiSaveWorkbook)
         Me.rpgWorkbook.ItemLinks.Add(Me.bbiSaveAsWorkbook)
         Me.rpgWorkbook.ItemLinks.Add(Me.bbiSaveAll, True)
@@ -865,6 +868,14 @@ Partial Class frmMainMenu
         Me.bbiOpenWorkbook.ImageOptions.Image = CType(resources.GetObject("bbiOpenWorkbook.ImageOptions.Image"), System.Drawing.Image)
         Me.bbiOpenWorkbook.ImageOptions.LargeImage = CType(resources.GetObject("bbiOpenWorkbook.ImageOptions.LargeImage"), System.Drawing.Image)
         Me.bbiOpenWorkbook.Name = "bbiOpenWorkbook"
+        '
+        'butNewWorkbook
+        '
+        Me.butNewWorkbook.Caption = "New"
+        Me.butNewWorkbook.Id = 334
+        Me.butNewWorkbook.ImageOptions.Image = CType(resources.GetObject("butNewWorkbook.ImageOptions.Image"), System.Drawing.Image)
+        Me.butNewWorkbook.ImageOptions.LargeImage = CType(resources.GetObject("butNewWorkbook.ImageOptions.LargeImage"), System.Drawing.Image)
+        Me.butNewWorkbook.Name = "butNewWorkbook"
         '
         'bbiSaveWorkbook
         '
@@ -1068,10 +1079,10 @@ Partial Class frmMainMenu
         Me.ribbonControl.ApplicationButtonText = Nothing
         Me.ribbonControl.ExpandCollapseItem.Id = 0
         Me.ribbonControl.Images = Me.ribbonImageCollection
-        Me.ribbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.ribbonControl.ExpandCollapseItem, Me.ribbonControl.SearchEditItem, Me.iExit, Me.iHelp, Me.iAbout, Me.siStatus, Me.siInfo, Me.rgbiSkins, Me.SpreadsheetCommandBarSubItem1, Me.SpreadsheetCommandBarButtonItem1, Me.SpreadsheetCommandBarButtonItem2, Me.SpreadsheetCommandBarSubItem2, Me.SpreadsheetCommandBarButtonItem3, Me.SpreadsheetCommandBarButtonItem4, Me.RenameTableItemCaption1, Me.RenameTableItem1, Me.SpreadsheetCommandBarCheckItem1, Me.SpreadsheetCommandBarCheckItem2, Me.SpreadsheetCommandBarCheckItem3, Me.SpreadsheetCommandBarCheckItem4, Me.SpreadsheetCommandBarCheckItem5, Me.SpreadsheetCommandBarCheckItem6, Me.SpreadsheetCommandBarCheckItem7, Me.GalleryTableStylesItem1, Me.SpreadsheetCommandBarButtonItem5, Me.SpreadsheetCommandBarButtonItem6, Me.SpreadsheetCommandBarButtonItem7, Me.GalleryChartLayoutItem1, Me.GalleryChartStyleItem1, Me.SpreadsheetCommandBarButtonGalleryDropDownItem1, Me.SpreadsheetCommandBarSubItem3, Me.SpreadsheetCommandBarButtonGalleryDropDownItem2, Me.SpreadsheetCommandBarButtonGalleryDropDownItem3, Me.SpreadsheetCommandBarButtonGalleryDropDownItem4, Me.SpreadsheetCommandBarButtonGalleryDropDownItem5, Me.SpreadsheetCommandBarSubItem4, Me.SpreadsheetCommandBarButtonGalleryDropDownItem6, Me.SpreadsheetCommandBarButtonGalleryDropDownItem7, Me.SpreadsheetCommandBarSubItem5, Me.SpreadsheetCommandBarButtonGalleryDropDownItem8, Me.SpreadsheetCommandBarButtonGalleryDropDownItem9, Me.SpreadsheetCommandBarButtonGalleryDropDownItem10, Me.SpreadsheetCommandBarButtonGalleryDropDownItem11, Me.SpreadsheetCommandBarButtonGalleryDropDownItem12, Me.SpreadsheetCommandBarCheckItem8, Me.SpreadsheetCommandBarCheckItem9, Me.SpreadsheetCommandBarButtonItem8, Me.SpreadsheetCommandBarButtonItem9, Me.SpreadsheetCommandBarButtonItem10, Me.SpreadsheetCommandBarSubItem6, Me.SpreadsheetCommandBarButtonItem11, Me.SpreadsheetCommandBarButtonItem12, Me.SpreadsheetCommandBarButtonItem13, Me.SpreadsheetCommandBarButtonItem14, Me.SpreadsheetCommandBarButtonItem15, Me.SpreadsheetCommandBarButtonItem16, Me.SpreadsheetCommandBarButtonItem17, Me.SpreadsheetCommandBarButtonItem18, Me.SpreadsheetCommandBarButtonItem19, Me.SpreadsheetCommandBarButtonItem20, Me.SpreadsheetCommandBarButtonItem21, Me.SpreadsheetCommandBarButtonItem22, Me.SpreadsheetCommandBarButtonItem23, Me.SpreadsheetCommandBarButtonItem24, Me.SpreadsheetCommandBarButtonItem25, Me.SpreadsheetCommandBarCheckItem10, Me.SpreadsheetCommandBarButtonItem26, Me.SpreadsheetCommandBarButtonItem27, Me.SpreadsheetCommandBarSubItem7, Me.SpreadsheetCommandBarButtonItem28, Me.SpreadsheetCommandBarButtonItem29, Me.SpreadsheetCommandBarButtonItem30, Me.SpreadsheetCommandBarSubItem8, Me.SpreadsheetCommandBarButtonItem31, Me.SpreadsheetCommandBarButtonItem32, Me.SpreadsheetCommandBarSubItem9, Me.SpreadsheetCommandBarButtonItem33, Me.SpreadsheetCommandBarButtonItem34, Me.SpreadsheetCommandBarButtonItem35, Me.SpreadsheetCommandBarButtonItem36, Me.SpreadsheetCommandBarButtonItem37, Me.SpreadsheetCommandBarSubItem10, Me.SpreadsheetCommandBarButtonItem38, Me.SpreadsheetCommandBarButtonItem39, Me.SpreadsheetCommandBarButtonItem40, Me.SpreadsheetCommandBarButtonItem41, Me.SpreadsheetCommandBarButtonItem42, Me.FunctionsFinancialItem1, Me.FunctionsLogicalItem1, Me.FunctionsTextItem1, Me.FunctionsDateAndTimeItem1, Me.FunctionsLookupAndReferenceItem1, Me.FunctionsMathAndTrigonometryItem1, Me.SpreadsheetCommandBarSubItem11, Me.FunctionsStatisticalItem1, Me.FunctionsEngineeringItem1, Me.FunctionsInformationItem1, Me.FunctionsCompatibilityItem1, Me.FunctionsWebItem1, Me.SpreadsheetCommandBarButtonItem43, Me.SpreadsheetCommandBarButtonItem44, Me.DefinedNameListItem1, Me.SpreadsheetCommandBarButtonItem45, Me.SpreadsheetCommandBarCheckItem11, Me.SpreadsheetCommandBarSubItem12, Me.SpreadsheetCommandBarCheckItem12, Me.SpreadsheetCommandBarCheckItem13, Me.SpreadsheetCommandBarButtonItem46, Me.SpreadsheetCommandBarButtonItem47, Me.SpreadsheetCommandBarSubItem13, Me.SpreadsheetCommandBarCheckItem14, Me.SpreadsheetCommandBarCheckItem15, Me.SpreadsheetCommandBarCheckItem16, Me.SpreadsheetCommandBarButtonItem48, Me.SpreadsheetCommandBarSubItem14, Me.SpreadsheetCommandBarCheckItem17, Me.SpreadsheetCommandBarCheckItem18, Me.PageSetupPaperKindItem1, Me.SpreadsheetCommandBarSubItem15, Me.SpreadsheetCommandBarButtonItem49, Me.SpreadsheetCommandBarButtonItem50, Me.SpreadsheetCommandBarButtonItem51, Me.SpreadsheetCommandBarCheckItem19, Me.SpreadsheetCommandBarCheckItem20, Me.SpreadsheetCommandBarButtonItem52, Me.SpreadsheetCommandBarButtonItem53, Me.SpreadsheetCommandBarButtonGalleryDropDownItem13, Me.SpreadsheetCommandBarButtonGalleryDropDownItem14, Me.SpreadsheetCommandBarButtonGalleryDropDownItem15, Me.SpreadsheetCommandBarButtonGalleryDropDownItem16, Me.SpreadsheetCommandBarButtonGalleryDropDownItem17, Me.SpreadsheetCommandBarButtonGalleryDropDownItem18, Me.SpreadsheetCommandBarButtonGalleryDropDownItem19, Me.SpreadsheetCommandBarButtonItem54, Me.SpreadsheetCommandBarButtonItem55, Me.SpreadsheetCommandBarButtonItem56, Me.SpreadsheetCommandBarButtonItem57, Me.SpreadsheetCommandBarButtonItem58, Me.SpreadsheetCommandBarButtonItem59, Me.BarButtonGroup1, Me.ChangeFontNameItem1, Me.ChangeFontSizeItem1, Me.SpreadsheetCommandBarButtonItem60, Me.SpreadsheetCommandBarButtonItem61, Me.BarButtonGroup2, Me.SpreadsheetCommandBarCheckItem21, Me.SpreadsheetCommandBarCheckItem22, Me.SpreadsheetCommandBarCheckItem23, Me.SpreadsheetCommandBarCheckItem24, Me.BarButtonGroup3, Me.SpreadsheetCommandBarSubItem16, Me.SpreadsheetCommandBarButtonItem62, Me.SpreadsheetCommandBarButtonItem63, Me.SpreadsheetCommandBarButtonItem64, Me.SpreadsheetCommandBarButtonItem65, Me.SpreadsheetCommandBarButtonItem66, Me.SpreadsheetCommandBarButtonItem67, Me.SpreadsheetCommandBarButtonItem68, Me.SpreadsheetCommandBarButtonItem69, Me.SpreadsheetCommandBarButtonItem70, Me.SpreadsheetCommandBarButtonItem71, Me.SpreadsheetCommandBarButtonItem72, Me.SpreadsheetCommandBarButtonItem73, Me.SpreadsheetCommandBarButtonItem74, Me.ChangeBorderLineColorItem1, Me.ChangeBorderLineStyleItem1, Me.BarButtonGroup4, Me.ChangeCellFillColorItem1, Me.ChangeFontColorItem1, Me.BarButtonGroup5, Me.SpreadsheetCommandBarCheckItem25, Me.SpreadsheetCommandBarCheckItem26, Me.SpreadsheetCommandBarCheckItem27, Me.BarButtonGroup6, Me.SpreadsheetCommandBarCheckItem28, Me.SpreadsheetCommandBarCheckItem29, Me.SpreadsheetCommandBarCheckItem30, Me.BarButtonGroup7, Me.SpreadsheetCommandBarButtonItem75, Me.SpreadsheetCommandBarButtonItem76, Me.SpreadsheetCommandBarCheckItem31, Me.SpreadsheetCommandBarSubItem17, Me.SpreadsheetCommandBarCheckItem32, Me.SpreadsheetCommandBarButtonItem77, Me.SpreadsheetCommandBarButtonItem78, Me.SpreadsheetCommandBarButtonItem79, Me.BarButtonGroup8, Me.ChangeNumberFormatItem1, Me.BarButtonGroup9, Me.SpreadsheetCommandBarSubItem18, Me.SpreadsheetCommandBarButtonItem80, Me.SpreadsheetCommandBarButtonItem81, Me.SpreadsheetCommandBarButtonItem82, Me.SpreadsheetCommandBarButtonItem83, Me.SpreadsheetCommandBarButtonItem84, Me.SpreadsheetCommandBarButtonItem85, Me.SpreadsheetCommandBarButtonItem86, Me.BarButtonGroup10, Me.SpreadsheetCommandBarButtonItem87, Me.SpreadsheetCommandBarButtonItem88, Me.SpreadsheetCommandBarSubItem19, Me.SpreadsheetCommandBarButtonItem89, Me.SpreadsheetCommandBarButtonItem90, Me.SpreadsheetCommandBarButtonItem91, Me.SpreadsheetCommandBarButtonItem92, Me.SpreadsheetCommandBarButtonItem93, Me.SpreadsheetCommandBarButtonItem94, Me.SpreadsheetCommandBarButtonItem95, Me.SpreadsheetCommandBarSubItem20, Me.SpreadsheetCommandBarButtonItem96, Me.SpreadsheetCommandBarButtonItem97, Me.SpreadsheetCommandBarButtonItem98, Me.SpreadsheetCommandBarButtonItem99, Me.SpreadsheetCommandBarButtonItem100, Me.SpreadsheetCommandBarButtonItem101, Me.SpreadsheetCommandBarSubItem21, Me.SpreadsheetCommandBarButtonGalleryDropDownItem20, Me.SpreadsheetCommandBarButtonGalleryDropDownItem21, Me.SpreadsheetCommandBarButtonGalleryDropDownItem22, Me.SpreadsheetCommandBarButtonItem102, Me.SpreadsheetCommandBarButtonItem103, Me.SpreadsheetCommandBarSubItem22, Me.GalleryFormatAsTableItem1, Me.GalleryChangeStyleItem1, Me.SpreadsheetCommandBarSubItem23, Me.SpreadsheetCommandBarButtonItem104, Me.SpreadsheetCommandBarButtonItem105, Me.SpreadsheetCommandBarButtonItem106, Me.SpreadsheetCommandBarSubItem24, Me.SpreadsheetCommandBarButtonItem107, Me.SpreadsheetCommandBarButtonItem108, Me.SpreadsheetCommandBarButtonItem109, Me.SpreadsheetCommandBarSubItem25, Me.SpreadsheetCommandBarButtonItem110, Me.SpreadsheetCommandBarButtonItem111, Me.SpreadsheetCommandBarButtonItem112, Me.SpreadsheetCommandBarButtonItem113, Me.SpreadsheetCommandBarButtonItem114, Me.SpreadsheetCommandBarButtonItem115, Me.SpreadsheetCommandBarButtonItem116, Me.SpreadsheetCommandBarButtonItem117, Me.SpreadsheetCommandBarButtonItem118, Me.SpreadsheetCommandBarButtonItem119, Me.SpreadsheetCommandBarButtonItem120, Me.SpreadsheetCommandBarSubItem26, Me.SpreadsheetCommandBarButtonItem121, Me.SpreadsheetCommandBarButtonItem122, Me.ChangeSheetTabColorItem1, Me.SpreadsheetCommandBarCheckItem33, Me.SpreadsheetCommandBarButtonItem124, Me.SpreadsheetCommandBarSubItem27, Me.SpreadsheetCommandBarSubItem28, Me.SpreadsheetCommandBarButtonItem130, Me.SpreadsheetCommandBarButtonItem131, Me.SpreadsheetCommandBarButtonItem132, Me.SpreadsheetCommandBarButtonItem133, Me.SpreadsheetCommandBarSubItem29, Me.SpreadsheetCommandBarButtonItem134, Me.SpreadsheetCommandBarButtonItem135, Me.SpreadsheetCommandBarButtonItem136, Me.SpreadsheetCommandBarButtonItem137, Me.SpreadsheetCommandBarButtonItem138, Me.SpreadsheetCommandBarButtonItem139, Me.SpreadsheetCommandBarSubItem30, Me.SpreadsheetCommandBarSubItem31, Me.SpreadsheetCommandBarButtonItem144, Me.SpreadsheetCommandBarButtonItem145, Me.SpreadsheetCommandBarButtonItem146, Me.SpreadsheetCommandBarButtonItem147, Me.SpreadsheetCommandBarButtonItem148, Me.SpreadsheetCommandBarButtonItem149, Me.SpreadsheetCommandBarButtonItem150, Me.SpreadsheetCommandBarButtonItem151, Me.SpreadsheetCommandBarButtonItem152, Me.SpreadsheetCommandBarButtonItem153, Me.SpreadsheetCommandBarButtonItem154, Me.SpreadsheetCommandBarButtonItem155, Me.SpreadsheetCommandBarButtonItem156, Me.SpreadsheetCommandBarButtonItem157, Me.SpreadsheetCommandBarButtonItem158, Me.SpreadsheetCommandBarButtonItem159, Me.SpreadsheetCommandBarButtonItem160, Me.bbiImportOpen, Me.bbiSaveImport, Me.bbiCreateEmptyExcelDocument, Me.bbiImportExcel, Me.bbiValidateData, Me.bbiValidatorAdd, Me.bbiValidatorDelete, Me.bbiFormatJsonCode, Me.bbiSaveImportAs, Me.bbiDuplicate, Me.bbiOpenWorkbook, Me.bbiSaveWorkbook, Me.bbiSaveAsWorkbook, Me.bbiAddTemplate, Me.bbiRemoveTemplate, Me.bbiCopyValidator, Me.bbiCancel, Me.bbiSaveAll, Me.bbiQuery, Me.BarDockingMenuItem1, Me.bbiVersions, Me.bbiCheckAll, Me.bbiUncheckAll})
+        Me.ribbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.ribbonControl.ExpandCollapseItem, Me.ribbonControl.SearchEditItem, Me.iExit, Me.iHelp, Me.iAbout, Me.siStatus, Me.siInfo, Me.rgbiSkins, Me.SpreadsheetCommandBarSubItem1, Me.SpreadsheetCommandBarButtonItem1, Me.SpreadsheetCommandBarButtonItem2, Me.SpreadsheetCommandBarSubItem2, Me.SpreadsheetCommandBarButtonItem3, Me.SpreadsheetCommandBarButtonItem4, Me.RenameTableItemCaption1, Me.RenameTableItem1, Me.SpreadsheetCommandBarCheckItem1, Me.SpreadsheetCommandBarCheckItem2, Me.SpreadsheetCommandBarCheckItem3, Me.SpreadsheetCommandBarCheckItem4, Me.SpreadsheetCommandBarCheckItem5, Me.SpreadsheetCommandBarCheckItem6, Me.SpreadsheetCommandBarCheckItem7, Me.GalleryTableStylesItem1, Me.SpreadsheetCommandBarButtonItem5, Me.SpreadsheetCommandBarButtonItem6, Me.SpreadsheetCommandBarButtonItem7, Me.GalleryChartLayoutItem1, Me.GalleryChartStyleItem1, Me.SpreadsheetCommandBarButtonGalleryDropDownItem1, Me.SpreadsheetCommandBarSubItem3, Me.SpreadsheetCommandBarButtonGalleryDropDownItem2, Me.SpreadsheetCommandBarButtonGalleryDropDownItem3, Me.SpreadsheetCommandBarButtonGalleryDropDownItem4, Me.SpreadsheetCommandBarButtonGalleryDropDownItem5, Me.SpreadsheetCommandBarSubItem4, Me.SpreadsheetCommandBarButtonGalleryDropDownItem6, Me.SpreadsheetCommandBarButtonGalleryDropDownItem7, Me.SpreadsheetCommandBarSubItem5, Me.SpreadsheetCommandBarButtonGalleryDropDownItem8, Me.SpreadsheetCommandBarButtonGalleryDropDownItem9, Me.SpreadsheetCommandBarButtonGalleryDropDownItem10, Me.SpreadsheetCommandBarButtonGalleryDropDownItem11, Me.SpreadsheetCommandBarButtonGalleryDropDownItem12, Me.SpreadsheetCommandBarCheckItem8, Me.SpreadsheetCommandBarCheckItem9, Me.SpreadsheetCommandBarButtonItem8, Me.SpreadsheetCommandBarButtonItem9, Me.SpreadsheetCommandBarButtonItem10, Me.SpreadsheetCommandBarSubItem6, Me.SpreadsheetCommandBarButtonItem11, Me.SpreadsheetCommandBarButtonItem12, Me.SpreadsheetCommandBarButtonItem13, Me.SpreadsheetCommandBarButtonItem14, Me.SpreadsheetCommandBarButtonItem15, Me.SpreadsheetCommandBarButtonItem16, Me.SpreadsheetCommandBarButtonItem17, Me.SpreadsheetCommandBarButtonItem18, Me.SpreadsheetCommandBarButtonItem19, Me.SpreadsheetCommandBarButtonItem20, Me.SpreadsheetCommandBarButtonItem21, Me.SpreadsheetCommandBarButtonItem22, Me.SpreadsheetCommandBarButtonItem23, Me.SpreadsheetCommandBarButtonItem24, Me.SpreadsheetCommandBarButtonItem25, Me.SpreadsheetCommandBarCheckItem10, Me.SpreadsheetCommandBarButtonItem26, Me.SpreadsheetCommandBarButtonItem27, Me.SpreadsheetCommandBarSubItem7, Me.SpreadsheetCommandBarButtonItem28, Me.SpreadsheetCommandBarButtonItem29, Me.SpreadsheetCommandBarButtonItem30, Me.SpreadsheetCommandBarSubItem8, Me.SpreadsheetCommandBarButtonItem31, Me.SpreadsheetCommandBarButtonItem32, Me.SpreadsheetCommandBarSubItem9, Me.SpreadsheetCommandBarButtonItem33, Me.SpreadsheetCommandBarButtonItem34, Me.SpreadsheetCommandBarButtonItem35, Me.SpreadsheetCommandBarButtonItem36, Me.SpreadsheetCommandBarButtonItem37, Me.SpreadsheetCommandBarSubItem10, Me.SpreadsheetCommandBarButtonItem38, Me.SpreadsheetCommandBarButtonItem39, Me.SpreadsheetCommandBarButtonItem40, Me.SpreadsheetCommandBarButtonItem41, Me.SpreadsheetCommandBarButtonItem42, Me.FunctionsFinancialItem1, Me.FunctionsLogicalItem1, Me.FunctionsTextItem1, Me.FunctionsDateAndTimeItem1, Me.FunctionsLookupAndReferenceItem1, Me.FunctionsMathAndTrigonometryItem1, Me.SpreadsheetCommandBarSubItem11, Me.FunctionsStatisticalItem1, Me.FunctionsEngineeringItem1, Me.FunctionsInformationItem1, Me.FunctionsCompatibilityItem1, Me.FunctionsWebItem1, Me.SpreadsheetCommandBarButtonItem43, Me.SpreadsheetCommandBarButtonItem44, Me.DefinedNameListItem1, Me.SpreadsheetCommandBarButtonItem45, Me.SpreadsheetCommandBarCheckItem11, Me.SpreadsheetCommandBarSubItem12, Me.SpreadsheetCommandBarCheckItem12, Me.SpreadsheetCommandBarCheckItem13, Me.SpreadsheetCommandBarButtonItem46, Me.SpreadsheetCommandBarButtonItem47, Me.SpreadsheetCommandBarSubItem13, Me.SpreadsheetCommandBarCheckItem14, Me.SpreadsheetCommandBarCheckItem15, Me.SpreadsheetCommandBarCheckItem16, Me.SpreadsheetCommandBarButtonItem48, Me.SpreadsheetCommandBarSubItem14, Me.SpreadsheetCommandBarCheckItem17, Me.SpreadsheetCommandBarCheckItem18, Me.PageSetupPaperKindItem1, Me.SpreadsheetCommandBarSubItem15, Me.SpreadsheetCommandBarButtonItem49, Me.SpreadsheetCommandBarButtonItem50, Me.SpreadsheetCommandBarButtonItem51, Me.SpreadsheetCommandBarCheckItem19, Me.SpreadsheetCommandBarCheckItem20, Me.SpreadsheetCommandBarButtonItem52, Me.SpreadsheetCommandBarButtonItem53, Me.SpreadsheetCommandBarButtonGalleryDropDownItem13, Me.SpreadsheetCommandBarButtonGalleryDropDownItem14, Me.SpreadsheetCommandBarButtonGalleryDropDownItem15, Me.SpreadsheetCommandBarButtonGalleryDropDownItem16, Me.SpreadsheetCommandBarButtonGalleryDropDownItem17, Me.SpreadsheetCommandBarButtonGalleryDropDownItem18, Me.SpreadsheetCommandBarButtonGalleryDropDownItem19, Me.SpreadsheetCommandBarButtonItem54, Me.SpreadsheetCommandBarButtonItem55, Me.SpreadsheetCommandBarButtonItem56, Me.SpreadsheetCommandBarButtonItem57, Me.SpreadsheetCommandBarButtonItem58, Me.SpreadsheetCommandBarButtonItem59, Me.BarButtonGroup1, Me.ChangeFontNameItem1, Me.ChangeFontSizeItem1, Me.SpreadsheetCommandBarButtonItem60, Me.SpreadsheetCommandBarButtonItem61, Me.BarButtonGroup2, Me.SpreadsheetCommandBarCheckItem21, Me.SpreadsheetCommandBarCheckItem22, Me.SpreadsheetCommandBarCheckItem23, Me.SpreadsheetCommandBarCheckItem24, Me.BarButtonGroup3, Me.SpreadsheetCommandBarSubItem16, Me.SpreadsheetCommandBarButtonItem62, Me.SpreadsheetCommandBarButtonItem63, Me.SpreadsheetCommandBarButtonItem64, Me.SpreadsheetCommandBarButtonItem65, Me.SpreadsheetCommandBarButtonItem66, Me.SpreadsheetCommandBarButtonItem67, Me.SpreadsheetCommandBarButtonItem68, Me.SpreadsheetCommandBarButtonItem69, Me.SpreadsheetCommandBarButtonItem70, Me.SpreadsheetCommandBarButtonItem71, Me.SpreadsheetCommandBarButtonItem72, Me.SpreadsheetCommandBarButtonItem73, Me.SpreadsheetCommandBarButtonItem74, Me.ChangeBorderLineColorItem1, Me.ChangeBorderLineStyleItem1, Me.BarButtonGroup4, Me.ChangeCellFillColorItem1, Me.ChangeFontColorItem1, Me.BarButtonGroup5, Me.SpreadsheetCommandBarCheckItem25, Me.SpreadsheetCommandBarCheckItem26, Me.SpreadsheetCommandBarCheckItem27, Me.BarButtonGroup6, Me.SpreadsheetCommandBarCheckItem28, Me.SpreadsheetCommandBarCheckItem29, Me.SpreadsheetCommandBarCheckItem30, Me.BarButtonGroup7, Me.SpreadsheetCommandBarButtonItem75, Me.SpreadsheetCommandBarButtonItem76, Me.SpreadsheetCommandBarCheckItem31, Me.SpreadsheetCommandBarSubItem17, Me.SpreadsheetCommandBarCheckItem32, Me.SpreadsheetCommandBarButtonItem77, Me.SpreadsheetCommandBarButtonItem78, Me.SpreadsheetCommandBarButtonItem79, Me.BarButtonGroup8, Me.ChangeNumberFormatItem1, Me.BarButtonGroup9, Me.SpreadsheetCommandBarSubItem18, Me.SpreadsheetCommandBarButtonItem80, Me.SpreadsheetCommandBarButtonItem81, Me.SpreadsheetCommandBarButtonItem82, Me.SpreadsheetCommandBarButtonItem83, Me.SpreadsheetCommandBarButtonItem84, Me.SpreadsheetCommandBarButtonItem85, Me.SpreadsheetCommandBarButtonItem86, Me.BarButtonGroup10, Me.SpreadsheetCommandBarButtonItem87, Me.SpreadsheetCommandBarButtonItem88, Me.SpreadsheetCommandBarSubItem19, Me.SpreadsheetCommandBarButtonItem89, Me.SpreadsheetCommandBarButtonItem90, Me.SpreadsheetCommandBarButtonItem91, Me.SpreadsheetCommandBarButtonItem92, Me.SpreadsheetCommandBarButtonItem93, Me.SpreadsheetCommandBarButtonItem94, Me.SpreadsheetCommandBarButtonItem95, Me.SpreadsheetCommandBarSubItem20, Me.SpreadsheetCommandBarButtonItem96, Me.SpreadsheetCommandBarButtonItem97, Me.SpreadsheetCommandBarButtonItem98, Me.SpreadsheetCommandBarButtonItem99, Me.SpreadsheetCommandBarButtonItem100, Me.SpreadsheetCommandBarButtonItem101, Me.SpreadsheetCommandBarSubItem21, Me.SpreadsheetCommandBarButtonGalleryDropDownItem20, Me.SpreadsheetCommandBarButtonGalleryDropDownItem21, Me.SpreadsheetCommandBarButtonGalleryDropDownItem22, Me.SpreadsheetCommandBarButtonItem102, Me.SpreadsheetCommandBarButtonItem103, Me.SpreadsheetCommandBarSubItem22, Me.GalleryFormatAsTableItem1, Me.GalleryChangeStyleItem1, Me.SpreadsheetCommandBarSubItem23, Me.SpreadsheetCommandBarButtonItem104, Me.SpreadsheetCommandBarButtonItem105, Me.SpreadsheetCommandBarButtonItem106, Me.SpreadsheetCommandBarSubItem24, Me.SpreadsheetCommandBarButtonItem107, Me.SpreadsheetCommandBarButtonItem108, Me.SpreadsheetCommandBarButtonItem109, Me.SpreadsheetCommandBarSubItem25, Me.SpreadsheetCommandBarButtonItem110, Me.SpreadsheetCommandBarButtonItem111, Me.SpreadsheetCommandBarButtonItem112, Me.SpreadsheetCommandBarButtonItem113, Me.SpreadsheetCommandBarButtonItem114, Me.SpreadsheetCommandBarButtonItem115, Me.SpreadsheetCommandBarButtonItem116, Me.SpreadsheetCommandBarButtonItem117, Me.SpreadsheetCommandBarButtonItem118, Me.SpreadsheetCommandBarButtonItem119, Me.SpreadsheetCommandBarButtonItem120, Me.SpreadsheetCommandBarSubItem26, Me.SpreadsheetCommandBarButtonItem121, Me.SpreadsheetCommandBarButtonItem122, Me.ChangeSheetTabColorItem1, Me.SpreadsheetCommandBarCheckItem33, Me.SpreadsheetCommandBarButtonItem124, Me.SpreadsheetCommandBarSubItem27, Me.SpreadsheetCommandBarSubItem28, Me.SpreadsheetCommandBarButtonItem130, Me.SpreadsheetCommandBarButtonItem131, Me.SpreadsheetCommandBarButtonItem132, Me.SpreadsheetCommandBarButtonItem133, Me.SpreadsheetCommandBarSubItem29, Me.SpreadsheetCommandBarButtonItem134, Me.SpreadsheetCommandBarButtonItem135, Me.SpreadsheetCommandBarButtonItem136, Me.SpreadsheetCommandBarButtonItem137, Me.SpreadsheetCommandBarButtonItem138, Me.SpreadsheetCommandBarButtonItem139, Me.SpreadsheetCommandBarSubItem30, Me.SpreadsheetCommandBarSubItem31, Me.SpreadsheetCommandBarButtonItem144, Me.SpreadsheetCommandBarButtonItem145, Me.SpreadsheetCommandBarButtonItem146, Me.SpreadsheetCommandBarButtonItem147, Me.SpreadsheetCommandBarButtonItem148, Me.SpreadsheetCommandBarButtonItem149, Me.SpreadsheetCommandBarButtonItem150, Me.SpreadsheetCommandBarButtonItem151, Me.SpreadsheetCommandBarButtonItem152, Me.SpreadsheetCommandBarButtonItem153, Me.SpreadsheetCommandBarButtonItem154, Me.SpreadsheetCommandBarButtonItem155, Me.SpreadsheetCommandBarButtonItem156, Me.SpreadsheetCommandBarButtonItem157, Me.SpreadsheetCommandBarButtonItem158, Me.SpreadsheetCommandBarButtonItem159, Me.SpreadsheetCommandBarButtonItem160, Me.bbiImportOpen, Me.bbiSaveImport, Me.bbiCreateEmptyExcelDocument, Me.bbiImportExcel, Me.bbiValidateData, Me.bbiValidatorAdd, Me.bbiValidatorDelete, Me.bbiFormatJsonCode, Me.bbiSaveImportAs, Me.bbiDuplicate, Me.bbiOpenWorkbook, Me.bbiSaveWorkbook, Me.bbiSaveAsWorkbook, Me.bbiAddTemplate, Me.bbiRemoveTemplate, Me.bbiCopyValidator, Me.bbiCancel, Me.bbiSaveAll, Me.bbiQuery, Me.BarDockingMenuItem1, Me.bbiVersions, Me.bbiCheckAll, Me.bbiUncheckAll, Me.butNewWorkbook})
         Me.ribbonControl.LargeImages = Me.ribbonImageCollectionLarge
         Me.ribbonControl.Location = New System.Drawing.Point(0, 0)
-        Me.ribbonControl.MaxItemId = 332
+        Me.ribbonControl.MaxItemId = 346
         Me.ribbonControl.MiniToolbars.Add(Me.RibbonMiniToolbar1)
         Me.ribbonControl.Name = "ribbonControl"
         Me.ribbonControl.PageCategories.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageCategory() {Me.DrawingToolsRibbonPageCategory1, Me.PictureToolsRibbonPageCategory1, Me.TableToolsRibbonPageCategory1, Me.ChartToolsRibbonPageCategory1})
@@ -1080,7 +1091,7 @@ Partial Class frmMainMenu
         Me.ribbonControl.QuickToolbarItemLinks.Add(Me.iHelp)
         Me.ribbonControl.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.RepositoryItemTextEdit1, Me.RepositoryItemFontEdit1, Me.RepositoryItemSpreadsheetFontSizeEdit1, Me.RepositoryItemPopupGalleryEdit1})
         Me.ribbonControl.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2010
-        Me.ribbonControl.Size = New System.Drawing.Size(1148, 158)
+        Me.ribbonControl.Size = New System.Drawing.Size(1257, 158)
         Me.ribbonControl.StatusBar = Me.ribbonStatusBar
         '
         'ribbonImageCollection
@@ -2535,7 +2546,7 @@ Partial Class frmMainMenu
         Me.spreadsheetControl.Location = New System.Drawing.Point(7, 7)
         Me.spreadsheetControl.MenuManager = Me.ribbonControl
         Me.spreadsheetControl.Name = "spreadsheetControl"
-        Me.spreadsheetControl.Size = New System.Drawing.Size(1124, 546)
+        Me.spreadsheetControl.Size = New System.Drawing.Size(1233, 654)
         Me.spreadsheetControl.TabIndex = 1
         Me.spreadsheetControl.Text = "spreadsheetControl1"
         '
@@ -4255,10 +4266,10 @@ Partial Class frmMainMenu
         '
         Me.ribbonStatusBar.ItemLinks.Add(Me.siInfo)
         Me.ribbonStatusBar.ItemLinks.Add(Me.siStatus)
-        Me.ribbonStatusBar.Location = New System.Drawing.Point(0, 775)
+        Me.ribbonStatusBar.Location = New System.Drawing.Point(0, 883)
         Me.ribbonStatusBar.Name = "ribbonStatusBar"
         Me.ribbonStatusBar.Ribbon = Me.ribbonControl
-        Me.ribbonStatusBar.Size = New System.Drawing.Size(1148, 24)
+        Me.ribbonStatusBar.Size = New System.Drawing.Size(1257, 24)
         '
         'popupControlContainer1
         '
@@ -4332,7 +4343,7 @@ Partial Class frmMainMenu
         Me.spreadsheetFormulaBarPanel.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spreadsheetFormulaBarPanel.Location = New System.Drawing.Point(0, 158)
         Me.spreadsheetFormulaBarPanel.Name = "spreadsheetFormulaBarPanel"
-        Me.spreadsheetFormulaBarPanel.Size = New System.Drawing.Size(1148, 617)
+        Me.spreadsheetFormulaBarPanel.Size = New System.Drawing.Size(1257, 725)
         Me.spreadsheetFormulaBarPanel.TabIndex = 3
         '
         'LayoutControl1
@@ -4346,19 +4357,17 @@ Partial Class frmMainMenu
         Me.LayoutControl1.Controls.Add(Me.txtLogs)
         Me.LayoutControl1.Controls.Add(Me.labVersion)
         Me.LayoutControl1.Controls.Add(Me.txtWorkbookName)
-        Me.LayoutControl1.Controls.Add(Me.lbxImportTemplates)
         Me.LayoutControl1.Controls.Add(Me.spreadsheetControl)
         Me.LayoutControl1.Controls.Add(Me.UcConnectionDetails1)
         Me.LayoutControl1.Controls.Add(Me.UcProperties1)
         Me.LayoutControl1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.LayoutControl1.HiddenItems.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem4})
         Me.LayoutControl1.Location = New System.Drawing.Point(0, 34)
         Me.LayoutControl1.Margin = New System.Windows.Forms.Padding(1)
         Me.LayoutControl1.Name = "LayoutControl1"
         Me.LayoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = New System.Drawing.Rectangle(616, 219, 1256, 948)
         Me.LayoutControl1.OptionsView.UseSkinIndents = False
         Me.LayoutControl1.Root = Me.LayoutControlGroup1
-        Me.LayoutControl1.Size = New System.Drawing.Size(1138, 583)
+        Me.LayoutControl1.Size = New System.Drawing.Size(1247, 691)
         Me.LayoutControl1.TabIndex = 6
         Me.LayoutControl1.Text = "LayoutControl1"
         '
@@ -4368,16 +4377,18 @@ Partial Class frmMainMenu
         Me.gridWorkbook.MainView = Me.gdWorkbook
         Me.gridWorkbook.MenuManager = Me.ribbonControl
         Me.gridWorkbook.Name = "gridWorkbook"
-        Me.gridWorkbook.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.beAction})
-        Me.gridWorkbook.Size = New System.Drawing.Size(314, 406)
+        Me.gridWorkbook.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.beAction, Me.RepositoryItemCheckEdit1})
+        Me.gridWorkbook.Size = New System.Drawing.Size(402, 514)
         Me.gridWorkbook.TabIndex = 25
         Me.gridWorkbook.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdWorkbook})
         '
         'gdWorkbook
         '
-        Me.gdWorkbook.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.gcPriority, Me.gcTemplateName, Me.gcActions})
+        Me.gdWorkbook.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.gcPriority, Me.gcTemplateName, Me.gcActions, Me.gcIsHierarchal, Me.gcIsShipEntity, Me.gcGroup})
         Me.gdWorkbook.GridControl = Me.gridWorkbook
+        Me.gdWorkbook.GroupCount = 1
         Me.gdWorkbook.Name = "gdWorkbook"
+        Me.gdWorkbook.OptionsBehavior.AutoExpandAllGroups = True
         Me.gdWorkbook.OptionsSelection.CheckBoxSelectorColumnWidth = 40
         Me.gdWorkbook.OptionsSelection.EnableAppearanceFocusedCell = False
         Me.gdWorkbook.OptionsSelection.EnableAppearanceFocusedRow = False
@@ -4387,6 +4398,7 @@ Partial Class frmMainMenu
         Me.gdWorkbook.OptionsView.ShowAutoFilterRow = True
         Me.gdWorkbook.OptionsView.ShowDetailButtons = False
         Me.gdWorkbook.OptionsView.ShowIndicator = False
+        Me.gdWorkbook.SortInfo.AddRange(New DevExpress.XtraGrid.Columns.GridColumnSortInfo() {New DevExpress.XtraGrid.Columns.GridColumnSortInfo(Me.gcGroup, DevExpress.Data.ColumnSortOrder.Ascending)})
         '
         'gcPriority
         '
@@ -4413,7 +4425,7 @@ Partial Class frmMainMenu
         Me.gcActions.MinWidth = 40
         Me.gcActions.Name = "gcActions"
         Me.gcActions.Visible = True
-        Me.gcActions.VisibleIndex = 3
+        Me.gcActions.VisibleIndex = 5
         Me.gcActions.Width = 40
         '
         'beAction
@@ -4429,12 +4441,44 @@ Partial Class frmMainMenu
         Me.beAction.Name = "beAction"
         Me.beAction.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.HideTextEditor
         '
+        'gcIsHierarchal
+        '
+        Me.gcIsHierarchal.Caption = "Is Hierarchal"
+        Me.gcIsHierarchal.ColumnEdit = Me.RepositoryItemCheckEdit1
+        Me.gcIsHierarchal.FieldName = "IsHierarchal"
+        Me.gcIsHierarchal.Name = "gcIsHierarchal"
+        Me.gcIsHierarchal.OptionsColumn.AllowEdit = False
+        Me.gcIsHierarchal.Visible = True
+        Me.gcIsHierarchal.VisibleIndex = 3
+        '
+        'RepositoryItemCheckEdit1
+        '
+        Me.RepositoryItemCheckEdit1.AutoHeight = False
+        Me.RepositoryItemCheckEdit1.Name = "RepositoryItemCheckEdit1"
+        '
+        'gcIsShipEntity
+        '
+        Me.gcIsShipEntity.Caption = "Is Ship"
+        Me.gcIsShipEntity.ColumnEdit = Me.RepositoryItemCheckEdit1
+        Me.gcIsShipEntity.FieldName = "IsShipEntity"
+        Me.gcIsShipEntity.Name = "gcIsShipEntity"
+        Me.gcIsShipEntity.OptionsColumn.AllowEdit = False
+        Me.gcIsShipEntity.Visible = True
+        Me.gcIsShipEntity.VisibleIndex = 4
+        '
+        'gcGroup
+        '
+        Me.gcGroup.FieldName = "Group"
+        Me.gcGroup.Name = "gcGroup"
+        Me.gcGroup.Visible = True
+        Me.gcGroup.VisibleIndex = 2
+        '
         'txtErrors
         '
-        Me.txtErrors.Location = New System.Drawing.Point(388, 32)
+        Me.txtErrors.Location = New System.Drawing.Point(423, 32)
         Me.txtErrors.MenuManager = Me.ribbonControl
         Me.txtErrors.Name = "txtErrors"
-        Me.txtErrors.Size = New System.Drawing.Size(741, 519)
+        Me.txtErrors.Size = New System.Drawing.Size(815, 627)
         Me.txtErrors.StyleController = Me.LayoutControl1
         Me.txtErrors.TabIndex = 24
         '
@@ -4453,7 +4497,7 @@ Partial Class frmMainMenu
         Me.lueHierarchies.Properties.SearchMode = DevExpress.XtraEditors.Controls.SearchMode.AutoSearch
         Me.lueHierarchies.Properties.SortColumnIndex = 3
         Me.lueHierarchies.Properties.ValueMember = "Id"
-        Me.lueHierarchies.Size = New System.Drawing.Size(259, 20)
+        Me.lueHierarchies.Size = New System.Drawing.Size(347, 20)
         Me.lueHierarchies.StyleController = Me.LayoutControl1
         Me.lueHierarchies.TabIndex = 23
         '
@@ -4480,16 +4524,16 @@ Partial Class frmMainMenu
         Me.txtBuild.Location = New System.Drawing.Point(220, 91)
         Me.txtBuild.MenuManager = Me.ribbonControl
         Me.txtBuild.Name = "txtBuild"
-        Me.txtBuild.Size = New System.Drawing.Size(98, 20)
+        Me.txtBuild.Size = New System.Drawing.Size(186, 20)
         Me.txtBuild.StyleController = Me.LayoutControl1
         Me.txtBuild.TabIndex = 12
         '
         'txtLogs
         '
-        Me.txtLogs.Location = New System.Drawing.Point(388, 32)
+        Me.txtLogs.Location = New System.Drawing.Point(423, 32)
         Me.txtLogs.MenuManager = Me.ribbonControl
         Me.txtLogs.Name = "txtLogs"
-        Me.txtLogs.Size = New System.Drawing.Size(741, 519)
+        Me.txtLogs.Size = New System.Drawing.Size(815, 627)
         Me.txtLogs.StyleController = Me.LayoutControl1
         Me.txtLogs.TabIndex = 11
         '
@@ -4497,7 +4541,7 @@ Partial Class frmMainMenu
         '
         Me.labVersion.Location = New System.Drawing.Point(62, 124)
         Me.labVersion.Name = "labVersion"
-        Me.labVersion.Size = New System.Drawing.Size(259, 13)
+        Me.labVersion.Size = New System.Drawing.Size(347, 13)
         Me.labVersion.StyleController = Me.LayoutControl1
         Me.labVersion.TabIndex = 10
         '
@@ -4507,48 +4551,25 @@ Partial Class frmMainMenu
         Me.txtWorkbookName.MenuManager = Me.ribbonControl
         Me.txtWorkbookName.Name = "txtWorkbookName"
         Me.txtWorkbookName.Properties.ReadOnly = True
-        Me.txtWorkbookName.Size = New System.Drawing.Size(259, 20)
+        Me.txtWorkbookName.Size = New System.Drawing.Size(347, 20)
         Me.txtWorkbookName.StyleController = Me.LayoutControl1
         Me.txtWorkbookName.TabIndex = 9
-        '
-        'lbxImportTemplates
-        '
-        Me.lbxImportTemplates.DisplayMember = "SortedName"
-        Me.lbxImportTemplates.Location = New System.Drawing.Point(7, 147)
-        Me.lbxImportTemplates.Name = "lbxImportTemplates"
-        Me.lbxImportTemplates.Size = New System.Drawing.Size(314, 198)
-        Me.lbxImportTemplates.StyleController = Me.LayoutControl1
-        Me.lbxImportTemplates.TabIndex = 8
-        Me.lbxImportTemplates.ValueMember = "ID"
         '
         'UcConnectionDetails1
         '
         Me.UcConnectionDetails1._Connection = CType(resources.GetObject("UcConnectionDetails1._Connection"), Otalio.Import.clsConnectionDetails)
         Me.UcConnectionDetails1.Location = New System.Drawing.Point(7, 7)
         Me.UcConnectionDetails1.Name = "UcConnectionDetails1"
-        Me.UcConnectionDetails1.Size = New System.Drawing.Size(359, 546)
+        Me.UcConnectionDetails1.Size = New System.Drawing.Size(394, 654)
         Me.UcConnectionDetails1.TabIndex = 7
         '
         'UcProperties1
         '
         Me.UcProperties1._DataImportTemplate = CType(resources.GetObject("UcProperties1._DataImportTemplate"), Otalio.Import.clsDataImportTemplate)
-        Me.UcProperties1.Location = New System.Drawing.Point(341, 7)
+        Me.UcProperties1.Location = New System.Drawing.Point(429, 7)
         Me.UcProperties1.Name = "UcProperties1"
-        Me.UcProperties1.Size = New System.Drawing.Size(790, 546)
+        Me.UcProperties1.Size = New System.Drawing.Size(811, 654)
         Me.UcProperties1.TabIndex = 6
-        '
-        'LayoutControlItem4
-        '
-        Me.LayoutControlItem4.Control = Me.lbxImportTemplates
-        Me.LayoutControlItem4.Location = New System.Drawing.Point(0, 140)
-        Me.LayoutControlItem4.MinSize = New System.Drawing.Size(60, 10)
-        Me.LayoutControlItem4.Name = "LayoutControlItem4"
-        Me.LayoutControlItem4.Size = New System.Drawing.Size(324, 208)
-        Me.LayoutControlItem4.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
-        Me.LayoutControlItem4.Text = "Workbook"
-        Me.LayoutControlItem4.TextLocation = DevExpress.Utils.Locations.Top
-        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
-        Me.LayoutControlItem4.TextVisible = False
         '
         'LayoutControlGroup1
         '
@@ -4557,7 +4578,7 @@ Partial Class frmMainMenu
         Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.tcgTabs})
         Me.LayoutControlGroup1.Name = "Root"
         Me.LayoutControlGroup1.OptionsItemText.TextToControlDistance = 5
-        Me.LayoutControlGroup1.Size = New System.Drawing.Size(1138, 583)
+        Me.LayoutControlGroup1.Size = New System.Drawing.Size(1247, 691)
         Me.LayoutControlGroup1.TextVisible = False
         '
         'tcgTabs
@@ -4565,7 +4586,7 @@ Partial Class frmMainMenu
         Me.tcgTabs.Location = New System.Drawing.Point(0, 0)
         Me.tcgTabs.Name = "tcgTabs"
         Me.tcgTabs.SelectedTabPage = Me.LayoutControlGroup2
-        Me.tcgTabs.Size = New System.Drawing.Size(1138, 583)
+        Me.tcgTabs.Size = New System.Drawing.Size(1247, 691)
         Me.tcgTabs.TabPages.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlGroup2, Me.LayoutControlGroup3, Me.lcgSpreedsheet})
         Me.tcgTabs.TextLocation = DevExpress.Utils.Locations.Bottom
         '
@@ -4575,32 +4596,35 @@ Partial Class frmMainMenu
         Me.LayoutControlGroup2.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup2.Name = "LayoutControlGroup2"
         Me.LayoutControlGroup2.OptionsItemText.TextToControlDistance = 5
-        Me.LayoutControlGroup2.Size = New System.Drawing.Size(1134, 556)
+        Me.LayoutControlGroup2.Size = New System.Drawing.Size(1243, 664)
         Me.LayoutControlGroup2.Text = "Import Properties"
         Me.LayoutControlGroup2.TextLocation = DevExpress.Utils.Locations.Bottom
         '
         'LayoutControlItem1
         '
         Me.LayoutControlItem1.Control = Me.UcProperties1
-        Me.LayoutControlItem1.Location = New System.Drawing.Point(334, 0)
+        Me.LayoutControlItem1.Location = New System.Drawing.Point(422, 0)
         Me.LayoutControlItem1.Name = "LayoutControlItem1"
-        Me.LayoutControlItem1.Size = New System.Drawing.Size(800, 556)
+        Me.LayoutControlItem1.Size = New System.Drawing.Size(821, 664)
         Me.LayoutControlItem1.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem1.TextVisible = False
         '
         'SplitterItem1
         '
         Me.SplitterItem1.AllowHotTrack = True
-        Me.SplitterItem1.Location = New System.Drawing.Point(324, 0)
+        Me.SplitterItem1.Location = New System.Drawing.Point(412, 0)
         Me.SplitterItem1.Name = "SplitterItem1"
-        Me.SplitterItem1.Size = New System.Drawing.Size(10, 556)
+        Me.SplitterItem1.Size = New System.Drawing.Size(10, 664)
         '
         'LayoutControlItem5
         '
         Me.LayoutControlItem5.Control = Me.txtWorkbookName
         Me.LayoutControlItem5.Location = New System.Drawing.Point(0, 0)
+        Me.LayoutControlItem5.MaxSize = New System.Drawing.Size(412, 30)
+        Me.LayoutControlItem5.MinSize = New System.Drawing.Size(412, 30)
         Me.LayoutControlItem5.Name = "LayoutControlItem5"
-        Me.LayoutControlItem5.Size = New System.Drawing.Size(324, 30)
+        Me.LayoutControlItem5.Size = New System.Drawing.Size(412, 30)
+        Me.LayoutControlItem5.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.LayoutControlItem5.Text = "Name:"
         Me.LayoutControlItem5.TextSize = New System.Drawing.Size(50, 13)
         '
@@ -4608,10 +4632,10 @@ Partial Class frmMainMenu
         '
         Me.LayoutControlItem6.Control = Me.labVersion
         Me.LayoutControlItem6.Location = New System.Drawing.Point(0, 117)
-        Me.LayoutControlItem6.MaxSize = New System.Drawing.Size(324, 23)
-        Me.LayoutControlItem6.MinSize = New System.Drawing.Size(324, 23)
+        Me.LayoutControlItem6.MaxSize = New System.Drawing.Size(0, 23)
+        Me.LayoutControlItem6.MinSize = New System.Drawing.Size(65, 23)
         Me.LayoutControlItem6.Name = "LayoutControlItem6"
-        Me.LayoutControlItem6.Size = New System.Drawing.Size(324, 23)
+        Me.LayoutControlItem6.Size = New System.Drawing.Size(412, 23)
         Me.LayoutControlItem6.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.LayoutControlItem6.Text = "Version"
         Me.LayoutControlItem6.TextSize = New System.Drawing.Size(50, 13)
@@ -4622,7 +4646,7 @@ Partial Class frmMainMenu
         Me.LcgVersions.Location = New System.Drawing.Point(0, 60)
         Me.LcgVersions.Name = "LcgVersions"
         Me.LcgVersions.OptionsItemText.TextToControlDistance = 5
-        Me.LcgVersions.Size = New System.Drawing.Size(324, 57)
+        Me.LcgVersions.Size = New System.Drawing.Size(412, 57)
         Me.LcgVersions.Text = "Version"
         Me.LcgVersions.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
         '
@@ -4630,8 +4654,11 @@ Partial Class frmMainMenu
         '
         Me.lciMajor.Control = Me.txtMajor
         Me.lciMajor.Location = New System.Drawing.Point(0, 0)
+        Me.lciMajor.MaxSize = New System.Drawing.Size(0, 30)
+        Me.lciMajor.MinSize = New System.Drawing.Size(92, 30)
         Me.lciMajor.Name = "lciMajor"
         Me.lciMajor.Size = New System.Drawing.Size(92, 30)
+        Me.lciMajor.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.lciMajor.Text = "Major"
         Me.lciMajor.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize
         Me.lciMajor.TextSize = New System.Drawing.Size(27, 13)
@@ -4653,7 +4680,7 @@ Partial Class frmMainMenu
         Me.lciBuild.Control = Me.txtBuild
         Me.lciBuild.Location = New System.Drawing.Point(183, 0)
         Me.lciBuild.Name = "lciBuild"
-        Me.lciBuild.Size = New System.Drawing.Size(135, 30)
+        Me.lciBuild.Size = New System.Drawing.Size(223, 30)
         Me.lciBuild.Text = "Build"
         Me.lciBuild.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize
         Me.lciBuild.TextSize = New System.Drawing.Size(22, 13)
@@ -4663,8 +4690,11 @@ Partial Class frmMainMenu
         '
         Me.LayoutControlItem8.Control = Me.lueHierarchies
         Me.LayoutControlItem8.Location = New System.Drawing.Point(0, 30)
+        Me.LayoutControlItem8.MaxSize = New System.Drawing.Size(0, 30)
+        Me.LayoutControlItem8.MinSize = New System.Drawing.Size(115, 30)
         Me.LayoutControlItem8.Name = "LayoutControlItem8"
-        Me.LayoutControlItem8.Size = New System.Drawing.Size(324, 30)
+        Me.LayoutControlItem8.Size = New System.Drawing.Size(412, 30)
+        Me.LayoutControlItem8.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.LayoutControlItem8.Text = "Hierarchy:"
         Me.LayoutControlItem8.TextSize = New System.Drawing.Size(50, 13)
         '
@@ -4673,7 +4703,7 @@ Partial Class frmMainMenu
         Me.LayoutControlItem10.Control = Me.gridWorkbook
         Me.LayoutControlItem10.Location = New System.Drawing.Point(0, 140)
         Me.LayoutControlItem10.Name = "LayoutControlItem10"
-        Me.LayoutControlItem10.Size = New System.Drawing.Size(324, 416)
+        Me.LayoutControlItem10.Size = New System.Drawing.Size(412, 524)
         Me.LayoutControlItem10.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem10.TextVisible = False
         '
@@ -4683,7 +4713,7 @@ Partial Class frmMainMenu
         Me.LayoutControlGroup3.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup3.Name = "LayoutControlGroup3"
         Me.LayoutControlGroup3.OptionsItemText.TextToControlDistance = 5
-        Me.LayoutControlGroup3.Size = New System.Drawing.Size(1134, 556)
+        Me.LayoutControlGroup3.Size = New System.Drawing.Size(1243, 664)
         Me.LayoutControlGroup3.Text = "Conection Details"
         '
         'LayoutControlItem2
@@ -4691,23 +4721,23 @@ Partial Class frmMainMenu
         Me.LayoutControlItem2.Control = Me.UcConnectionDetails1
         Me.LayoutControlItem2.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlItem2.Name = "LayoutControlItem2"
-        Me.LayoutControlItem2.Size = New System.Drawing.Size(369, 556)
+        Me.LayoutControlItem2.Size = New System.Drawing.Size(404, 664)
         Me.LayoutControlItem2.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem2.TextVisible = False
         '
         'SplitterItem2
         '
         Me.SplitterItem2.AllowHotTrack = True
-        Me.SplitterItem2.Location = New System.Drawing.Point(369, 0)
+        Me.SplitterItem2.Location = New System.Drawing.Point(404, 0)
         Me.SplitterItem2.Name = "SplitterItem2"
-        Me.SplitterItem2.Size = New System.Drawing.Size(10, 556)
+        Me.SplitterItem2.Size = New System.Drawing.Size(10, 664)
         '
         'TabbedControlGroup1
         '
-        Me.TabbedControlGroup1.Location = New System.Drawing.Point(379, 0)
+        Me.TabbedControlGroup1.Location = New System.Drawing.Point(414, 0)
         Me.TabbedControlGroup1.Name = "TabbedControlGroup1"
         Me.TabbedControlGroup1.SelectedTabPage = Me.LayoutControlGroup6
-        Me.TabbedControlGroup1.Size = New System.Drawing.Size(755, 556)
+        Me.TabbedControlGroup1.Size = New System.Drawing.Size(829, 664)
         Me.TabbedControlGroup1.TabPages.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlGroup6, Me.LayoutControlGroup5})
         '
         'LayoutControlGroup6
@@ -4716,7 +4746,7 @@ Partial Class frmMainMenu
         Me.LayoutControlGroup6.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup6.Name = "LayoutControlGroup6"
         Me.LayoutControlGroup6.OptionsItemText.TextToControlDistance = 5
-        Me.LayoutControlGroup6.Size = New System.Drawing.Size(751, 529)
+        Me.LayoutControlGroup6.Size = New System.Drawing.Size(825, 637)
         Me.LayoutControlGroup6.Text = "Logs:"
         '
         'LayoutControlItem7
@@ -4724,7 +4754,7 @@ Partial Class frmMainMenu
         Me.LayoutControlItem7.Control = Me.txtLogs
         Me.LayoutControlItem7.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlItem7.Name = "LayoutControlItem7"
-        Me.LayoutControlItem7.Size = New System.Drawing.Size(751, 529)
+        Me.LayoutControlItem7.Size = New System.Drawing.Size(825, 637)
         Me.LayoutControlItem7.Text = "Logs"
         Me.LayoutControlItem7.TextLocation = DevExpress.Utils.Locations.Top
         Me.LayoutControlItem7.TextSize = New System.Drawing.Size(0, 0)
@@ -4736,7 +4766,7 @@ Partial Class frmMainMenu
         Me.LayoutControlGroup5.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup5.Name = "LayoutControlGroup5"
         Me.LayoutControlGroup5.OptionsItemText.TextToControlDistance = 5
-        Me.LayoutControlGroup5.Size = New System.Drawing.Size(751, 529)
+        Me.LayoutControlGroup5.Size = New System.Drawing.Size(825, 637)
         Me.LayoutControlGroup5.Text = "Errors:"
         '
         'LayoutControlItem9
@@ -4744,7 +4774,7 @@ Partial Class frmMainMenu
         Me.LayoutControlItem9.Control = Me.txtErrors
         Me.LayoutControlItem9.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlItem9.Name = "LayoutControlItem9"
-        Me.LayoutControlItem9.Size = New System.Drawing.Size(751, 529)
+        Me.LayoutControlItem9.Size = New System.Drawing.Size(825, 637)
         Me.LayoutControlItem9.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem9.TextVisible = False
         '
@@ -4754,7 +4784,7 @@ Partial Class frmMainMenu
         Me.lcgSpreedsheet.Location = New System.Drawing.Point(0, 0)
         Me.lcgSpreedsheet.Name = "lcgSpreedsheet"
         Me.lcgSpreedsheet.OptionsItemText.TextToControlDistance = 5
-        Me.lcgSpreedsheet.Size = New System.Drawing.Size(1134, 556)
+        Me.lcgSpreedsheet.Size = New System.Drawing.Size(1243, 664)
         Me.lcgSpreedsheet.Text = "Spreedsheet"
         '
         'LayoutControlItem3
@@ -4762,17 +4792,17 @@ Partial Class frmMainMenu
         Me.LayoutControlItem3.Control = Me.spreadsheetControl
         Me.LayoutControlItem3.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlItem3.Name = "LayoutControlItem3"
-        Me.LayoutControlItem3.Size = New System.Drawing.Size(1134, 556)
+        Me.LayoutControlItem3.Size = New System.Drawing.Size(1243, 664)
         Me.LayoutControlItem3.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem3.TextVisible = False
         '
         'SplitterControl1
         '
         Me.SplitterControl1.Dock = System.Windows.Forms.DockStyle.Right
-        Me.SplitterControl1.Location = New System.Drawing.Point(1138, 34)
+        Me.SplitterControl1.Location = New System.Drawing.Point(1247, 34)
         Me.SplitterControl1.MinSize = 20
         Me.SplitterControl1.Name = "SplitterControl1"
-        Me.SplitterControl1.Size = New System.Drawing.Size(10, 583)
+        Me.SplitterControl1.Size = New System.Drawing.Size(10, 691)
         Me.SplitterControl1.TabIndex = 4
         Me.SplitterControl1.TabStop = False
         '
@@ -4782,7 +4812,7 @@ Partial Class frmMainMenu
         Me.splitterControl.Location = New System.Drawing.Point(0, 24)
         Me.splitterControl.MinSize = 20
         Me.splitterControl.Name = "splitterControl"
-        Me.splitterControl.Size = New System.Drawing.Size(1148, 10)
+        Me.splitterControl.Size = New System.Drawing.Size(1257, 10)
         Me.splitterControl.TabIndex = 2
         Me.splitterControl.TabStop = False
         '
@@ -4794,7 +4824,7 @@ Partial Class frmMainMenu
         Me.formulaBarNameBoxSplitContainerControl.Name = "formulaBarNameBoxSplitContainerControl"
         Me.formulaBarNameBoxSplitContainerControl.Panel1.Controls.Add(Me.spreadsheetNameBoxControl)
         Me.formulaBarNameBoxSplitContainerControl.Panel2.Controls.Add(Me.spreadsheetFormulaBarControl1)
-        Me.formulaBarNameBoxSplitContainerControl.Size = New System.Drawing.Size(1148, 24)
+        Me.formulaBarNameBoxSplitContainerControl.Size = New System.Drawing.Size(1257, 24)
         Me.formulaBarNameBoxSplitContainerControl.SplitterPosition = 145
         Me.formulaBarNameBoxSplitContainerControl.TabIndex = 3
         '
@@ -4815,7 +4845,7 @@ Partial Class frmMainMenu
         Me.spreadsheetFormulaBarControl1.Location = New System.Drawing.Point(0, 0)
         Me.spreadsheetFormulaBarControl1.MinimumSize = New System.Drawing.Size(0, 20)
         Me.spreadsheetFormulaBarControl1.Name = "spreadsheetFormulaBarControl1"
-        Me.spreadsheetFormulaBarControl1.Size = New System.Drawing.Size(993, 24)
+        Me.spreadsheetFormulaBarControl1.Size = New System.Drawing.Size(1102, 24)
         Me.spreadsheetFormulaBarControl1.SpreadsheetControl = Me.spreadsheetControl
         Me.spreadsheetFormulaBarControl1.TabIndex = 0
         '
@@ -5208,7 +5238,7 @@ Partial Class frmMainMenu
         Me.AllowFormGlass = DevExpress.Utils.DefaultBoolean.[True]
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1148, 799)
+        Me.ClientSize = New System.Drawing.Size(1257, 907)
         Me.Controls.Add(Me.spreadsheetFormulaBarPanel)
         Me.Controls.Add(Me.popupControlContainer1)
         Me.Controls.Add(Me.popupControlContainer2)
@@ -5266,6 +5296,7 @@ Partial Class frmMainMenu
         CType(Me.gridWorkbook, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gdWorkbook, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.beAction, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.RepositoryItemCheckEdit1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtErrors.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lueHierarchies.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtMinor.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5273,8 +5304,6 @@ Partial Class frmMainMenu
         CType(Me.txtBuild.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtLogs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtWorkbookName.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.lbxImportTemplates, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tcgTabs, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).EndInit()
@@ -5312,452 +5341,450 @@ Partial Class frmMainMenu
 
     End Sub
     Private WithEvents ribbonControl As DevExpress.XtraBars.Ribbon.RibbonControl
-  Private WithEvents iExit As DevExpress.XtraBars.BarButtonItem
-  Private WithEvents siStatus As DevExpress.XtraBars.BarStaticItem
-  Private WithEvents siInfo As DevExpress.XtraBars.BarStaticItem
-  Private WithEvents skinsRibbonPageGroup As DevExpress.XtraBars.Ribbon.RibbonPageGroup
-  Private WithEvents rgbiSkins As DevExpress.XtraBars.RibbonGalleryBarItem
-  Private WithEvents helpRibbonPage As DevExpress.XtraBars.Ribbon.RibbonPage
-  Private WithEvents helpRibbonPageGroup As DevExpress.XtraBars.Ribbon.RibbonPageGroup
-  Private WithEvents iHelp As DevExpress.XtraBars.BarButtonItem
-  Private WithEvents iAbout As DevExpress.XtraBars.BarButtonItem
-  Private WithEvents appMenu As DevExpress.XtraBars.Ribbon.ApplicationMenu
-  Private WithEvents popupControlContainer1 As DevExpress.XtraBars.PopupControlContainer
-  Private WithEvents someLabelControl2 As DevExpress.XtraEditors.LabelControl
-  Private WithEvents someLabelControl1 As DevExpress.XtraEditors.LabelControl
-  Private WithEvents popupControlContainer2 As DevExpress.XtraBars.PopupControlContainer
-  Private WithEvents buttonEdit As DevExpress.XtraEditors.ButtonEdit
-  Private WithEvents ribbonStatusBar As DevExpress.XtraBars.Ribbon.RibbonStatusBar
-  Private WithEvents ribbonImageCollection As DevExpress.Utils.ImageCollection
-  Private WithEvents ribbonImageCollectionLarge As DevExpress.Utils.ImageCollection
-  Private WithEvents spreadsheetFormulaBarPanel As System.Windows.Forms.Panel
-  Private WithEvents splitterControl As DevExpress.XtraEditors.SplitterControl
-  Private WithEvents formulaBarNameBoxSplitContainerControl As DevExpress.XtraEditors.SplitContainerControl
-  Private WithEvents spreadsheetNameBoxControl As DevExpress.XtraSpreadsheet.SpreadsheetNameBoxControl
-  Private WithEvents spreadsheetFormulaBarControl1 As DevExpress.XtraSpreadsheet.SpreadsheetFormulaBarControl
-  Friend WithEvents SpreadsheetCommandBarSubItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents RenameTableItemCaption1 As DevExpress.XtraSpreadsheet.UI.RenameTableItemCaption
-  Friend WithEvents RenameTableItem1 As DevExpress.XtraSpreadsheet.UI.RenameTableItem
-  Friend WithEvents RepositoryItemTextEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemTextEdit
-  Friend WithEvents SpreadsheetCommandBarCheckItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents GalleryTableStylesItem1 As DevExpress.XtraSpreadsheet.UI.GalleryTableStylesItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents GalleryChartLayoutItem1 As DevExpress.XtraSpreadsheet.UI.GalleryChartLayoutItem
-  Friend WithEvents GalleryChartStyleItem1 As DevExpress.XtraSpreadsheet.UI.GalleryChartStyleItem
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown1 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarSubItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown2 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown3 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown4 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown5 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarSubItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown6 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown7 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarSubItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown8 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown9 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown10 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown11 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown12 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarCheckItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem23 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem24 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem25 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem26 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem27 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem28 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem29 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem30 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem31 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem32 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem33 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem34 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem35 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem36 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem37 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem38 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem39 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem40 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem41 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem42 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents FunctionsFinancialItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsFinancialItem
-  Friend WithEvents FunctionsLogicalItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsLogicalItem
-  Friend WithEvents FunctionsTextItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsTextItem
-  Friend WithEvents FunctionsDateAndTimeItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsDateAndTimeItem
-  Friend WithEvents FunctionsLookupAndReferenceItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsLookupAndReferenceItem
-  Friend WithEvents FunctionsMathAndTrigonometryItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsMathAndTrigonometryItem
-  Friend WithEvents SpreadsheetCommandBarSubItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents FunctionsStatisticalItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsStatisticalItem
-  Friend WithEvents FunctionsEngineeringItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsEngineeringItem
-  Friend WithEvents FunctionsInformationItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsInformationItem
-  Friend WithEvents FunctionsCompatibilityItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsCompatibilityItem
-  Friend WithEvents FunctionsWebItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsWebItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem43 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem44 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents DefinedNameListItem1 As DevExpress.XtraSpreadsheet.UI.DefinedNameListItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem45 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarSubItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem46 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem47 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem48 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents PageSetupPaperKindItem1 As DevExpress.XtraSpreadsheet.UI.PageSetupPaperKindItem
-  Friend WithEvents SpreadsheetCommandBarSubItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem49 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem50 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem51 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem52 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem53 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown13 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown14 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown15 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown16 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown17 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown18 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown19 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonItem54 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem55 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem56 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem57 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem58 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem59 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents BarButtonGroup1 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents ChangeFontNameItem1 As DevExpress.XtraSpreadsheet.UI.ChangeFontNameItem
-  Friend WithEvents RepositoryItemFontEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemFontEdit
-  Friend WithEvents ChangeFontSizeItem1 As DevExpress.XtraSpreadsheet.UI.ChangeFontSizeItem
-  Friend WithEvents RepositoryItemSpreadsheetFontSizeEdit1 As DevExpress.XtraSpreadsheet.Design.RepositoryItemSpreadsheetFontSizeEdit
-  Friend WithEvents SpreadsheetCommandBarButtonItem60 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem61 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents BarButtonGroup2 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarCheckItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem23 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem24 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents BarButtonGroup3 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarSubItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem62 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem63 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem64 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem65 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem66 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem67 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem68 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem69 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem70 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem71 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem72 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem73 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem74 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents ChangeBorderLineColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeBorderLineColorItem
-  Friend WithEvents ChangeBorderLineStyleItem1 As DevExpress.XtraSpreadsheet.UI.ChangeBorderLineStyleItem
-  Friend WithEvents CommandBarGalleryDropDown20 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents BarButtonGroup4 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents ChangeCellFillColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeCellFillColorItem
-  Friend WithEvents ChangeFontColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeFontColorItem
-  Friend WithEvents BarButtonGroup5 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarCheckItem25 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem26 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem27 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents BarButtonGroup6 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarCheckItem28 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem29 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem30 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents BarButtonGroup7 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarButtonItem75 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem76 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem31 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarSubItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem32 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem77 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem78 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem79 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents BarButtonGroup8 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents ChangeNumberFormatItem1 As DevExpress.XtraSpreadsheet.UI.ChangeNumberFormatItem
-  Friend WithEvents RepositoryItemPopupGalleryEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemPopupGalleryEdit
-  Friend WithEvents BarButtonGroup9 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarSubItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem80 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem81 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem82 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem83 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem84 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem85 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem86 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents BarButtonGroup10 As DevExpress.XtraBars.BarButtonGroup
-  Friend WithEvents SpreadsheetCommandBarButtonItem87 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem88 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarSubItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem89 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem90 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem91 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem92 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem93 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem94 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem95 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem96 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem97 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem98 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem99 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem100 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem101 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown21 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown22 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
-  Friend WithEvents CommandBarGalleryDropDown23 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents SpreadsheetCommandBarSubItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem102 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem103 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents GalleryFormatAsTableItem1 As DevExpress.XtraSpreadsheet.UI.GalleryFormatAsTableItem
-  Friend WithEvents CommandBarGalleryDropDown24 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
-  Friend WithEvents GalleryChangeStyleItem1 As DevExpress.XtraSpreadsheet.UI.GalleryChangeStyleItem
-  Friend WithEvents SpreadsheetCommandBarSubItem23 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem104 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem105 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem106 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem24 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem107 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem108 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem109 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem25 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem110 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem111 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem112 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem113 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem114 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem26 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem115 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem116 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem117 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem118 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem119 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem120 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem121 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem122 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents ChangeSheetTabColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeSheetTabColorItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem33 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem124 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem27 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarSubItem28 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem130 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem131 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem132 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem133 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem29 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem134 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem135 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem136 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem137 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem138 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem139 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarSubItem30 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarSubItem31 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem144 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem145 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem146 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem147 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem148 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem149 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem150 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem151 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem152 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem153 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem154 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem155 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem156 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem157 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem158 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem159 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem160 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents DrawingToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.DrawingToolsRibbonPageCategory
-  Friend WithEvents DrawingFormatRibbonPage1 As DevExpress.XtraSpreadsheet.UI.DrawingFormatRibbonPage
-  Friend WithEvents DrawingFormatArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.DrawingFormatArrangeRibbonPageGroup
-  Friend WithEvents PictureToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.PictureToolsRibbonPageCategory
-  Friend WithEvents PictureFormatRibbonPage1 As DevExpress.XtraSpreadsheet.UI.PictureFormatRibbonPage
-  Friend WithEvents PictureFormatArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PictureFormatArrangeRibbonPageGroup
-  Friend WithEvents TableToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.TableToolsRibbonPageCategory
-  Friend WithEvents TableToolsDesignRibbonPage1 As DevExpress.XtraSpreadsheet.UI.TableToolsDesignRibbonPage
-  Friend WithEvents TablePropertiesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TablePropertiesRibbonPageGroup
-  Friend WithEvents TableToolsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TableToolsRibbonPageGroup
-  Friend WithEvents TableStyleOptionsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TableStyleOptionsRibbonPageGroup
-  Friend WithEvents TableStylesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TableStylesRibbonPageGroup
-  Friend WithEvents ChartToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.ChartToolsRibbonPageCategory
-  Friend WithEvents ChartsFormatRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ChartsFormatRibbonPage
-  Friend WithEvents ChartsFormatArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsFormatArrangeRibbonPageGroup
-  Friend WithEvents ChartsLayoutRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutRibbonPage
-  Friend WithEvents ChartsLayoutLabelsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutLabelsRibbonPageGroup
-  Friend WithEvents ChartsLayoutAxesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutAxesRibbonPageGroup
-  Friend WithEvents ChartsLayoutAnalysisRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutAnalysisRibbonPageGroup
-  Friend WithEvents ChartsDesignRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignRibbonPage
-  Friend WithEvents ChartsDesignTypeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignTypeRibbonPageGroup
-  Friend WithEvents ChartsDesignDataRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignDataRibbonPageGroup
-  Friend WithEvents ChartsDesignLayoutsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignLayoutsRibbonPageGroup
-  Friend WithEvents ChartsDesignStylesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignStylesRibbonPageGroup
-  Friend WithEvents FileRibbonPage1 As DevExpress.XtraSpreadsheet.UI.FileRibbonPage
-  Friend WithEvents CommonRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.CommonRibbonPageGroup
-  Friend WithEvents InfoRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.InfoRibbonPageGroup
-  Friend WithEvents HomeRibbonPage1 As DevExpress.XtraSpreadsheet.UI.HomeRibbonPage
-  Friend WithEvents ClipboardRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ClipboardRibbonPageGroup
-  Friend WithEvents FontRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FontRibbonPageGroup
-  Friend WithEvents AlignmentRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.AlignmentRibbonPageGroup
-  Friend WithEvents NumberRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.NumberRibbonPageGroup
-  Friend WithEvents StylesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.StylesRibbonPageGroup
-  Friend WithEvents CellsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.CellsRibbonPageGroup
-  Friend WithEvents EditingRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.EditingRibbonPageGroup
-  Friend WithEvents InsertRibbonPage1 As DevExpress.XtraSpreadsheet.UI.InsertRibbonPage
-  Friend WithEvents TablesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TablesRibbonPageGroup
-  Friend WithEvents IllustrationsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.IllustrationsRibbonPageGroup
-  Friend WithEvents ChartsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsRibbonPageGroup
-  Friend WithEvents LinksRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.LinksRibbonPageGroup
-  Friend WithEvents SymbolsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.SymbolsRibbonPageGroup
-  Friend WithEvents PageLayoutRibbonPage1 As DevExpress.XtraSpreadsheet.UI.PageLayoutRibbonPage
-  Friend WithEvents PageSetupRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PageSetupRibbonPageGroup
-  Friend WithEvents PageSetupShowRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PageSetupShowRibbonPageGroup
-  Friend WithEvents PageSetupPrintRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PageSetupPrintRibbonPageGroup
-  Friend WithEvents ArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ArrangeRibbonPageGroup
-  Friend WithEvents FormulasRibbonPage1 As DevExpress.XtraSpreadsheet.UI.FormulasRibbonPage
-  Friend WithEvents FunctionLibraryRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FunctionLibraryRibbonPageGroup
-  Friend WithEvents FormulaDefinedNamesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FormulaDefinedNamesRibbonPageGroup
-  Friend WithEvents FormulaAuditingRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FormulaAuditingRibbonPageGroup
-  Friend WithEvents FormulaCalculationRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FormulaCalculationRibbonPageGroup
-  Friend WithEvents DataRibbonPage1 As DevExpress.XtraSpreadsheet.UI.DataRibbonPage
-  Friend WithEvents SortAndFilterRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.SortAndFilterRibbonPageGroup
-  Friend WithEvents DataToolsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.DataToolsRibbonPageGroup
-  Friend WithEvents OutlineRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.OutlineRibbonPageGroup
-  Friend WithEvents ReviewRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ReviewRibbonPage
-  Friend WithEvents CommentsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.CommentsRibbonPageGroup
-  Friend WithEvents ChangesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChangesRibbonPageGroup
-  Friend WithEvents ViewRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ViewRibbonPage
-  Friend WithEvents ShowRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ShowRibbonPageGroup
-  Friend WithEvents ZoomRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ZoomRibbonPageGroup
-  Friend WithEvents WindowRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.WindowRibbonPageGroup
-  Friend WithEvents SpreadsheetBarController1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetBarController
-  Friend WithEvents SpreadsheetCommandBarButtonItem123 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem125 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem126 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem127 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem128 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem129 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem140 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem141 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarCheckItem34 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem142 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Friend WithEvents SpreadsheetCommandBarButtonItem143 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
-  Private WithEvents RibbonPageSkins As RibbonPage
-  Private WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
-  Friend WithEvents LayoutControl1 As DevExpress.XtraLayout.LayoutControl
-  Friend WithEvents UcProperties1 As ucDataImportProperties
-  Friend WithEvents LayoutControlGroup1 As DevExpress.XtraLayout.LayoutControlGroup
-  Friend WithEvents tcgTabs As DevExpress.XtraLayout.TabbedControlGroup
-  Friend WithEvents LayoutControlGroup3 As DevExpress.XtraLayout.LayoutControlGroup
-  Friend WithEvents LayoutControlGroup2 As DevExpress.XtraLayout.LayoutControlGroup
-  Friend WithEvents LayoutControlItem1 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents UcConnectionDetails1 As ucConnectionDetails
-  Friend WithEvents LayoutControlItem2 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents LayoutControlItem3 As DevExpress.XtraLayout.LayoutControlItem
-  Private WithEvents spreadsheetControl As DevExpress.XtraSpreadsheet.SpreadsheetControl
-  Friend WithEvents lcgSpreedsheet As DevExpress.XtraLayout.LayoutControlGroup
-  Friend WithEvents LayoutControlGroup4 As DevExpress.XtraLayout.LayoutControlGroup
-  Friend WithEvents EmptySpaceItem1 As DevExpress.XtraLayout.EmptySpaceItem
-  Friend WithEvents bbiImportOpen As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiSaveImport As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents rpImport As RibbonPage
-  Friend WithEvents rpgImportCommon As RibbonPageGroup
-  Friend WithEvents bbiCreateEmptyExcelDocument As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiImportExcel As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiValidateData As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents rpgActions As RibbonPageGroup
-  Friend WithEvents bbiValidatorAdd As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiValidatorDelete As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents rpgValidators As RibbonPageGroup
-  Friend WithEvents bbiFormatJsonCode As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiSaveImportAs As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiDuplicate As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiOpenWorkbook As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiSaveWorkbook As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiSaveAsWorkbook As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiAddTemplate As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiRemoveTemplate As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents rpgWorkbook As RibbonPageGroup
-  Friend WithEvents lbxImportTemplates As DevExpress.XtraEditors.CheckedListBoxControl
-  Friend WithEvents LayoutControlItem4 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents SplitterItem1 As DevExpress.XtraLayout.SplitterItem
-  Friend WithEvents bbiCopyValidator As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiCancel As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents bbiSaveAll As DevExpress.XtraBars.BarButtonItem
-  Friend WithEvents labVersion As DevExpress.XtraEditors.LabelControl
-  Friend WithEvents txtWorkbookName As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents LayoutControlItem5 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents LayoutControlItem6 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtLogs As DevExpress.XtraEditors.MemoEdit
+    Private WithEvents iExit As DevExpress.XtraBars.BarButtonItem
+    Private WithEvents siStatus As DevExpress.XtraBars.BarStaticItem
+    Private WithEvents siInfo As DevExpress.XtraBars.BarStaticItem
+    Private WithEvents skinsRibbonPageGroup As DevExpress.XtraBars.Ribbon.RibbonPageGroup
+    Private WithEvents rgbiSkins As DevExpress.XtraBars.RibbonGalleryBarItem
+    Private WithEvents helpRibbonPage As DevExpress.XtraBars.Ribbon.RibbonPage
+    Private WithEvents helpRibbonPageGroup As DevExpress.XtraBars.Ribbon.RibbonPageGroup
+    Private WithEvents iHelp As DevExpress.XtraBars.BarButtonItem
+    Private WithEvents iAbout As DevExpress.XtraBars.BarButtonItem
+    Private WithEvents appMenu As DevExpress.XtraBars.Ribbon.ApplicationMenu
+    Private WithEvents popupControlContainer1 As DevExpress.XtraBars.PopupControlContainer
+    Private WithEvents someLabelControl2 As DevExpress.XtraEditors.LabelControl
+    Private WithEvents someLabelControl1 As DevExpress.XtraEditors.LabelControl
+    Private WithEvents popupControlContainer2 As DevExpress.XtraBars.PopupControlContainer
+    Private WithEvents buttonEdit As DevExpress.XtraEditors.ButtonEdit
+    Private WithEvents ribbonStatusBar As DevExpress.XtraBars.Ribbon.RibbonStatusBar
+    Private WithEvents ribbonImageCollection As DevExpress.Utils.ImageCollection
+    Private WithEvents ribbonImageCollectionLarge As DevExpress.Utils.ImageCollection
+    Private WithEvents spreadsheetFormulaBarPanel As System.Windows.Forms.Panel
+    Private WithEvents splitterControl As DevExpress.XtraEditors.SplitterControl
+    Private WithEvents formulaBarNameBoxSplitContainerControl As DevExpress.XtraEditors.SplitContainerControl
+    Private WithEvents spreadsheetNameBoxControl As DevExpress.XtraSpreadsheet.SpreadsheetNameBoxControl
+    Private WithEvents spreadsheetFormulaBarControl1 As DevExpress.XtraSpreadsheet.SpreadsheetFormulaBarControl
+    Friend WithEvents SpreadsheetCommandBarSubItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents RenameTableItemCaption1 As DevExpress.XtraSpreadsheet.UI.RenameTableItemCaption
+    Friend WithEvents RenameTableItem1 As DevExpress.XtraSpreadsheet.UI.RenameTableItem
+    Friend WithEvents RepositoryItemTextEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemTextEdit
+    Friend WithEvents SpreadsheetCommandBarCheckItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents GalleryTableStylesItem1 As DevExpress.XtraSpreadsheet.UI.GalleryTableStylesItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents GalleryChartLayoutItem1 As DevExpress.XtraSpreadsheet.UI.GalleryChartLayoutItem
+    Friend WithEvents GalleryChartStyleItem1 As DevExpress.XtraSpreadsheet.UI.GalleryChartStyleItem
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown1 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarSubItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem2 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown2 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem3 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown3 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown4 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown5 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarSubItem4 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown6 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown7 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarSubItem5 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown8 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown9 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown10 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown11 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown12 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarCheckItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem6 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem23 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem24 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem25 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem26 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem27 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem7 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem28 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem29 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem30 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem8 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem31 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem32 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem9 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem33 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem34 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem35 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem36 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem37 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem10 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem38 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem39 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem40 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem41 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem42 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents FunctionsFinancialItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsFinancialItem
+    Friend WithEvents FunctionsLogicalItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsLogicalItem
+    Friend WithEvents FunctionsTextItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsTextItem
+    Friend WithEvents FunctionsDateAndTimeItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsDateAndTimeItem
+    Friend WithEvents FunctionsLookupAndReferenceItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsLookupAndReferenceItem
+    Friend WithEvents FunctionsMathAndTrigonometryItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsMathAndTrigonometryItem
+    Friend WithEvents SpreadsheetCommandBarSubItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents FunctionsStatisticalItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsStatisticalItem
+    Friend WithEvents FunctionsEngineeringItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsEngineeringItem
+    Friend WithEvents FunctionsInformationItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsInformationItem
+    Friend WithEvents FunctionsCompatibilityItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsCompatibilityItem
+    Friend WithEvents FunctionsWebItem1 As DevExpress.XtraSpreadsheet.UI.FunctionsWebItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem43 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem44 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents DefinedNameListItem1 As DevExpress.XtraSpreadsheet.UI.DefinedNameListItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem45 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem11 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarSubItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem12 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem46 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem47 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem48 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents PageSetupPaperKindItem1 As DevExpress.XtraSpreadsheet.UI.PageSetupPaperKindItem
+    Friend WithEvents SpreadsheetCommandBarSubItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem49 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem50 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem51 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem52 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem53 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem13 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown13 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem14 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown14 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem15 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown15 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown16 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown17 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown18 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown19 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonItem54 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem55 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem56 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem57 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem58 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem59 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents BarButtonGroup1 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents ChangeFontNameItem1 As DevExpress.XtraSpreadsheet.UI.ChangeFontNameItem
+    Friend WithEvents RepositoryItemFontEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemFontEdit
+    Friend WithEvents ChangeFontSizeItem1 As DevExpress.XtraSpreadsheet.UI.ChangeFontSizeItem
+    Friend WithEvents RepositoryItemSpreadsheetFontSizeEdit1 As DevExpress.XtraSpreadsheet.Design.RepositoryItemSpreadsheetFontSizeEdit
+    Friend WithEvents SpreadsheetCommandBarButtonItem60 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem61 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents BarButtonGroup2 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarCheckItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem23 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem24 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents BarButtonGroup3 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarSubItem16 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem62 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem63 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem64 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem65 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem66 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem67 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem68 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem69 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem70 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem71 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem72 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem73 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem74 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents ChangeBorderLineColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeBorderLineColorItem
+    Friend WithEvents ChangeBorderLineStyleItem1 As DevExpress.XtraSpreadsheet.UI.ChangeBorderLineStyleItem
+    Friend WithEvents CommandBarGalleryDropDown20 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents BarButtonGroup4 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents ChangeCellFillColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeCellFillColorItem
+    Friend WithEvents ChangeFontColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeFontColorItem
+    Friend WithEvents BarButtonGroup5 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarCheckItem25 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem26 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem27 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents BarButtonGroup6 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarCheckItem28 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem29 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem30 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents BarButtonGroup7 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarButtonItem75 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem76 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem31 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarSubItem17 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem32 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem77 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem78 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem79 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents BarButtonGroup8 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents ChangeNumberFormatItem1 As DevExpress.XtraSpreadsheet.UI.ChangeNumberFormatItem
+    Friend WithEvents RepositoryItemPopupGalleryEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemPopupGalleryEdit
+    Friend WithEvents BarButtonGroup9 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarSubItem18 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem80 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem81 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem82 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem83 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem84 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem85 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem86 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents BarButtonGroup10 As DevExpress.XtraBars.BarButtonGroup
+    Friend WithEvents SpreadsheetCommandBarButtonItem87 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem88 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem19 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarSubItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem89 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem90 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem91 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem92 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem93 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem94 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem95 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem96 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem97 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem98 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem99 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem100 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem101 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem20 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown21 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem21 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown22 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarButtonGalleryDropDownItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonGalleryDropDownItem
+    Friend WithEvents CommandBarGalleryDropDown23 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents SpreadsheetCommandBarSubItem22 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem102 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem103 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents GalleryFormatAsTableItem1 As DevExpress.XtraSpreadsheet.UI.GalleryFormatAsTableItem
+    Friend WithEvents CommandBarGalleryDropDown24 As DevExpress.XtraBars.Commands.CommandBarGalleryDropDown
+    Friend WithEvents GalleryChangeStyleItem1 As DevExpress.XtraSpreadsheet.UI.GalleryChangeStyleItem
+    Friend WithEvents SpreadsheetCommandBarSubItem23 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem104 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem105 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem106 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem24 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem107 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem108 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem109 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem25 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem110 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem111 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem112 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem113 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem114 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem26 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem115 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem116 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem117 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem118 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem119 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem120 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem121 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem122 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents ChangeSheetTabColorItem1 As DevExpress.XtraSpreadsheet.UI.ChangeSheetTabColorItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem33 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem124 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem27 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarSubItem28 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem130 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem131 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem132 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem133 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem29 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem134 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem135 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem136 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem137 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem138 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem139 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarSubItem30 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarSubItem31 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarSubItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem144 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem145 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem146 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem147 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem148 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem149 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem150 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem151 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem152 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem153 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem154 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem155 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem156 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem157 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem158 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem159 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem160 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents DrawingToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.DrawingToolsRibbonPageCategory
+    Friend WithEvents DrawingFormatRibbonPage1 As DevExpress.XtraSpreadsheet.UI.DrawingFormatRibbonPage
+    Friend WithEvents DrawingFormatArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.DrawingFormatArrangeRibbonPageGroup
+    Friend WithEvents PictureToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.PictureToolsRibbonPageCategory
+    Friend WithEvents PictureFormatRibbonPage1 As DevExpress.XtraSpreadsheet.UI.PictureFormatRibbonPage
+    Friend WithEvents PictureFormatArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PictureFormatArrangeRibbonPageGroup
+    Friend WithEvents TableToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.TableToolsRibbonPageCategory
+    Friend WithEvents TableToolsDesignRibbonPage1 As DevExpress.XtraSpreadsheet.UI.TableToolsDesignRibbonPage
+    Friend WithEvents TablePropertiesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TablePropertiesRibbonPageGroup
+    Friend WithEvents TableToolsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TableToolsRibbonPageGroup
+    Friend WithEvents TableStyleOptionsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TableStyleOptionsRibbonPageGroup
+    Friend WithEvents TableStylesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TableStylesRibbonPageGroup
+    Friend WithEvents ChartToolsRibbonPageCategory1 As DevExpress.XtraSpreadsheet.UI.ChartToolsRibbonPageCategory
+    Friend WithEvents ChartsFormatRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ChartsFormatRibbonPage
+    Friend WithEvents ChartsFormatArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsFormatArrangeRibbonPageGroup
+    Friend WithEvents ChartsLayoutRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutRibbonPage
+    Friend WithEvents ChartsLayoutLabelsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutLabelsRibbonPageGroup
+    Friend WithEvents ChartsLayoutAxesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutAxesRibbonPageGroup
+    Friend WithEvents ChartsLayoutAnalysisRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsLayoutAnalysisRibbonPageGroup
+    Friend WithEvents ChartsDesignRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignRibbonPage
+    Friend WithEvents ChartsDesignTypeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignTypeRibbonPageGroup
+    Friend WithEvents ChartsDesignDataRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignDataRibbonPageGroup
+    Friend WithEvents ChartsDesignLayoutsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignLayoutsRibbonPageGroup
+    Friend WithEvents ChartsDesignStylesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsDesignStylesRibbonPageGroup
+    Friend WithEvents FileRibbonPage1 As DevExpress.XtraSpreadsheet.UI.FileRibbonPage
+    Friend WithEvents CommonRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.CommonRibbonPageGroup
+    Friend WithEvents InfoRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.InfoRibbonPageGroup
+    Friend WithEvents HomeRibbonPage1 As DevExpress.XtraSpreadsheet.UI.HomeRibbonPage
+    Friend WithEvents ClipboardRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ClipboardRibbonPageGroup
+    Friend WithEvents FontRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FontRibbonPageGroup
+    Friend WithEvents AlignmentRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.AlignmentRibbonPageGroup
+    Friend WithEvents NumberRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.NumberRibbonPageGroup
+    Friend WithEvents StylesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.StylesRibbonPageGroup
+    Friend WithEvents CellsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.CellsRibbonPageGroup
+    Friend WithEvents EditingRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.EditingRibbonPageGroup
+    Friend WithEvents InsertRibbonPage1 As DevExpress.XtraSpreadsheet.UI.InsertRibbonPage
+    Friend WithEvents TablesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.TablesRibbonPageGroup
+    Friend WithEvents IllustrationsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.IllustrationsRibbonPageGroup
+    Friend WithEvents ChartsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChartsRibbonPageGroup
+    Friend WithEvents LinksRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.LinksRibbonPageGroup
+    Friend WithEvents SymbolsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.SymbolsRibbonPageGroup
+    Friend WithEvents PageLayoutRibbonPage1 As DevExpress.XtraSpreadsheet.UI.PageLayoutRibbonPage
+    Friend WithEvents PageSetupRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PageSetupRibbonPageGroup
+    Friend WithEvents PageSetupShowRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PageSetupShowRibbonPageGroup
+    Friend WithEvents PageSetupPrintRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.PageSetupPrintRibbonPageGroup
+    Friend WithEvents ArrangeRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ArrangeRibbonPageGroup
+    Friend WithEvents FormulasRibbonPage1 As DevExpress.XtraSpreadsheet.UI.FormulasRibbonPage
+    Friend WithEvents FunctionLibraryRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FunctionLibraryRibbonPageGroup
+    Friend WithEvents FormulaDefinedNamesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FormulaDefinedNamesRibbonPageGroup
+    Friend WithEvents FormulaAuditingRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FormulaAuditingRibbonPageGroup
+    Friend WithEvents FormulaCalculationRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.FormulaCalculationRibbonPageGroup
+    Friend WithEvents DataRibbonPage1 As DevExpress.XtraSpreadsheet.UI.DataRibbonPage
+    Friend WithEvents SortAndFilterRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.SortAndFilterRibbonPageGroup
+    Friend WithEvents DataToolsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.DataToolsRibbonPageGroup
+    Friend WithEvents OutlineRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.OutlineRibbonPageGroup
+    Friend WithEvents ReviewRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ReviewRibbonPage
+    Friend WithEvents CommentsRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.CommentsRibbonPageGroup
+    Friend WithEvents ChangesRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ChangesRibbonPageGroup
+    Friend WithEvents ViewRibbonPage1 As DevExpress.XtraSpreadsheet.UI.ViewRibbonPage
+    Friend WithEvents ShowRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ShowRibbonPageGroup
+    Friend WithEvents ZoomRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.ZoomRibbonPageGroup
+    Friend WithEvents WindowRibbonPageGroup1 As DevExpress.XtraSpreadsheet.UI.WindowRibbonPageGroup
+    Friend WithEvents SpreadsheetBarController1 As DevExpress.XtraSpreadsheet.UI.SpreadsheetBarController
+    Friend WithEvents SpreadsheetCommandBarButtonItem123 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem125 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem126 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem127 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem128 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem129 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem140 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem141 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarCheckItem34 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarCheckItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem142 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Friend WithEvents SpreadsheetCommandBarButtonItem143 As DevExpress.XtraSpreadsheet.UI.SpreadsheetCommandBarButtonItem
+    Private WithEvents RibbonPageSkins As RibbonPage
+    Private WithEvents SplitterControl1 As DevExpress.XtraEditors.SplitterControl
+    Friend WithEvents LayoutControl1 As DevExpress.XtraLayout.LayoutControl
+    Friend WithEvents UcProperties1 As ucDataImportProperties
+    Friend WithEvents LayoutControlGroup1 As DevExpress.XtraLayout.LayoutControlGroup
+    Friend WithEvents tcgTabs As DevExpress.XtraLayout.TabbedControlGroup
+    Friend WithEvents LayoutControlGroup3 As DevExpress.XtraLayout.LayoutControlGroup
+    Friend WithEvents LayoutControlGroup2 As DevExpress.XtraLayout.LayoutControlGroup
+    Friend WithEvents LayoutControlItem1 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents UcConnectionDetails1 As ucConnectionDetails
+    Friend WithEvents LayoutControlItem2 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents LayoutControlItem3 As DevExpress.XtraLayout.LayoutControlItem
+    Private WithEvents spreadsheetControl As DevExpress.XtraSpreadsheet.SpreadsheetControl
+    Friend WithEvents lcgSpreedsheet As DevExpress.XtraLayout.LayoutControlGroup
+    Friend WithEvents LayoutControlGroup4 As DevExpress.XtraLayout.LayoutControlGroup
+    Friend WithEvents EmptySpaceItem1 As DevExpress.XtraLayout.EmptySpaceItem
+    Friend WithEvents bbiImportOpen As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiSaveImport As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents rpImport As RibbonPage
+    Friend WithEvents rpgImportCommon As RibbonPageGroup
+    Friend WithEvents bbiCreateEmptyExcelDocument As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiImportExcel As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiValidateData As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents rpgActions As RibbonPageGroup
+    Friend WithEvents bbiValidatorAdd As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiValidatorDelete As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents rpgValidators As RibbonPageGroup
+    Friend WithEvents bbiFormatJsonCode As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiSaveImportAs As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiDuplicate As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiOpenWorkbook As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiSaveWorkbook As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiSaveAsWorkbook As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiAddTemplate As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiRemoveTemplate As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents rpgWorkbook As RibbonPageGroup
+    Friend WithEvents SplitterItem1 As DevExpress.XtraLayout.SplitterItem
+    Friend WithEvents bbiCopyValidator As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiCancel As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents bbiSaveAll As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents labVersion As DevExpress.XtraEditors.LabelControl
+    Friend WithEvents txtWorkbookName As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents LayoutControlItem5 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents LayoutControlItem6 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents txtLogs As DevExpress.XtraEditors.MemoEdit
     Friend WithEvents SplitterItem2 As DevExpress.XtraLayout.SplitterItem
     Friend WithEvents bbiQuery As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents BarDockingMenuItem1 As DevExpress.XtraBars.BarDockingMenuItem
@@ -5784,7 +5811,7 @@ Partial Class frmMainMenu
     Friend WithEvents LayoutControlGroup5 As DevExpress.XtraLayout.LayoutControlGroup
     Friend WithEvents txtErrors As DevExpress.XtraEditors.MemoEdit
     Friend WithEvents LayoutControlItem9 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents SplashScreenManager1 As DevExpress.XtraSplashScreen.SplashScreenManager
+    Friend WithEvents SplashScreenManager1 As DevExpress.XtraSplashScreen.SplashScreenManager
     Friend WithEvents gridWorkbook As DevExpress.XtraGrid.GridControl
     Friend WithEvents gdWorkbook As DevExpress.XtraGrid.Views.Grid.GridView
     Friend WithEvents gcTemplateName As DevExpress.XtraGrid.Columns.GridColumn
@@ -5792,4 +5819,9 @@ Partial Class frmMainMenu
     Friend WithEvents beAction As DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit
     Friend WithEvents LayoutControlItem10 As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents gcPriority As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents butNewWorkbook As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents gcIsHierarchal As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents RepositoryItemCheckEdit1 As DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit
+    Friend WithEvents gcIsShipEntity As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents gcGroup As DevExpress.XtraGrid.Columns.GridColumn
 End Class

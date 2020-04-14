@@ -12,529 +12,566 @@ Imports System.Web.Script.Serialization
 
 Public Class clsAPI
 
-  Private msAccessToken As String
-  Private msRefreshToken As String
-
-  Private moResponseDataLoginResponse As Object
-  Private moLoginResponse As Object
-  Private moRefreshResponse As Object
-  Private mdResponseDateTime As DateTime
-  Private mnRefreshTokenCount As Long = 0
-  Private mnTokenExpires As Long? = 0
-
-  Private moTimmer As New Timer
-
-  Public Event APICallEvent(psRequest As RestRequest, psResponse As IRestResponse)
-  Public Event ErrorEvent(psExcetpion As Exception)
+     Private Const DefaultPageSize As Integer = 100
 
 
-  Public Sub New()
+     Private msAccessToken As String
+     Private msRefreshToken As String
 
-    'need for connection to our webservices
-    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls
-
-  End Sub
-
-  Private Function ExecuteAPI(ByVal oClient As RestClient, ByVal oRequest As RestRequest, ByVal isLogin As Boolean) As IRestResponse
-    Try
-      If goConnection._UserName <> String.Empty Then
-        oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
-
-        If Not isLogin Then
-          oRequest.AddHeader("X-API-Token", "Bearer " & msAccessToken)
-        End If
-      Else
-
-        If Not isLogin Then
-          oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
-        End If
-      End If
-
-      If goConnection._HTTPUserName <> String.Empty Then
-        oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
-      End If
+     Private moResponseDataLoginResponse As Object
+     Private moLoginResponse As Object
+     Private moRefreshResponse As Object
+     Private mdResponseDateTime As DateTime
+     Private mnRefreshTokenCount As Long = 0
+     Private mnTokenExpires As Long? = 0
 
 
-      Return oClient.Execute(oRequest)
+     Private moTimmer As New Timer
 
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
-
-    Return Nothing
-
-  End Function
-
-  Public Function TestConnection(Optional pbSilent As Boolean = True, Optional poConnection As clsConnectionDetails = Nothing, Optional psLoadData As Boolean = False) As Boolean
-    Try
-      If poConnection IsNot Nothing Then
-        goConnection = poConnection
-      End If
-
-      Dim eStatus As HttpStatusCode = LogIntoIAM(True)
-
-      If eStatus = HttpStatusCode.OK Then
-        If pbSilent = False Then MsgBox("System successfully tested connection to server")
-        If psLoadData Then
-          Call LoadLookupTypes()
-          Call LoadHierarchies()
-        End If
-
-        Return True
-      Else
-        If pbSilent = False Then MsgBox(String.Format("Server returned following error code {0}", eStatus))
-        Return False
-      End If
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
-
-    Return False
-
-  End Function
-
-  Public Function LogIntoIAM(Optional pbTestOnly As Boolean = False) As HttpStatusCode
-    Try
-      Dim url As String = String.Format("{0}iam/v1/sso/login", goConnection._ServerAddress)
-      Dim oColumns = New Dictionary(Of String, String)
-      With oColumns
-        .Add("login", goConnection._UserName)
-        .Add("password", goConnection._UserPwd)
-        .Add("rememberMe", "false")
-      End With
+     Public Event APICallEvent(psRequest As RestRequest, psResponse As IRestResponse)
+     Public Event ErrorEvent(psExcetpion As Exception)
 
 
-      Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
-      Dim serialized = jsSerializer.Serialize(oColumns)
-      Dim oClient = New RestClient(url)
+     Public Sub New()
 
+          'need for connection to our webservices
+          ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls
 
-      Dim oRequest = New RestRequest(Method.POST)
-      oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-      oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
-      oRequest.AddParameter("application/json", serialized, ParameterType.RequestBody)
-      Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+     End Sub
 
-      Select Case oResponse.StatusCode
-        Case HttpStatusCode.OK
-
-          Dim json As JObject = JObject.Parse(oResponse.Content)
-          moLoginResponse = json.SelectToken("responsePayload")
-          moResponseDataLoginResponse = json.SelectToken("message")
-          mdResponseDateTime = DateTime.Now
-          mnTokenExpires = json.SelectToken("message").SelectToken("expires_in")
-          msAccessToken = json.SelectToken("message").SelectToken("access_token")
-          msRefreshToken = json.SelectToken("message").SelectToken("refresh_token")
-
-          If pbTestOnly = False Then
-            moTimmer.Interval = 1000
-            moTimmer.Start()
-          End If
-
-        Case Else
-          MsgBox(String.Format("Error connecting, request was {0} - {1}", oResponse.StatusCode, oResponse.StatusDescription))
-      End Select
-
-      Return oResponse.StatusCode
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
-
-    Return Nothing
-
-  End Function
-
-  Private Sub RefreshIAMConnection()
-    Try
-
-      If moLoginResponse IsNot Nothing Then
-
-
-
-        If (mnTokenExpires - DateTime.Now.Subtract(mdResponseDateTime).TotalSeconds <= 10) Then
-
+     Private Function ExecuteAPI(ByVal oClient As RestClient, ByVal oRequest As RestRequest, ByVal isLogin As Boolean) As IRestResponse
           Try
-            Dim url As String = String.Format("{0}iam/v1/sso/refresh", goConnection._ServerAddress)
-            Dim columns = New Dictionary(Of String, String) From {{"refreshToken", msRefreshToken}}
+               If goConnection._UserName <> String.Empty Then
+                    oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
 
-            Dim jsSerializer = New JavaScriptSerializer()
-            Dim serialized = jsSerializer.Serialize(columns)
-            Dim oClient = New RestClient(url)
-            Dim oRequest = New RestRequest(Method.POST)
+                    If Not isLogin Then
+                         oRequest.AddHeader("X-API-Token", "Bearer " & msAccessToken)
+                    End If
+               Else
 
-            oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-            oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
-            oRequest.AddParameter("application/json", serialized, ParameterType.RequestBody)
+                    If Not isLogin Then
+                         oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
+                    End If
+               End If
 
-            Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               If goConnection._HTTPUserName <> String.Empty Then
+                    oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
+               End If
 
 
-            If oResponse.StatusCode = HttpStatusCode.OK Then
-
-
-
-              Dim json As JObject = JObject.Parse(oResponse.Content)
-              moRefreshResponse = json.SelectToken("responsePayload")
-              mdResponseDateTime = DateTime.Now
-              mnRefreshTokenCount += 1
-              mnTokenExpires = json.SelectToken("message").SelectToken("expires_in")
-              msAccessToken = json.SelectToken("message").SelectToken("access_token")
-              msRefreshToken = json.SelectToken("message").SelectToken("refresh_token")
-
-            End If
-
-            ' RaiseEvent APICallEvent(oRequest, oResponse)
+               Return oClient.Execute(oRequest)
 
           Catch ex As Exception
-            Dim index As Integer = ex.Message.IndexOf("{")
-
-            If index >= 0 Then
-              moTimmer.Stop()
-              Dim jsonString As String = ex.Message.Substring(index)
-              MessageBox.Show(jsonString)
-            Else
-              moTimmer.Stop()
-              MessageBox.Show(ex.Message)
-            End If
+               RaiseEvent ErrorEvent(ex)
           End Try
-        Else
-        End If
-      End If
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
 
+          Return Nothing
 
-  End Sub
+     End Function
 
-  Public Function CallWebEndpointUsingPost(psEndPoint As String, psDTOJson As String) As IRestResponse
-    Try
-      ExtractSystemVariables(psEndPoint)
-      ExtractSystemVariables(psDTOJson)
+     Public Function TestConnection(Optional pbSilent As Boolean = True, Optional poConnection As clsConnectionDetails = Nothing, Optional psLoadData As Boolean = False) As Boolean
+          Try
+               If poConnection IsNot Nothing Then
+                    goConnection = poConnection
+               End If
 
-      Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+               Dim eStatus As HttpStatusCode = LogIntoIAM(True, pbSilent)
 
-      Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
-      Dim serialized = jsSerializer.Serialize(psDTOJson)
-      Dim oClient = New RestClient(url)
+               If eStatus = HttpStatusCode.OK Then
+                    If pbSilent = False Then MsgBox("System successfully tested connection to server")
+                    If psLoadData Then
+                         Call LoadLookupTypes()
+                         Call LoadHierarchies()
+                    End If
 
+                    Return True
+               Else
+                    If pbSilent = False Then MsgBox(String.Format("Server returned following error code {0}", eStatus))
+                    Return False
+               End If
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
-      Dim oRequest = New RestRequest(Method.POST)
-      oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-      oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
-      oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
-      Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+          Return False
 
-      RaiseEvent APICallEvent(oRequest, oResponse)
+     End Function
 
-      Return oResponse
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
+     Public Function LogIntoIAM(Optional pbTestOnly As Boolean = False, Optional pbSilent As Boolean = True) As HttpStatusCode
+          Try
+               Dim url As String = String.Format("{0}iam/v1/sso/login", goConnection._ServerAddress)
+               Dim oColumns = New Dictionary(Of String, String)
+               With oColumns
+                    .Add("login", goConnection._UserName)
+                    .Add("password", goConnection._UserPwd)
+                    .Add("rememberMe", "false")
+               End With
 
-    Return Nothing
 
-  End Function
+               Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+               Dim serialized = jsSerializer.Serialize(oColumns)
+               Dim oClient = New RestClient(url)
 
-  Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "", Optional psColumnsInclude As String = "") As IRestResponse
-    Try
-      psEndPoint = ExtractSystemVariables(psEndPoint)
-      psHeader = ExtractSystemVariables(psHeader)
-      psQuery = ExtractSystemVariables(psQuery)
-      psSort = ExtractSystemVariables(psSort)
 
+               Dim oRequest = New RestRequest(Method.POST)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+               oRequest.AddParameter("application/json", serialized, ParameterType.RequestBody)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-      Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
-      Dim sQuery As String = psQuery.ToString.Trim
+               Select Case oResponse.StatusCode
+                    Case HttpStatusCode.OK
 
-      If Not String.IsNullOrEmpty(sQuery) Then
+                         Dim json As JObject = JObject.Parse(oResponse.Content)
+                         moLoginResponse = json.SelectToken("responsePayload")
+                         moResponseDataLoginResponse = json.SelectToken("message")
+                         mdResponseDateTime = DateTime.Now
+                         mnTokenExpires = json.SelectToken("message").SelectToken("expires_in")
+                         msAccessToken = json.SelectToken("message").SelectToken("access_token")
+                         msRefreshToken = json.SelectToken("message").SelectToken("refresh_token")
 
-        If sQuery.Contains("??") Then
-          Dim sQueryValues As List(Of String) = sQuery.Split(New Char() {"?"}, StringSplitOptions.RemoveEmptyEntries).ToList
-          If sQueryValues IsNot Nothing Then
-            If sQueryValues.Count = 1 Then
-              url = url + "?" & sQueryValues(0)
-              sQuery = String.Empty
-            End If
+                         If pbTestOnly = False Then
+                              moTimmer.Interval = 1000
+                              moTimmer.Start()
+                         End If
 
-            If sQueryValues.Count = 2 Then
-              url = url + "?" & sQueryValues(1)
-              sQuery = sQueryValues(0)
-            End If
-          End If
-        End If
+                    Case Else
 
-        If String.IsNullOrEmpty(sQuery) = False Then
-          If url.Contains("?") Then
-            url = url + String.Format("&search={0}", System.Web.HttpUtility.UrlEncode(sQuery))
-          Else
-            url = url + String.Format("?search={0}", System.Web.HttpUtility.UrlEncode(sQuery))
-          End If
-        End If
-      End If
+                         If pbSilent = False Then
+                              MsgBox(String.Format("Error connecting, request was {0} - {1}", oResponse.StatusCode, oResponse.StatusDescription))
+                         End If
 
+               End Select
 
-      If psSort <> String.Empty Then
-        url = url + "&sort=" & psSort
-      End If
+               Return oResponse.StatusCode
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
-      Dim oClient = New RestClient(url)
+          Return Nothing
 
+     End Function
 
-      Dim oRequest = New RestRequest(Method.GET)
-      oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-      oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+     Private Sub RefreshIAMConnection()
+          Try
 
-      'include fields
-      If String.IsNullOrEmpty(psColumnsInclude) = False Then
-        oRequest.AddParameter("include-fields", psColumnsInclude, ParameterType.HttpHeader)
+               If moLoginResponse IsNot Nothing Then
 
-      End If
 
 
-      If psHeader IsNot Nothing AndAlso String.IsNullOrEmpty(psHeader) = False Then
-        Dim oJObject As JObject = JObject.Parse(psHeader)
-        For Each oProperty As JProperty In oJObject.Properties
-          If oProperty IsNot Nothing Then
-            oRequest.AddParameter(oProperty.Name, oProperty.Value, ParameterType.HttpHeader)
-          End If
-        Next
-      End If
+                    If (mnTokenExpires - DateTime.Now.Subtract(mdResponseDateTime).TotalSeconds <= 10) Then
 
+                         Try
+                              Dim url As String = String.Format("{0}iam/v1/sso/refresh", goConnection._ServerAddress)
+                              Dim columns = New Dictionary(Of String, String) From {{"refreshToken", msRefreshToken}}
 
-      Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+                              Dim jsSerializer = New JavaScriptSerializer()
+                              Dim serialized = jsSerializer.Serialize(columns)
+                              Dim oClient = New RestClient(url)
+                              Dim oRequest = New RestRequest(Method.POST)
 
-      RaiseEvent APICallEvent(oRequest, oResponse)
+                              oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+                              oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+                              oRequest.AddParameter("application/json", serialized, ParameterType.RequestBody)
 
+                              Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-      Return oResponse
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
 
-    Return Nothing
+                              If oResponse.StatusCode = HttpStatusCode.OK Then
 
-  End Function
 
-  Public Function CallWebEndpointUsingDelete(psEndPoint As String, psQuery As String) As IRestResponse
-    Try
-      psEndPoint = ExtractSystemVariables(psEndPoint)
-      psQuery = ExtractSystemVariables(psQuery)
 
+                                   Dim json As JObject = JObject.Parse(oResponse.Content)
+                                   moRefreshResponse = json.SelectToken("responsePayload")
+                                   mdResponseDateTime = DateTime.Now
+                                   mnRefreshTokenCount += 1
+                                   mnTokenExpires = json.SelectToken("message").SelectToken("expires_in")
+                                   msAccessToken = json.SelectToken("message").SelectToken("access_token")
+                                   msRefreshToken = json.SelectToken("message").SelectToken("refresh_token")
 
-      Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+                              End If
 
-      If Not String.IsNullOrEmpty(psQuery) Then
-        url = url + String.Format("?{0}", (psQuery))
-      End If
+                              ' RaiseEvent APICallEvent(oRequest, oResponse)
 
-      Dim oClient = New RestClient(url)
+                         Catch ex As Exception
+                              Dim index As Integer = ex.Message.IndexOf("{")
 
+                              If index >= 0 Then
+                                   moTimmer.Stop()
+                                   Dim jsonString As String = ex.Message.Substring(index)
+                                   MessageBox.Show(jsonString)
+                              Else
+                                   moTimmer.Stop()
+                                   MessageBox.Show(ex.Message)
+                              End If
+                         End Try
+                    Else
+                    End If
+               End If
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
-      Dim oRequest = New RestRequest(Method.DELETE)
-      oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-      oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
 
-      Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+     End Sub
 
-      RaiseEvent APICallEvent(oRequest, oResponse)
+     Public Function CallWebEndpointUsingPost(psEndPoint As String, psDTOJson As String) As IRestResponse
+          Try
+               ExtractSystemVariables(psEndPoint)
+               ExtractSystemVariables(psDTOJson)
 
-      Return oResponse
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
+               Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
-    Return Nothing
+               Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+               Dim serialized = jsSerializer.Serialize(psDTOJson)
+               Dim oClient = New RestClient(url)
 
-  End Function
 
-  Public Function CallWebEndpointUsingPut(psEndPoint As String, psEntityID As String, psQuery As String, psDTOJson As String) As IRestResponse
-    Try
-      psEndPoint = ExtractSystemVariables(psEndPoint)
-      psQuery = ExtractSystemVariables(psQuery)
-      psDTOJson = ExtractSystemVariables(psDTOJson)
+               Dim oRequest = New RestRequest(Method.POST)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+               oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-      Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
+               RaiseEvent APICallEvent(oRequest, oResponse)
 
-      If Not String.IsNullOrEmpty(psQuery) Then
-        If psQuery.Contains("??") Then
-          url = url + String.Format("{0}", Replace((psQuery.Trim), "??", String.Empty))
-        Else
-          url = url + String.Format("?{0}", (psQuery.Trim))
-        End If
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
+          Return Nothing
 
-      End If
+     End Function
 
-      Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
-      Dim serialized = jsSerializer.Serialize(psDTOJson)
-      Dim oClient = New RestClient(url)
+     Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "", Optional psColumnsInclude As String = "", Optional pnPage As Integer = 0) As IRestResponse
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               psHeader = ExtractSystemVariables(psHeader)
+               psQuery = ExtractSystemVariables(psQuery)
+               psSort = ExtractSystemVariables(psSort)
 
 
+               Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+               Dim sQuery As String = psQuery.ToString.Trim
 
-      Dim oRequest = New RestRequest(Method.PUT)
+               If Not String.IsNullOrEmpty(sQuery) Then
 
-      oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-      oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
-      oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
+                    If sQuery.Contains("??") Then
+                         Dim sQueryValues As List(Of String) = sQuery.Split(New Char() {"?"}, StringSplitOptions.RemoveEmptyEntries).ToList
+                         If sQueryValues IsNot Nothing Then
+                              If sQueryValues.Count = 1 Then
+                                   url = url + "?" & sQueryValues(0)
+                                   sQuery = String.Empty
+                              End If
 
-      Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+                              If sQueryValues.Count = 2 Then
+                                   url = url + "?" & sQueryValues(1)
+                                   sQuery = sQueryValues(0)
+                              End If
+                         End If
+                    End If
 
-      RaiseEvent APICallEvent(oRequest, oResponse)
 
-      Return oResponse
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
 
-    Return Nothing
+                    If String.IsNullOrEmpty(sQuery) = False Then
+                         If url.Contains("?") Then
+                              url = url + String.Format("&search={0}", System.Web.HttpUtility.UrlEncode(sQuery))
+                         Else
+                              url = url + String.Format("?search={0}", System.Web.HttpUtility.UrlEncode(sQuery))
+                         End If
+                    End If
 
-  End Function
 
-  Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
 
-    Dim bFileContent As Byte() = Nothing
+               End If
 
-    Try
-      psEndPoint = ExtractSystemVariables(psEndPoint)
-      If File.Exists(psFileName) Then
 
-        Select Case Path.GetExtension(psFileName).ToString.ToLower
-          Case ".jpg" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg)
-          Case ".png" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png)
-          Case ".bmp" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp)
-          Case Else : bFileContent = System.IO.File.ReadAllBytes(psFileName)
-        End Select
+               If pnPage > 0 Then
+                    If url.Contains("?") Then
+                         url = url & String.Format("&page={0}", pnPage)
+                    Else
+                         url = url & String.Format("?page={0}", pnPage)
+                    End If
+               End If
 
-        If bFileContent IsNot Nothing Then
 
-          Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID, psObject)
-          Dim oClient = New RestClient(url)
 
-          Dim oRequest = New RestRequest(psObject, Method.POST)
-          ' oRequest.AddHeader("Content-Type", "multipart/form-data")
-          oRequest.AddHeader("Accept-Encoding", ": gzip, deflate, br")
-          oRequest.AddFile("file", bFileContent, Path.GetFileName(psFileName), String.Format("image/{0}", Path.GetExtension(psFileName)))
-          Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-          RaiseEvent APICallEvent(oRequest, oResponse)
+               If psSort <> String.Empty Then
+                    url = url + "&sort=" & psSort
+               End If
 
-          Return oResponse
-        End If
-      End If
+               Dim oClient = New RestClient(url)
 
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    Finally
-      bFileContent = Nothing
-    End Try
 
-    Return Nothing
+               Dim oRequest = New RestRequest(Method.GET)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
 
-  End Function
+               'include fields
+               If String.IsNullOrEmpty(psColumnsInclude) = False Then
+                    oRequest.AddParameter("include-fields", psColumnsInclude, ParameterType.HttpHeader)
 
-  Public Function GetValueFromEndpoint(psEndPoint As String, psQuery As String, psNodeName As String, psRootNode As String) As String
-    Try
-      psEndPoint = ExtractSystemVariables(psEndPoint)
-      psQuery = ExtractSystemVariables(psQuery)
+               End If
 
-      Dim sReturnValue As String = String.Empty
 
-      Dim oResponse As IRestResponse = CallWebEndpointUsingGet(psEndPoint, String.Empty, psQuery)
-      Dim json As JObject = JObject.Parse(oResponse.Content)
-      If json IsNot Nothing Then
+               If psHeader IsNot Nothing AndAlso String.IsNullOrEmpty(psHeader) = False Then
+                    Dim oJObject As JObject = JObject.Parse(psHeader)
+                    For Each oProperty As JProperty In oJObject.Properties
+                         If oProperty IsNot Nothing Then
+                              oRequest.AddParameter(oProperty.Name, oProperty.Value, ParameterType.HttpHeader)
+                         End If
+                    Next
+               End If
 
-        Dim sRoot As String = String.Empty
-        Dim sNode As String = String.Empty
 
-        If String.IsNullOrEmpty(psNodeName) = False AndAlso psNodeName.Contains("[0]") Then
-          sRoot = psNodeName.Substring(0, psNodeName.LastIndexOf("[0]"))
-          sNode = psNodeName.Substring(psNodeName.LastIndexOf("]") + 2)
-        End If
+               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-        If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
-          Dim oObject As JToken = json.SelectToken(sRoot)
-          If oObject IsNot Nothing Then
-            If oObject.Count > 0 Then
+               RaiseEvent APICallEvent(oRequest, oResponse)
 
-              Try
-                If sNode = "description" Then
-                  'try to exact it from the object
-                  Dim oToken As JToken = json.SelectToken(String.Format("{0}[0].translations.en.description", sRoot, sNode))
-                  If oToken IsNot Nothing Then
-                    Return oToken.ToString
-                  End If
-                End If
 
-              Catch ex As Exception
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
-              End Try
+          Return Nothing
 
+     End Function
 
-              'Extract the value
-              sReturnValue = json.SelectToken(psNodeName).ToString
+     Public Function CallWebEndpointUsingDelete(psEndPoint As String, psQuery As String) As IRestResponse
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               psQuery = ExtractSystemVariables(psQuery)
 
 
-            End If
-          End If
-        Else
+               Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
-          sReturnValue = oResponse.ErrorMessage
+               If Not String.IsNullOrEmpty(psQuery) Then
+                    url = url + String.Format("?{0}", (psQuery))
+               End If
 
-        End If
+               Dim oClient = New RestClient(url)
 
 
-      End If
+               Dim oRequest = New RestRequest(Method.DELETE)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
 
+               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-      Return sReturnValue
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
+               RaiseEvent APICallEvent(oRequest, oResponse)
 
-    Return Nothing
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
-  End Function
+          Return Nothing
 
-  Private Sub LoadLookupTypes()
-    Try
-      goLookupTypes.Clear()
+     End Function
 
-      If goLookupTypes IsNot Nothing AndAlso goLookupTypes.Count = 0 Then
-        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", String.Empty, String.Empty)
-        If oResponse IsNot Nothing Then
+     Public Function CallWebEndpointUsingPut(psEndPoint As String, psEntityID As String, psQuery As String, psDTOJson As String) As IRestResponse
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               psQuery = ExtractSystemVariables(psQuery)
+               psDTOJson = ExtractSystemVariables(psDTOJson)
 
-          Dim json As JObject = JObject.Parse(oResponse.Content)
-          Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
+               Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
 
-          For Each oNode In oOjbect
-            If oNode IsNot Nothing Then
-              goLookupTypes.Add(New clsLookUpTypes With {.Id = oNode("id"), .Code = oNode("code"), .Description = oNode("description"), .LookupGroup = oNode("lookupGroup")})
-            End If
-          Next
+               If Not String.IsNullOrEmpty(psQuery) Then
+                    If psQuery.Contains("??") Then
+                         url = url + String.Format("{0}", Replace((psQuery.Trim), "??", String.Empty))
+                    Else
+                         url = url + String.Format("?{0}", (psQuery.Trim))
+                    End If
 
-          json = Nothing
-          oOjbect = Nothing
 
-          If goLookupTypes IsNot Nothing Then
-            goLookupTypes = goLookupTypes.OrderBy(Function(n) n.Description).ToList
-          End If
+               End If
 
-        End If
+               Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+               Dim serialized = jsSerializer.Serialize(psDTOJson)
+               Dim oClient = New RestClient(url)
 
-        oResponse = Nothing
 
-      End If
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
 
-  End Sub
+               Dim oRequest = New RestRequest(Method.PUT)
 
-  Public Function CallGraphQL(psEndPoint As String, psDTOJson As String) As IRestResponse
-    Try
-      psEndPoint = ExtractSystemVariables(psEndPoint)
-      psDTOJson = ExtractSystemVariables(psDTOJson)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+               If psDTOJson IsNot Nothing Then
+                    oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
+               End If
+
+               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+
+               RaiseEvent APICallEvent(oRequest, oResponse)
+
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+          Return Nothing
+
+     End Function
+
+     Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
+
+          Dim bFileContent As Byte() = Nothing
+
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               If File.Exists(psFileName) Then
+
+                    Select Case Path.GetExtension(psFileName).ToString.ToLower
+                         Case ".jpg" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg)
+                         Case ".png" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png)
+                         Case ".bmp" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp)
+                         Case Else : bFileContent = System.IO.File.ReadAllBytes(psFileName)
+                    End Select
+
+                    If bFileContent IsNot Nothing Then
+
+                         Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID, psObject)
+                         Dim oClient = New RestClient(url)
+
+                         Dim oRequest = New RestRequest(psObject, Method.POST)
+                         ' oRequest.AddHeader("Content-Type", "multipart/form-data")
+                         oRequest.AddHeader("Accept-Encoding", ": gzip, deflate, br")
+                         oRequest.AddFile("file", bFileContent, Path.GetFileName(psFileName), String.Format("image/{0}", Path.GetExtension(psFileName)))
+                         Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+
+                         RaiseEvent APICallEvent(oRequest, oResponse)
+
+                         Return oResponse
+                    End If
+               End If
+
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          Finally
+               bFileContent = Nothing
+          End Try
+
+          Return Nothing
+
+     End Function
+
+     Public Function GetValueFromEndpoint(psEndPoint As String, psQuery As String, psNodeName As String, psRootNode As String) As String
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               psQuery = ExtractSystemVariables(psQuery)
+
+               Dim sReturnValue As String = String.Empty
+
+               Dim oResponse As IRestResponse = CallWebEndpointUsingGet(psEndPoint, String.Empty, psQuery)
+               Dim json As JObject = JObject.Parse(oResponse.Content)
+               If json IsNot Nothing Then
+
+                    Dim sRoot As String = String.Empty
+                    Dim sNode As String = String.Empty
+
+                    If String.IsNullOrEmpty(psNodeName) = False AndAlso psNodeName.Contains("[0]") Then
+                         sRoot = psNodeName.Substring(0, psNodeName.LastIndexOf("[0]"))
+                         sNode = psNodeName.Substring(psNodeName.LastIndexOf("]") + 2)
+                    End If
+
+                    If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
+                         Dim oObject As JToken = json.SelectToken(sRoot)
+                         If oObject IsNot Nothing Then
+                              If oObject.Count > 0 Then
+
+                                   Try
+                                        If sNode = "description" Then
+                                             'try to exact it from the object
+                                             Dim oToken As JToken = json.SelectToken(String.Format("{0}[0].translations.en.description", sRoot, sNode))
+                                             If oToken IsNot Nothing Then
+                                                  Return oToken.ToString
+                                             End If
+                                        End If
+
+                                   Catch ex As Exception
+
+                                   End Try
+
+
+                                   Try
+                                        If oObject.HasValues Then
+                                             If oObject.First IsNot Nothing Then
+                                                  sReturnValue = oObject.First.SelectToken(sNode).Value(Of String)
+                                             End If
+                                        End If
+                                   Catch ex As Exception
+
+                                   End Try
+
+                                   'Extract the value
+                                   'If json.ContainsKey(psNodeName) Then
+                                   '     sReturnValue = json.SelectToken(psNodeName).ToString
+                                   'End If
+
+                              End If
+                              End If
+                    Else
+
+                         sReturnValue = oResponse.ErrorMessage
+
+                    End If
+
+
+               End If
+
+
+               Return sReturnValue
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+          Return Nothing
+
+     End Function
+
+     Private Sub LoadLookupTypes()
+          Try
+               goLookupTypes.Clear()
+
+               If goLookupTypes IsNot Nothing AndAlso goLookupTypes.Count = 0 Then
+                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", String.Empty, String.Empty)
+                    If oResponse IsNot Nothing Then
+
+                         Dim json As JObject = JObject.Parse(oResponse.Content)
+                         Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
+
+                         For Each oNode In oOjbect
+                              If oNode IsNot Nothing Then
+                                   goLookupTypes.Add(New clsLookUpTypes With {.Id = oNode("id"), .Code = oNode("code"), .Description = oNode("description"), .LookupGroup = oNode("lookupGroup")})
+                              End If
+                         Next
+
+                         json = Nothing
+                         oOjbect = Nothing
+
+                         If goLookupTypes IsNot Nothing Then
+                              goLookupTypes = goLookupTypes.OrderBy(Function(n) n.Description).ToList
+                         End If
+
+                    End If
+
+                    oResponse = Nothing
+
+               End If
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+     End Sub
+
+     Public Function CallGraphQL(psEndPoint As String, psDTOJson As String) As IRestResponse
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               psDTOJson = ExtractSystemVariables(psDTOJson)
 
                psDTOJson = Replace(psDTOJson, vbNewLine, "")
                psDTOJson = Replace(psDTOJson, ControlChars.Quote, "\" & ControlChars.Quote)
@@ -542,138 +579,139 @@ Public Class clsAPI
 
                Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
 
-      Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
-      Dim serialized = jsSerializer.Serialize(psDTOJson)
-      Dim oClient = New RestClient(url)
-      Dim sBody As String = Replace(String.Format("{1}{3}query{3}:{3}{0}{3}{2}", psDTOJson, "{", "}", ControlChars.Quote), vbNewLine, String.Empty)
+               Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+               Dim serialized = jsSerializer.Serialize(psDTOJson)
+               Dim oClient = New RestClient(url)
+               Dim sBody As String = Replace(String.Format("{1}{3}query{3}:{3}{0}{3}{2}", psDTOJson, "{", "}", ControlChars.Quote), vbNewLine, String.Empty)
 
-      Dim oRequest = New RestRequest(Method.POST)
-      oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
-      oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
-      oRequest.AddParameter("Accept-Encoding", "gzip,deflate,br", ParameterType.HttpHeader)
-      oRequest.AddParameter("Content-Type", "application/json", ParameterType.HttpHeader)
+               Dim oRequest = New RestRequest(Method.POST)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+               oRequest.AddParameter("Accept-Encoding", "gzip,deflate,br", ParameterType.HttpHeader)
+               oRequest.AddParameter("Content-Type", "application/json", ParameterType.HttpHeader)
 
-      oRequest.AddParameter("application/json", sBody, ParameterType.RequestBody)
-      Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               oRequest.AddParameter("application/json", sBody, ParameterType.RequestBody)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-      RaiseEvent APICallEvent(oRequest, oResponse)
+               RaiseEvent APICallEvent(oRequest, oResponse)
 
-      Return oResponse
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
-    Return Nothing
+          Return Nothing
 
-  End Function
+     End Function
 
-  Private Sub LoadHierarchies()
-    Try
+     Private Sub LoadHierarchies()
+          Try
 
-      goHierarchies.Clear()
+               goHierarchies.Clear()
 
-      If goHierarchies IsNot Nothing AndAlso goHierarchies.Count = 0 Then
-        Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", String.Empty, String.Empty)
-        If oResponse IsNot Nothing Then
+               If goHierarchies IsNot Nothing AndAlso goHierarchies.Count = 0 Then
+                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", String.Empty, String.Empty)
+                    If oResponse IsNot Nothing Then
 
-          Dim json As JObject = JObject.Parse(oResponse.Content)
-          Dim oOjbect As JToken = json.SelectToken("responsePayload")
+                         Dim json As JObject = JObject.Parse(oResponse.Content)
+                         Dim oOjbect As JToken = json.SelectToken("responsePayload")
 
-          For Each oNode In oOjbect
-            If oNode IsNot Nothing Then
+                         For Each oNode In oOjbect
+                              If oNode IsNot Nothing Then
 
-              Dim sDescription As JToken = oNode.SelectToken("translations.en.description")
+                                   Dim sDescription As JToken = oNode.SelectToken("translations.en.description")
 
-              goHierarchies.Add(New clsHierarchies With {.Id = oNode("id"), .Code = oNode("code"), .Description = sDescription, .ParentHierarchyId = oNode("parentHierarchyId"),
-                             .Enabled = IIf(oNode("enabled").ToString.ToUpper = "TRUE", True, False), .Level = oNode("level"), .Priority = oNode("priority")})
-            End If
-          Next
+                                   goHierarchies.Add(New clsHierarchies With {.Id = oNode("id"), .Code = oNode("code"), .Description = sDescription, .ParentHierarchyId = oNode("parentHierarchyId"),
+                                                  .Enabled = IIf(oNode("enabled").ToString.ToUpper = "TRUE", True, False), .Level = oNode("level"), .Priority = oNode("priority")})
+                              End If
+                         Next
 
-          json = Nothing
-          oOjbect = Nothing
+                         json = Nothing
+                         oOjbect = Nothing
 
-          'check for children
-          For Each oH As clsHierarchies In goHierarchies
+                         'check for children
+                         For Each oH As clsHierarchies In goHierarchies
 
-            oH.ParentName = LookforParentHierarchies(oH, String.Empty)
+                              oH.ParentName = LookforParentHierarchies(oH, String.Empty)
 
-          Next
-
-
-          If goHierarchies IsNot Nothing Then
-            goHierarchies = goHierarchies.OrderBy(Function(n) n.ParentName).ThenBy(Function(n) n.Description).ToList
-          End If
+                         Next
 
 
-
-        End If
-        oResponse = Nothing
-      End If
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
+                         If goHierarchies IsNot Nothing Then
+                              goHierarchies = goHierarchies.OrderBy(Function(n) n.ParentName).ThenBy(Function(n) n.Description).ToList
+                         End If
 
 
-  End Sub
 
-  Private Function LookforParentHierarchies(poHierarchy As clsHierarchies, psParentString As String) As String
-    Try
-
-      If poHierarchy.ParentHierarchyId IsNot Nothing AndAlso poHierarchy.ParentHierarchyId.ToString <> String.Empty Then
-
-        Dim oParent As clsHierarchies = goHierarchies.Where(Function(n) n.Id = poHierarchy.ParentHierarchyId).FirstOrDefault
-
-        If oParent.Id <> "1" Then
-          If oParent IsNot Nothing AndAlso oParent.Description <> String.Empty Then
-            If psParentString = String.Empty Then
-              psParentString = oParent.Description
-            Else
-              psParentString = oParent.Description & "\" & psParentString
-            End If
-          End If
-
-          If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> String.Empty Then
-            psParentString = LookforParentHierarchies(oParent, psParentString)
-          End If
-        Else
-          If psParentString = String.Empty Then
-            psParentString = "Enterprise"
-          Else
-            psParentString = "Enterprise" & " \ " & psParentString
-          End If
-        End If
-      End If
-
-      Return psParentString
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
-
-    Return Nothing
-
-  End Function
-
-  Public Function ExtractSystemVariables(psObject As String) As String
-
-    Try
+                    End If
+                    oResponse = Nothing
+               End If
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
 
 
-      'check for Hierarchy
-      If psObject IsNot Nothing AndAlso String.IsNullOrEmpty(psObject) = False Then
+     End Sub
 
-        If psObject.ToString.ToUpper.Contains("@@HIERARCHYID@@") = True Then psObject = Replace(psObject, "@@HIERARCHYID@@", gsSelectedHierarchy.ToString)
-        If psObject.ToString.ToUpper.Contains("@@EMPTYARRAY@@") = True Then psObject = Replace(psObject, ControlChars.Quote & "@@EMPTYARRAY@@" & ControlChars.Quote, "[]")
+     Private Function LookforParentHierarchies(poHierarchy As clsHierarchies, psParentString As String) As String
+          Try
 
-      End If
+               If poHierarchy.ParentHierarchyId IsNot Nothing AndAlso poHierarchy.ParentHierarchyId.ToString <> String.Empty Then
 
-      Return psObject
+                    Dim oParent As clsHierarchies = goHierarchies.Where(Function(n) n.Id = poHierarchy.ParentHierarchyId).FirstOrDefault
 
-    Catch ex As Exception
-      RaiseEvent ErrorEvent(ex)
-    End Try
+                    If oParent.Id <> "1" Then
+                         If oParent IsNot Nothing AndAlso oParent.Description <> String.Empty Then
+                              If psParentString = String.Empty Then
+                                   psParentString = oParent.Description
+                              Else
+                                   psParentString = oParent.Description & "\" & psParentString
+                              End If
+                         End If
 
-    Return String.Empty
+                         If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> String.Empty Then
+                              psParentString = LookforParentHierarchies(oParent, psParentString)
+                         End If
+                    Else
+                         If psParentString = String.Empty Then
+                              psParentString = "Enterprise"
+                         Else
+                              psParentString = "Enterprise" & " \ " & psParentString
+                         End If
+                    End If
+               End If
 
-  End Function
+               Return psParentString
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+          Return Nothing
+
+     End Function
+
+     Public Function ExtractSystemVariables(psObject As String) As String
+
+          Try
+
+
+               'check for Hierarchy
+               If psObject IsNot Nothing AndAlso String.IsNullOrEmpty(psObject) = False Then
+
+                    If psObject.ToString.ToUpper.Contains("@@HIERARCHYID@@") = True Then psObject = Replace(psObject, "@@HIERARCHYID@@", gsSelectedHierarchy.ToString)
+                    If psObject.ToString.ToUpper.Contains("@@EMPTYARRAY@@") = True Then psObject = Replace(psObject, ControlChars.Quote & "@@EMPTYARRAY@@" & ControlChars.Quote, "[]")
+                    If psObject.ToString.ToUpper.Contains("@@SHIPID@@") = True Then psObject = Replace(psObject, "@@SHIPID@@", gsSelectedHierarchy.ToString)
+
+               End If
+
+               Return psObject
+
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+          Return String.Empty
+
+     End Function
 
 End Class

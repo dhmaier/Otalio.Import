@@ -37,7 +37,7 @@ Public Class frmMainMenu
           ' Open a Splash Screen
           SplashScreenManager.ShowForm(Me, GetType(frmSplashScreen), True, True, False)
           SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Initializing")
-          Thread.Sleep(3000)
+          Thread.Sleep(1000)
 
           Me.miButtonImage = CreateButtonImage()
           Me.miHotButtonImage = CreateHotButtonImage()
@@ -108,35 +108,46 @@ Public Class frmMainMenu
                fd.FilterIndex = 1
                fd.FileName = String.Empty
                fd.RestoreDirectory = True
+               fd.Multiselect = True
                If fd.ShowDialog() = DialogResult.OK Then
 
                     UpdateProgressStatus("Opening Import", False)
 
-                    Dim sFilename As String = fd.FileName
+                    For Each sFilename As String In fd.FileNames
 
-                    If File.Exists(sFilename) Then
+                         If File.Exists(sFilename) Then
 
-                         Dim oDataimportTemplate As clsDataImportTemplate = TryCast(LoadFile(sFilename), clsDataImportTemplate)
+                              Dim oDataimportTemplate As clsDataImportTemplate = TryCast(LoadFile(sFilename), clsDataImportTemplate)
 
-                         If oDataimportTemplate IsNot Nothing Then
+                              If oDataimportTemplate IsNot Nothing Then
 
-                              UcProperties1.msFilePath = sFilename
-                              UcProperties1.msFileName = fd.SafeFileName
+                                   UcProperties1.msFilePath = sFilename
+                                   UcProperties1.msFileName = fd.SafeFileName
 
-                              If oDataimportTemplate.Validators Is Nothing Then
-                                   oDataimportTemplate.Validators = New List(Of clsValidation)
+                                   If oDataimportTemplate.Validators Is Nothing Then
+                                        oDataimportTemplate.Validators = New List(Of clsValidation)
+                                   End If
+
+                                   If goOpenWorkBook.Templates IsNot Nothing AndAlso goOpenWorkBook.Templates.Count > 0 Then
+
+                                        oDataimportTemplate.Priority = goOpenWorkBook.Templates.Max(Function(n) n.Priority) + 1
+
+                                   Else
+
+                                        oDataimportTemplate.Priority = 1
+
+                                   End If
+
+                                   goOpenWorkBook.Templates.Add(oDataimportTemplate)
+                                   loadWorkbook()
+
+
+
+                              Else
+                                   MsgBox("Failed to load Data import template file")
                               End If
-
-                              goOpenWorkBook.Templates.Add(oDataimportTemplate)
-                              loadWorkbook()
-
-
-
-                         Else
-                              MsgBox("Failed to load Data import template file")
                          End If
-
-                    End If
+                    Next
 
 
                End If
@@ -154,26 +165,28 @@ Public Class frmMainMenu
           Try
 
 
-               If lbxImportTemplates.CheckedItemsCount = 0 Then
+               If gdWorkbook.SelectedRowsCount = 0 Then
                     MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
                     Exit Sub
                End If
+               If MsgBox("You are about to save one or more import templates.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
 
-               If lbxImportTemplates.CheckedItemsCount > 0 Then
+
                     Using oFolder As New FolderBrowserDialog
 
                          oFolder.Description = "Please select a folder to save template in"
 
-                         If String.IsNullOrEmpty(goConnectionHistory.LastUsedFolder) = False Then
-                              oFolder.SelectedPath = goConnectionHistory.LastUsedFolder
+                         If String.IsNullOrEmpty(goConnectionHistory.LastUsedExportFolder) = False Then
+                              oFolder.SelectedPath = goConnectionHistory.LastUsedExportFolder
                          End If
 
                          If oFolder.ShowDialog = DialogResult.OK Then
                               Dim sFolderName As String = oFolder.SelectedPath
 
-                              goConnectionHistory.LastUsedFolder = sFolderName
+                              goConnectionHistory.LastUsedExportFolder = sFolderName
 
-                              For Each oItem In lbxImportTemplates.CheckedItems
+                              For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+                                   Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
                                    If oItem IsNot Nothing Then
                                         Try
 
@@ -192,9 +205,8 @@ Public Class frmMainMenu
                               Next
                          End If
                     End Using
+
                End If
-
-
 
 
 
@@ -214,7 +226,9 @@ Public Class frmMainMenu
 
      Private Sub bbiCreateEmptyExcelDocument_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiCreateEmptyExcelDocument.ItemClick
 
-          For Each oItem In lbxImportTemplates.CheckedItems
+          For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+
+               Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
                Call createNewExcelSheet(TryCast(oItem, clsDataImportTemplate))
                Application.DoEvents()
           Next
@@ -427,18 +441,22 @@ Public Class frmMainMenu
      End Sub
 
      Private Sub bbiRemoveTemplate_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiRemoveTemplate.ItemClick
-          With lbxImportTemplates
 
-               If .SelectedIndex >= 0 Then
-                    Dim oItem = .GetItem(.SelectedIndex)
-                    If oItem IsNot Nothing Then
-                         goOpenWorkBook.Templates.Remove(TryCast(oItem, clsDataImportTemplate))
-                    End If
-               End If
+
+          If gdWorkbook.SelectedRowsCount = 0 Then
+               MsgBox("Please select one or more import templates to remove ",, "Warning...")
+               Exit Sub
+          End If
+          If MsgBox("You are about to remove one or more import templates.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
+
+               For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                    goOpenWorkBook.Templates.Remove(TryCast(oItem, clsDataImportTemplate))
+               Next
 
                loadWorkbook()
+          End If
 
-          End With
      End Sub
 
      Private Sub bbiCancel_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiCancel.ItemClick
@@ -449,8 +467,27 @@ Public Class frmMainMenu
 
           UpdateProgressStatus("Saving Files", False)
 
+          If String.IsNullOrEmpty(msFilePath) Then
+
+               Using oFolder As New FolderBrowserDialog
+
+                    oFolder.Description = "Please select a folder to save template in"
+
+                    If String.IsNullOrEmpty(goConnectionHistory.LastUsedWorkbookFolder) = False Then
+                         oFolder.SelectedPath = goConnectionHistory.LastUsedWorkbookFolder
+                    End If
+
+                    If oFolder.ShowDialog = DialogResult.OK Then
+                         msFilePath = oFolder.SelectedPath
+                         goConnectionHistory.LastUsedWorkbookFolder = msFileName
+                    End If
+               End Using
+          End If
+
           If String.IsNullOrEmpty(msFilePath) = False Then
-               lbxImportTemplates.Focus()
+
+               txtWorkbookName.Focus()
+
                Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
 
                Dim sPath As String = Path.GetDirectoryName(msFilePath)
@@ -469,7 +506,7 @@ Public Class frmMainMenu
                SaveWorkbook(False)
                Dim sCurrentFilename As String = spreadsheetControl.Document.Path
                If String.IsNullOrEmpty(sCurrentFilename) = True Then
-                    sCurrentFilename = String.Format("{0}\{1}.{2}", sPath, sFileName, "xlsx")
+                    sCurrentFilename = String.Format("{0}\{1}.{2}", msFilePath, sFileName, "xlsx")
                End If
 
                Dim sExcelExtention As String = Path.GetExtension(sCurrentFilename)
@@ -490,11 +527,28 @@ Public Class frmMainMenu
           End If
 
           If MsgBox("Running the query will remove all existing data from the excel worksheet.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
+               Dim bIgnore As Boolean = False
 
                For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+
                     Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-                    QueryandLoad(TryCast(oItem, clsDataImportTemplate))
-                    Application.DoEvents()
+                    If oItem IsNot Nothing Then
+
+                         Dim bApply As Boolean = True
+
+                         If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
+                              Select Case MsgBox(String.Format("This import template {0} requires a valid {1} selected.{2}{2}Select Abort to exit, retry to move to next template and ignore to ignore all errors.", oItem.Name, IIf(oItem.IsShipEntity, "Ship", "Hierarchy"), vbNewLine), vbAbortRetryIgnore, "Warning...")
+                                   Case MsgBoxResult.Abort : Exit Sub
+                                   Case MsgBoxResult.Ignore : bIgnore = True : bApply = False
+                                   Case MsgBoxResult.Retry : bApply = False
+                              End Select
+                         End If
+
+                         If bApply Then
+                              QueryandLoad(TryCast(oItem, clsDataImportTemplate))
+                              Application.DoEvents()
+                         End If
+                    End If
                Next
           End If
 
@@ -513,6 +567,54 @@ Public Class frmMainMenu
                     Case "IMPORT"
                     Case "QUERY"
                End Select
+          End If
+     End Sub
+
+     Private Sub butNewWorkbook_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles butNewWorkbook.ItemClick
+          If MsgBox("You are about to create a new workbook, are you sure?", vbYesNoCancel) = vbYes Then
+
+               Dim sWorkbookName As String = InputBox("Workbook Name", "User Input", "New Workbook")
+
+               Dim oWorkbook As New clsWorkbook
+               oWorkbook.WorkbookName = sWorkbookName
+
+               'make one last backup of current file
+               If String.IsNullOrEmpty(msFilePath) = False Then
+
+                    txtWorkbookName.Focus()
+
+                    Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
+
+                    Dim sPath As String = Path.GetDirectoryName(msFilePath)
+                    Dim sFileName As String = Path.GetFileNameWithoutExtension(goOpenWorkBook.WorkbookName)
+                    Dim sExtention As String = Path.GetExtension(goOpenWorkBook.WorkbookName)
+                    Dim sVersion As String = goOpenWorkBook.WorkbookVersion
+                    sVersion = Replace(sVersion, ".", "-")
+
+                    'create backups
+                    SaveWorkbook(False, Path.GetDirectoryName(msFilePath), "BACKUP",
+                               String.Format("{0} {1}", Path.GetFileNameWithoutExtension(goOpenWorkBook.WorkbookName), sVersion),
+                               Path.GetExtension(goOpenWorkBook.WorkbookName), False)
+
+
+                    Dim sCurrentFilename As String = spreadsheetControl.Document.Path
+                    If String.IsNullOrEmpty(sCurrentFilename) = True Then
+                         sCurrentFilename = String.Format("{0}\{1}.{2}", sPath, sFileName, "xlsx")
+                    End If
+
+                    Dim sExcelExtention As String = Path.GetExtension(sCurrentFilename)
+                    spreadsheetControl.SaveDocument(String.Format("{0}\{1}\{2} {3}{4}", sPath, "BACKUP", sFileName, sVersion, sExcelExtention))
+
+
+               End If
+
+               goOpenWorkBook = oWorkbook
+               spreadsheetControl.CreateNewDocument()
+               msFilePath = ""
+               msFileName = sWorkbookName & ".ditw"
+               UcProperties1._DataImportTemplate = New clsDataImportTemplate
+               loadWorkbook()
+
           End If
      End Sub
 
@@ -721,8 +823,24 @@ Public Class frmMainMenu
                                              oActiveColumns.Add(oCol)
                                         End If
                                    Next
+
+
+
                               End If
-                         End If
+
+                              If String.IsNullOrEmpty(oValidation.ReturnCell) = False Then
+                                   Dim sCol As String = oValidation.ReturnCell
+
+                                   If sCol.Contains(":") Then
+                                        sCol = sCol.Substring(0, sCol.IndexOf(":"))
+                                   End If
+
+                                   If oActiveColumns.Exists(Function(n) n.ColumnName = sCol) = False Then
+                                        oActiveColumns.Add(New clsImportColum With {.ColumnName = sCol, .Name = oValidation.Comments, .Type = JTokenType.None, .ColumnID = oValidation.ReturnCell})
+                                   End If
+                              End If
+
+                              End If
 
                     Next
                End If
@@ -1242,45 +1360,46 @@ Public Class frmMainMenu
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
+                    If .Rows.Item(nRow - 1).Visible = True Then
 
-                    Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
+                         Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
-                    'get copy of query
-                    sQuery = poValidation.Query
+                         'get copy of query
+                         sQuery = poValidation.Query
 
-                    'find all colunms that are reference from the excel sheet to do the query
-                    For Each sColumn As String In psColumns
-                         Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
-                         sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-                    Next
+                         'find all colunms that are reference from the excel sheet to do the query
+                         For Each sColumn As String In psColumns
+                              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+                              sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+                         Next
 
 
-                    'check if query has already been process to void duplicate calls
-                    If oReturnValuesStore.ContainsKey(sQuery) = False Then
+                         'check if query has already been process to void duplicate calls
+                         If oReturnValuesStore.ContainsKey(sQuery) = False Then
 
-                         'call the end point to get the query results
-                         Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuery)
-                         Dim json As JObject = JObject.Parse(oResponse.Content)
-                         If json IsNot Nothing Then
+                              'call the end point to get the query results
+                              Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuery)
+                              Dim json As JObject = JObject.Parse(oResponse.Content)
+                              If json IsNot Nothing Then
 
-                              Dim sRecordsEffeted As String = json.SelectToken("responsePayload.numberOfElements").ToString
-                              Dim sMessage As String = String.Format("{0} records found.", sRecordsEffeted)
-                              Dim sCode As String = IIf(CInt(sRecordsEffeted) = 1, "OK", "Failed")
+                                   Dim sRecordsEffeted As String = json.SelectToken("responsePayload.numberOfElements").ToString
+                                   Dim sMessage As String = String.Format("{0} records found.", sRecordsEffeted)
+                                   Dim sCode As String = IIf(CInt(sRecordsEffeted) = 1, "OK", "Failed")
 
-                              'add item to dictionary 
-                              oReturnValuesStore.Add(sQuery, String.Format("{0}:{1}", sCode, sMessage))
-                              .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sCode
-                              .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sMessage
+                                   'add item to dictionary 
+                                   oReturnValuesStore.Add(sQuery, String.Format("{0}:{1}", sCode, sMessage))
+                                   .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sCode
+                                   .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sMessage
+                              End If
+                         Else
+
+                              'item was already validated, post same results
+                              Dim sData() As String = oReturnValuesStore.Item(sQuery).ToString.Split(":")
+                              .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sData(0)
+                              .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sData(1)
+
                          End If
-                    Else
-
-                         'item was already validated, post same results
-                         Dim sData() As String = oReturnValuesStore.Item(sQuery).ToString.Split(":")
-                         .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sData(0)
-                         .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sData(1)
-
                     End If
-
 
                     If mbCancel Then
                          Exit For
@@ -1412,7 +1531,7 @@ Public Class frmMainMenu
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
-                    If .Rows.Item(nRow).Visible = True Then
+                    If .Rows.Item(nRow - 1).Visible = True Then
                          Dim bSourceData As Boolean = True
 
                          Call UpdateProgressStatus(String.Format("Validating {3} Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1, poValidation.Comments))
@@ -1544,7 +1663,7 @@ Public Class frmMainMenu
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
-                    If .Rows.Item(nRow).Visible = True Then
+                    If .Rows.Item(nRow - 1).Visible = True Then
                          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
                          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
@@ -1652,7 +1771,7 @@ Public Class frmMainMenu
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
-                    If .Rows.Item(nRow).Visible = True Then
+                    If .Rows.Item(nRow - 1).Visible = True Then
                          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
                          'get copy of query
@@ -1845,7 +1964,7 @@ Public Class frmMainMenu
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
-                    If .Rows.Item(nRow).Visible = True Then
+                    If .Rows.Item(nRow - 1).Visible = True Then
                          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
                          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, nRow))
@@ -2070,7 +2189,7 @@ Public Class frmMainMenu
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
-                    If .Rows.Item(nRow).Visible = True Then
+                    If .Rows.Item(nRow - 1).Visible = True Then
                          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
                          Dim oCellDestination As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
@@ -2102,7 +2221,7 @@ Public Class frmMainMenu
                                    If sListValues IsNot Nothing Then
                                         For Each sValue In sListValues
                                              If sValue.ToString.Trim.Length > 0 Then
-                                                  sReturnValue = String.Format("{0}{1}{2}{1},", sReturnValue, ControlChars.Quote, sValue)
+                                                  sReturnValue = String.Format("{0}{1}{2}{1},", sReturnValue, "", sValue)
                                              End If
                                         Next
                                    End If
@@ -2204,7 +2323,7 @@ Public Class frmMainMenu
 
                          For nRow = 2 To nCountRows + 1
 
-                              If .Rows.Item(nRow).Visible = True Then
+                              If .Rows.Item(nRow - 1).Visible = True Then
 
                                    Dim oDTO As String = sTemplateDTO
 
@@ -2250,6 +2369,17 @@ Public Class frmMainMenu
                                                   oResponse = goHTTPServer.CallWebEndpointUsingPut(poImportTemplate.APIEndpoint,
                                                                                                .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCell, nRow)).Value.ToString,
                                                                                                 sQuery, oDTO)
+
+                                                  'check if its was found, if not then do an insert
+                                                  If oResponse IsNot Nothing AndAlso oResponse.StatusCode = HttpStatusCode.NotFound Then
+
+                                                       Dim oDTOExcludingID As String = Replace(oDTO, .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCell, nRow)).Value.ToString, "")
+
+                                                       'Try an add
+                                                       oResponse = goHTTPServer.CallWebEndpointUsingPost(poImportTemplate.APIEndpoint, oDTOExcludingID)
+
+                                                  End If
+
                                              End If
                                         Case "3"
 
@@ -2443,7 +2573,7 @@ Public Class frmMainMenu
 
                          For nRow = 2 To nCountRows + 1
 
-                              If .Rows.Item(nRow).Visible = True Then
+                              If .Rows.Item(nRow - 1).Visible = True Then
 
                                    Dim oDTO As String = sTemplateDTO
 
@@ -2819,6 +2949,7 @@ Public Class frmMainMenu
                Dim sPath As String = IIf(String.IsNullOrEmpty(psPath), msFilePath, psPath)
                Dim sFileName As String = IIf(String.IsNullOrEmpty(psFileName), msFileName, psFileName)
 
+
                If String.IsNullOrEmpty(psFolder) = False Then
                     sPath = Path.Combine(sPath, psFolder)
                End If
@@ -2910,9 +3041,7 @@ Public Class frmMainMenu
 
           If goOpenWorkBook IsNot Nothing Then
 
-               lbxImportTemplates.DataSource = goOpenWorkBook.Templates.OrderBy(Function(x) x.Priority).ToList
                gridWorkbook.DataSource = goOpenWorkBook.Templates.OrderBy(Function(x) x.Priority).ToList
-               lbxImportTemplates.Refresh()
                labVersion.Text = goOpenWorkBook.WorkbookVersion
                txtWorkbookName.EditValue = goOpenWorkBook.WorkbookName
 
@@ -3015,6 +3144,7 @@ Public Class frmMainMenu
 
                                    End If
 
+
                                    Dim jsServerResponse As JObject = JObject.Parse(oResponse.Content)
                                    If jsServerResponse IsNot Nothing Then
 
@@ -3083,12 +3213,14 @@ Public Class frmMainMenu
                                                                  Else
 
                                                                       'call the end point to get the query results
-                                                                      oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint & String.Format("?page={0}", nPage), String.Empty, oTemplate.SelectQuery.ToString)
+
+
+                                                                      oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint, String.Empty, oTemplate.SelectQuery.ToString, , , nPage)
 
 
                                                                  End If
 
-                                                                 jsServerResponse = JObject.Parse(oResponse.Content)
+                                                                      jsServerResponse = JObject.Parse(oResponse.Content)
                                                                  oObject = jsServerResponse.SelectToken(sNodeLoad)
 
                                                             End If
@@ -3102,7 +3234,7 @@ Public Class frmMainMenu
                                                                                 nRow += 1
                                                                                 nCounter += 1
 
-                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} objects ", nCounter, IIf(bGraphQL, nPage + 1, nPages), IIf(bGraphQL, nPages + 1, nPages)))
+                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} objects ", nCounter, IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages + 1, nPages)))
 
                                                                                 For Each ocolumn In oTemplate.ImportColumns.OrderBy(Function(n) n.No).ToList
 
@@ -3325,6 +3457,14 @@ Public Class frmMainMenu
                                                                       Next
                                                                  End If
                                                             End If
+                                                            If String.IsNullOrEmpty(oValidation.ReturnCell) = False Then
+                                                                 If oListUsedColumns.Contains(oValidation.ReturnCell) = False Then
+                                                                      If oListReferencedColumns.ContainsKey(oValidation.ReturnCell) = False Then
+                                                                           oListReferencedColumns.Add(oValidation.ReturnCell, oValidation)
+                                                                      End If
+                                                                 End If
+                                                            End If
+
                                                        Next
 
                                                        If oListReferencedColumns IsNot Nothing And oListReferencedColumns.Count > 0 Then
@@ -3348,12 +3488,23 @@ Public Class frmMainMenu
 
                                                                                      Dim sQuery As String = oValidation.Query
                                                                                      Dim sDataSource As String = ExtractColumnDataField(sQuery, sKey)
+
+
                                                                                      Dim sRootNode As String = ExtractRootFromNodes(oValidation.ReturnNodeValue)
                                                                                      Dim oListValues As New Dictionary(Of String, String)
 
                                                                                      sQuery = Replace(sQuery, sDataSource, Replace(oValidation.ReturnNodeValue, sRootNode, String.Empty))
 
-                                                                                     Dim oReturnNode As String = String.Format("{1}{0}", sDataSource, sRootNode)
+
+                                                                                     Dim oReturnNode As String = ""
+                                                                                     If sKey = oValidation.ReturnCell Then
+                                                                                          oReturnNode = oValidation.ReturnNodeValue
+
+                                                                                     Else
+                                                                                          oReturnNode = String.Format("{1}{0}", sDataSource, sRootNode)
+                                                                                     End If
+
+
 
                                                                                      For nRow = 2 To .ActiveWorksheet.Rows.LastUsedIndex + 1
                                                                                           'only extract if the destination cell are empty
@@ -3362,7 +3513,7 @@ Public Class frmMainMenu
                                                                                                Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
 
                                                                                                If .ActiveWorksheet.Cells(String.Format("{0}{1}", oValidation.ReturnCell, nRow)).Value IsNot Nothing AndAlso
-                                                                                              String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", oValidation.ReturnCell, nRow)).Value.ToString) = False Then
+                                                                                              String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", oValidation.ReturnCell, nRow)).Value.ToString) = False Or sDataSource = "" Then
 
                                                                                                     Dim sNewQuery As String = sQuery
                                                                                                     Dim sColumns As List(Of String) = ExtractColumnDetails(oValidation.Query)
@@ -3386,21 +3537,23 @@ Public Class frmMainMenu
                                                                                                          sAPIendpoint = Replace(sAPIendpoint, String.Format("<!{0}!>", sColumn), .ActiveWorksheet.Cells(sCellAddress).Value.ToString.Trim)
                                                                                                     Next
 
+                                                                                                    If sNewQuery.Contains("<!") = False Then
 
-                                                                                                    Dim sValue As String = String.Empty
-                                                                                                    If oListValues.ContainsKey(sNewQuery) Then
-                                                                                                         sValue = oListValues(sNewQuery)
-                                                                                                    Else
-                                                                                                         sValue = goHTTPServer.GetValueFromEndpoint(sAPIendpoint, sNewQuery, oReturnNode, sRootNode)
-                                                                                                         If String.IsNullOrEmpty(sValue) = False Then
-                                                                                                              oListValues.Add(sNewQuery, sValue)
+                                                                                                         Dim sValue As String = String.Empty
+                                                                                                         If oListValues.ContainsKey(sNewQuery) Then
+                                                                                                              sValue = oListValues(sNewQuery)
+                                                                                                         Else
+                                                                                                              sValue = goHTTPServer.GetValueFromEndpoint(sAPIendpoint, sNewQuery, oReturnNode, sRootNode)
+                                                                                                              If String.IsNullOrEmpty(sValue) = False Then
+                                                                                                                   oListValues.Add(sNewQuery, sValue)
+                                                                                                              End If
                                                                                                          End If
+
+                                                                                                         .ActiveWorksheet.Cells(String.Format("{0}{1}", sKey, nRow)).Value = sValue
                                                                                                     End If
 
-                                                                                                    .ActiveWorksheet.Cells(String.Format("{0}{1}", sKey, nRow)).Value = sValue
-
                                                                                                End If
-                                                                                          End If
+                                                                                               End If
 
 
                                                                                           If mbCancel Then
@@ -3525,25 +3678,27 @@ Public Class frmMainMenu
                                                                                                                              sAPIendpoint = Replace(sAPIendpoint, String.Format("<!{0}!>", sColumn), .ActiveWorksheet.Cells(sCellAddress).Value.ToString.Trim)
                                                                                                                         Next
 
-                                                                                                                        Dim sValue As String = String.Empty
 
-                                                                                                                        If oListValues.ContainsKey(sNewQuery) Then
-                                                                                                                             sValue = oListValues(sNewQuery)
-                                                                                                                        Else
-                                                                                                                             sValue = goHTTPServer.GetValueFromEndpoint(sAPIendpoint, sNewQuery, oReturnNode, sRootNode)
+                                                                                                                        If sNewQuery.Contains("<!") = False Then
+                                                                                                                             Dim sValue As String = String.Empty
 
-                                                                                                                             If String.IsNullOrEmpty(sValue) = False Then
-                                                                                                                                  oListValues.Add(sNewQuery, sValue)
+                                                                                                                             If oListValues.ContainsKey(sNewQuery) Then
+                                                                                                                                  sValue = oListValues(sNewQuery)
+                                                                                                                             Else
+                                                                                                                                  sValue = goHTTPServer.GetValueFromEndpoint(sAPIendpoint, sNewQuery, oReturnNode, sRootNode)
+
+                                                                                                                                  If String.IsNullOrEmpty(sValue) = False Then
+                                                                                                                                       oListValues.Add(sNewQuery, sValue)
+                                                                                                                                  End If
+
                                                                                                                              End If
 
+                                                                                                                             If sReturnIndex <> String.Empty Then
+                                                                                                                                  sValue = Replace(sValueIDs, sValueID, sValue)
+                                                                                                                             End If
+
+                                                                                                                             oListofValues.Add(sValue)
                                                                                                                         End If
-
-                                                                                                                        If sReturnIndex <> String.Empty Then
-                                                                                                                             sValue = Replace(sValueIDs, sValueID, sValue)
-                                                                                                                        End If
-
-                                                                                                                        oListofValues.Add(sValue)
-
                                                                                                                    End If
                                                                                                               Next
 
@@ -3641,7 +3796,25 @@ Public Class frmMainMenu
                                                        Next
 
                                                   Else
-                                                       MsgBox("No data found.", vbOKOnly)
+                                                       Dim oRange As DevExpress.Spreadsheet.CellRange = .ActiveWorksheet.Range.FromLTRB(0, 0, .ActiveWorksheet.Columns.LastUsedIndex, .ActiveWorksheet.Rows.LastUsedIndex)
+
+                                                       'get the data as a excel table
+                                                       If .ActiveWorksheet.Tables.Count = 0 Then
+                                                            Dim oTable As Table = .ActiveWorksheet.Tables.Add(oRange, True)
+                                                       Else
+
+                                                            If oRange.RightColumnIndex <> .ActiveWorksheet.Columns.LastUsedIndex Or oRange.BottomRowIndex <> .ActiveWorksheet.Rows.LastUsedIndex Then
+
+                                                                 Dim oRangeNew As CellRange = .ActiveWorksheet.Tables(0).Range
+                                                                 oRangeNew = .ActiveWorksheet.Range.FromLTRB(oRange.LeftColumnIndex,
+                                                                                      oRange.TopRowIndex,
+                                                                                       .ActiveWorksheet.Columns.LastUsedIndex,
+                                                                                      .ActiveWorksheet.Rows.LastUsedIndex)
+
+                                                            End If
+
+                                                       End If
+
                                                   End If
                                              End If
                                         Else
@@ -3768,36 +3941,27 @@ Public Class frmMainMenu
           End If
      End Sub
 
+     Private Function VerifyHierarchSelection(poTemplate As clsDataImportTemplate) As Boolean
+
+          If poTemplate.IsHierarchal Then
+               Dim oHierarchy As clsHierarchies = TryCast(lueHierarchies.GetSelectedDataRow, clsHierarchies)
+               If oHierarchy Is Nothing Then Return False
+          End If
+
+          If poTemplate.IsShipEntity Then
+               Dim oHierarchy As clsHierarchies = TryCast(lueHierarchies.GetSelectedDataRow, clsHierarchies)
+               If oHierarchy Is Nothing Then Return False
+               If oHierarchy.Level <> "SHIP" Then Return False
+          End If
+
+          Return True
+
+     End Function
+
 #End Region
 
 #Region "Objects"
 
-     Private Sub lbxImportTemplates_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbxImportTemplates.SelectedIndexChanged
-
-          With lbxImportTemplates
-               If .SelectedIndex >= 0 Then
-                    Dim oItem = .GetItem(.SelectedIndex)
-                    If oItem IsNot Nothing Then
-                         UcProperties1._DataImportTemplate = oItem
-                         Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
-
-                         If String.IsNullOrEmpty(UcProperties1._DataImportTemplate.WorkbookSheetName) = False Then
-                              With spreadsheetControl
-                                   If .Document.Worksheets.Contains(UcProperties1._DataImportTemplate.WorkbookSheetName) = False Then
-                                        .Document.Worksheets.Add(StrConv(UcProperties1._DataImportTemplate.WorkbookSheetName, vbProperCase))
-                                        .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
-                                   Else
-                                        'if its found make it the active worksheet
-                                        .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
-                                   End If
-                              End With
-                         End If
-
-                    End If
-               End If
-          End With
-
-     End Sub
 
      Private Sub bbiVersions_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiVersions.ItemClick
           If bbiVersions.Down = True Then
@@ -3808,49 +3972,6 @@ Public Class frmMainMenu
 
      End Sub
 
-     Private Sub lbxImportTemplates_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles lbxImportTemplates.MouseDoubleClick
-
-          With lbxImportTemplates
-               If .SelectedIndex >= 0 Then
-                    Dim oItem = .GetItem(.SelectedIndex)
-                    If oItem IsNot Nothing Then
-                         UcProperties1._DataImportTemplate = oItem
-                         Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
-
-                         With spreadsheetControl
-                              If .Document.Worksheets.Contains(UcProperties1._DataImportTemplate.WorkbookSheetName) = False Then
-                                   .Document.Worksheets.Add(StrConv(UcProperties1._DataImportTemplate.WorkbookSheetName, vbProperCase))
-                                   .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
-                              Else
-                                   'if its found make it the active worksheet
-                                   .Document.Worksheets.ActiveWorksheet = .Document.Worksheets(UcProperties1._DataImportTemplate.WorkbookSheetName)
-                              End If
-                         End With
-
-                         tcgTabs.SelectedTabPage = lcgSpreedsheet
-
-                    End If
-               End If
-          End With
-     End Sub
-
-     Private Sub lbxImportTemplates_MouseDown(sender As Object, e As MouseEventArgs) Handles lbxImportTemplates.MouseDown
-
-          If e.Button = MouseButtons.Right Then
-               pumImportTemplates.ShowPopup(Me.MousePosition)
-          End If
-     End Sub
-
-     Private Sub bbiCheckAll_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiCheckAll.ItemClick
-
-          lbxImportTemplates.CheckAll()
-
-
-     End Sub
-
-     Private Sub bbiUncheckAll_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiUncheckAll.ItemClick
-          lbxImportTemplates.UnCheckAll()
-     End Sub
 
      Private Sub lueHierarchies_EditValueChanged(sender As Object, e As EventArgs) Handles lueHierarchies.EditValueChanged
           If lueHierarchies.EditValue IsNot Nothing Then
@@ -3888,6 +4009,7 @@ Public Class frmMainMenu
 
 
      End Sub
+
 
 
 

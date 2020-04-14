@@ -13,9 +13,11 @@
   Public Const gsSettingFileNameOld As String = "OtalioISF.Setting"
 
   Public Const gsSettingFileName As String = "OtalioImport.Setting"
-  Public Property gsSelectedHierarchy As String = ""
+     Public Property gsSelectedHierarchy As String = ""
+     Public Property gsSelectedHierarchyType As String = ""
 
-  Public Enum UserControlWaitFormCommand
+
+     Public Enum UserControlWaitFormCommand
     SetSize
   End Enum
 
