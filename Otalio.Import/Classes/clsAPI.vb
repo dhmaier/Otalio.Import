@@ -41,18 +41,26 @@ Public Class clsAPI
 
      Private Function ExecuteAPI(ByVal oClient As RestClient, ByVal oRequest As RestRequest, ByVal isLogin As Boolean) As IRestResponse
           Try
-               If goConnection._UserName <> String.Empty Then
+
+               If isLogin Then
                     oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
-
-                    If Not isLogin Then
-                         oRequest.AddHeader("X-API-Token", "Bearer " & msAccessToken)
-                    End If
                Else
+                    'Clipboard.SetText("Bearer " & msAccessToken)
+                    oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
 
-                    If Not isLogin Then
-                         oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
-                    End If
                End If
+               'If goConnection._UserName <> String.Empty Then
+               '     oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
+
+               '     If Not isLogin Then
+               '          oRequest.AddHeader("X-API-Token", "Bearer " & msAccessToken)
+               '     End If
+               'Else
+
+               '     If Not isLogin Then
+               '          oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
+               '     End If
+               'End If
 
                If goConnection._HTTPUserName <> String.Empty Then
                     oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
@@ -125,10 +133,12 @@ Public Class clsAPI
                          Dim json As JObject = JObject.Parse(oResponse.Content)
                          moLoginResponse = json.SelectToken("responsePayload")
                          moResponseDataLoginResponse = json.SelectToken("message")
+
                          mdResponseDateTime = DateTime.Now
-                         mnTokenExpires = json.SelectToken("message").SelectToken("expires_in")
-                         msAccessToken = json.SelectToken("message").SelectToken("access_token")
-                         msRefreshToken = json.SelectToken("message").SelectToken("refresh_token")
+
+                         mnTokenExpires = CInt(moLoginResponse.SelectToken("expires_in"))
+                         msAccessToken = moLoginResponse.SelectToken("access_token")
+                         msRefreshToken = moLoginResponse.SelectToken("refresh_token")
 
                          If pbTestOnly = False Then
                               moTimmer.Interval = 1000
@@ -231,7 +241,7 @@ Public Class clsAPI
                oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
                oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
                oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
-               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
 
                RaiseEvent APICallEvent(oRequest, oResponse)
 
@@ -244,7 +254,7 @@ Public Class clsAPI
 
      End Function
 
-     Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "", Optional psColumnsInclude As String = "", Optional pnPage As Integer = 0) As IRestResponse
+     Public Function CallWebEndpointUsingGet(psEndPoint As String, psHeader As String, psQuery As String, Optional psSort As String = "", Optional psColumnsInclude As String = "", Optional pnPage As Integer = -1, Optional pnSize As Integer = -1) As IRestResponse
           Try
                psEndPoint = ExtractSystemVariables(psEndPoint)
                psHeader = ExtractSystemVariables(psHeader)
@@ -287,7 +297,7 @@ Public Class clsAPI
                End If
 
 
-               If pnPage > 0 Then
+               If pnPage > -1 Then
                     If url.Contains("?") Then
                          url = url & String.Format("&page={0}", pnPage)
                     Else
@@ -296,6 +306,13 @@ Public Class clsAPI
                End If
 
 
+               If pnSize > -1 Then
+                    If url.Contains("?") Then
+                         url = url & String.Format("&size={0}", pnSize)
+                    Else
+                         url = url & String.Format("?size={0}", pnSize)
+                    End If
+               End If
 
 
                If psSort <> String.Empty Then
@@ -326,7 +343,7 @@ Public Class clsAPI
                End If
 
 
-               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
 
                RaiseEvent APICallEvent(oRequest, oResponse)
 
@@ -359,7 +376,7 @@ Public Class clsAPI
                oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
                oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
 
-               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
 
                RaiseEvent APICallEvent(oRequest, oResponse)
 
@@ -404,7 +421,7 @@ Public Class clsAPI
                     oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
                End If
 
-               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
 
                RaiseEvent APICallEvent(oRequest, oResponse)
 
@@ -441,7 +458,7 @@ Public Class clsAPI
                          ' oRequest.AddHeader("Content-Type", "multipart/form-data")
                          oRequest.AddHeader("Accept-Encoding", ": gzip, deflate, br")
                          oRequest.AddFile("file", bFileContent, Path.GetFileName(psFileName), String.Format("image/{0}", Path.GetExtension(psFileName)))
-                         Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+                         Dim oResponse = ExecuteAPI(oClient, oRequest, False)
 
                          RaiseEvent APICallEvent(oRequest, oResponse)
 
@@ -543,23 +560,23 @@ Public Class clsAPI
 
                          Dim json As JObject = JObject.Parse(oResponse.Content)
                          Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
-
-                         For Each oNode In oOjbect
-                              If oNode IsNot Nothing Then
-                                   goLookupTypes.Add(New clsLookUpTypes With {.Id = oNode("id"), .Code = oNode("code"), .Description = oNode("description"), .LookupGroup = oNode("lookupGroup")})
-                              End If
-                         Next
-
+                         If oOjbect IsNot Nothing Then
+                              For Each oNode In oOjbect
+                                   If oNode IsNot Nothing Then
+                                        goLookupTypes.Add(New clsLookUpTypes With {.Id = oNode("id"), .Code = oNode("code"), .Description = oNode("description"), .LookupGroup = oNode("lookupGroup")})
+                                   End If
+                              Next
+                         End If
                          json = Nothing
-                         oOjbect = Nothing
+                              oOjbect = Nothing
 
-                         If goLookupTypes IsNot Nothing Then
-                              goLookupTypes = goLookupTypes.OrderBy(Function(n) n.Description).ToList
+                              If goLookupTypes IsNot Nothing Then
+                                   goLookupTypes = goLookupTypes.OrderBy(Function(n) n.Description).ToList
+                              End If
+
                          End If
 
-                    End If
-
-                    oResponse = Nothing
+                         oResponse = Nothing
 
                End If
           Catch ex As Exception
@@ -591,7 +608,7 @@ Public Class clsAPI
                oRequest.AddParameter("Content-Type", "application/json", ParameterType.HttpHeader)
 
                oRequest.AddParameter("application/json", sBody, ParameterType.RequestBody)
-               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
 
                RaiseEvent APICallEvent(oRequest, oResponse)
 
@@ -659,29 +676,30 @@ Public Class clsAPI
                If poHierarchy.ParentHierarchyId IsNot Nothing AndAlso poHierarchy.ParentHierarchyId.ToString <> String.Empty Then
 
                     Dim oParent As clsHierarchies = goHierarchies.Where(Function(n) n.Id = poHierarchy.ParentHierarchyId).FirstOrDefault
-
-                    If oParent.Id <> "1" Then
-                         If oParent IsNot Nothing AndAlso oParent.Description <> String.Empty Then
-                              If psParentString = String.Empty Then
-                                   psParentString = oParent.Description
-                              Else
-                                   psParentString = oParent.Description & "\" & psParentString
+                    If oParent IsNot Nothing Then
+                         If oParent.Id <> "1" Then
+                              If oParent IsNot Nothing AndAlso oParent.Description <> String.Empty Then
+                                   If psParentString = String.Empty Then
+                                        psParentString = oParent.Description
+                                   Else
+                                        psParentString = oParent.Description & "\" & psParentString
+                                   End If
                               End If
-                         End If
 
-                         If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> String.Empty Then
-                              psParentString = LookforParentHierarchies(oParent, psParentString)
-                         End If
-                    Else
-                         If psParentString = String.Empty Then
-                              psParentString = "Enterprise"
+                              If oParent.ParentHierarchyId IsNot Nothing AndAlso oParent.ParentHierarchyId.ToString <> String.Empty Then
+                                   psParentString = LookforParentHierarchies(oParent, psParentString)
+                              End If
                          Else
-                              psParentString = "Enterprise" & " \ " & psParentString
+                              If psParentString = String.Empty Then
+                                   psParentString = "Enterprise"
+                              Else
+                                   psParentString = "Enterprise" & " \ " & psParentString
+                              End If
                          End If
                     End If
                End If
 
-               Return psParentString
+                    Return psParentString
           Catch ex As Exception
                RaiseEvent ErrorEvent(ex)
           End Try
@@ -711,6 +729,35 @@ Public Class clsAPI
           End Try
 
           Return String.Empty
+
+     End Function
+
+     Public Function LogEvent(psMessage As String, psClassName As String, psObjectFriendlyName As String, psObjectID As String)
+
+
+          Try
+               Dim oJsn As New JObject
+               oJsn.Add(New JProperty("eventType", "DATA_IMPORT"))
+
+               Dim oLog As New JObject
+               oLog.Add(New JProperty("className", psClassName))
+               oLog.Add(New JProperty("message", psMessage))
+               oLog.Add(New JProperty("objectFriendlyName", psObjectFriendlyName))
+               oLog.Add(New JProperty("objectId", Replace(psObjectID, "-", "")))
+
+               Dim oLogs As New JArray
+               oLogs.Add(oLog)
+               oJsn.Add(New JProperty("logEntities", oLogs))
+
+               Dim oDTO As New JArray
+               oDTO.Add(oJsn)
+
+               Call CallWebEndpointUsingPost("metadata/v1/logs", oDTO.ToString)
+          Catch ex As Exception
+
+          End Try
+
+
 
      End Function
 

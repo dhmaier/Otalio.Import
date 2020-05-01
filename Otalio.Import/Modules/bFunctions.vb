@@ -182,14 +182,15 @@ Module bFunctions
     Return value
   End Function
 
-  Private Function GenerateGUID() As String
+     Public Function GenerateGUID() As String
 
 
-    Return System.Guid.NewGuid.ToString()
+          Return Replace(System.Guid.NewGuid.ToString(), "-", "")
 
-  End Function
 
-  Public Function FormatString(psString As String, psFormat As String) As String
+     End Function
+
+     Public Function FormatString(psString As String, psFormat As String) As String
 
 
     Select Case psFormat.ToString

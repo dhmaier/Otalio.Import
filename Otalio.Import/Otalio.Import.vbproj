@@ -167,6 +167,7 @@
     <Compile Include="Classes\clsHierarchies.vb" />
     <Compile Include="Classes\clsImportColum.vb" />
     <Compile Include="Classes\clsJsonHelper.vb" />
+    <Compile Include="Classes\clsLogs.vb" />
     <Compile Include="Classes\clsLookUpTypes.vb" />
     <Compile Include="Classes\clsValidation.vb" />
     <Compile Include="Classes\clsVariables.vb" />

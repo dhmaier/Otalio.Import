@@ -27,12 +27,12 @@ Partial Class ucDataImportProperties
         Me.txtReturnValueName = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.txtFileLocationColumn = New DevExpress.XtraEditors.TextEdit()
         Me.txtEntityColumn = New DevExpress.XtraEditors.TextEdit()
-        Me.txtGraphQLNode = New DevExpress.XtraEditors.TextEdit()
-        Me.txtGraphQLQuery = New DevExpress.XtraEditors.MemoEdit()
         Me.gridVariables = New DevExpress.XtraGrid.GridControl()
         Me.gdVariables = New DevExpress.XtraGrid.Views.Grid.GridView()
         Me.gcVariable = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.gcValue = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.txtGraphQLNode = New DevExpress.XtraEditors.TextEdit()
+        Me.txtGraphQLQuery = New DevExpress.XtraEditors.MemoEdit()
         Me.sePriority = New DevExpress.XtraEditors.SpinEdit()
         Me.txtSelectQuery = New DevExpress.XtraEditors.MemoEdit()
         Me.txtAPIQuery = New DevExpress.XtraEditors.MemoEdit()
@@ -64,10 +64,11 @@ Partial Class ucDataImportProperties
         Me.colType = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.colName = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.colParent = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.colChildNode = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.colFormatted = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.colColumnID = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.colVariableName = New DevExpress.XtraGrid.Columns.GridColumn()
-        Me.colChildNode = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.gcCommand = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.txtDataTransportObject = New DevExpress.XtraEditors.MemoEdit()
         Me.txtAPIEndpoint = New DevExpress.XtraEditors.TextEdit()
         Me.txtReturnCellDTO = New DevExpress.XtraEditors.TextEdit()
@@ -78,10 +79,10 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem6 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.TabbedControlGroup1 = New DevExpress.XtraLayout.TabbedControlGroup()
-        Me.LayoutControlGroup3 = New DevExpress.XtraLayout.LayoutControlGroup()
-        Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup2 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem3 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlGroup3 = New DevExpress.XtraLayout.LayoutControlGroup()
+        Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.SplitterItem2 = New DevExpress.XtraLayout.SplitterItem()
         Me.LayoutControlItem11 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem7 = New DevExpress.XtraLayout.LayoutControlItem()
@@ -109,10 +110,10 @@ Partial Class ucDataImportProperties
         CType(Me.txtReturnValueName.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtFileLocationColumn.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtEntityColumn.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtGraphQLQuery.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gridVariables, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gdVariables, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtGraphQLQuery.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.sePriority.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSelectQuery.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtAPIQuery.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -140,10 +141,10 @@ Partial Class ucDataImportProperties
         CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TabbedControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitterItem2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem7, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -244,26 +245,6 @@ Partial Class ucDataImportProperties
         Me.txtEntityColumn.StyleController = Me.LayoutControl1
         Me.txtEntityColumn.TabIndex = 22
         '
-        'txtGraphQLNode
-        '
-        Me.txtGraphQLNode.Location = New System.Drawing.Point(717, 47)
-        Me.txtGraphQLNode.Name = "txtGraphQLNode"
-        Me.txtGraphQLNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtGraphQLNode.Properties.Appearance.Options.UseFont = True
-        Me.txtGraphQLNode.Size = New System.Drawing.Size(235, 20)
-        Me.txtGraphQLNode.StyleController = Me.LayoutControl1
-        Me.txtGraphQLNode.TabIndex = 21
-        '
-        'txtGraphQLQuery
-        '
-        Me.txtGraphQLQuery.Location = New System.Drawing.Point(662, 71)
-        Me.txtGraphQLQuery.Name = "txtGraphQLQuery"
-        Me.txtGraphQLQuery.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtGraphQLQuery.Properties.Appearance.Options.UseFont = True
-        Me.txtGraphQLQuery.Size = New System.Drawing.Size(290, 608)
-        Me.txtGraphQLQuery.StyleController = Me.LayoutControl1
-        Me.txtGraphQLQuery.TabIndex = 20
-        '
         'gridVariables
         '
         Me.gridVariables.Location = New System.Drawing.Point(24, 360)
@@ -296,6 +277,26 @@ Partial Class ucDataImportProperties
         Me.gcValue.Name = "gcValue"
         Me.gcValue.Visible = True
         Me.gcValue.VisibleIndex = 1
+        '
+        'txtGraphQLNode
+        '
+        Me.txtGraphQLNode.Location = New System.Drawing.Point(717, 47)
+        Me.txtGraphQLNode.Name = "txtGraphQLNode"
+        Me.txtGraphQLNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtGraphQLNode.Properties.Appearance.Options.UseFont = True
+        Me.txtGraphQLNode.Size = New System.Drawing.Size(235, 20)
+        Me.txtGraphQLNode.StyleController = Me.LayoutControl1
+        Me.txtGraphQLNode.TabIndex = 21
+        '
+        'txtGraphQLQuery
+        '
+        Me.txtGraphQLQuery.Location = New System.Drawing.Point(662, 71)
+        Me.txtGraphQLQuery.Name = "txtGraphQLQuery"
+        Me.txtGraphQLQuery.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtGraphQLQuery.Properties.Appearance.Options.UseFont = True
+        Me.txtGraphQLQuery.Size = New System.Drawing.Size(290, 608)
+        Me.txtGraphQLQuery.StyleController = Me.LayoutControl1
+        Me.txtGraphQLQuery.TabIndex = 20
         '
         'sePriority
         '
@@ -529,7 +530,7 @@ Partial Class ucDataImportProperties
         '
         'gdImportColumns
         '
-        Me.gdImportColumns.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.colNo, Me.colColumnName, Me.colType, Me.colName, Me.colParent, Me.colFormatted, Me.colColumnID, Me.colVariableName, Me.colChildNode})
+        Me.gdImportColumns.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.colNo, Me.colColumnName, Me.colType, Me.colName, Me.colParent, Me.colChildNode, Me.colFormatted, Me.colColumnID, Me.colVariableName, Me.gcCommand})
         Me.gdImportColumns.GridControl = Me.gridImportColumns
         Me.gdImportColumns.Name = "gdImportColumns"
         Me.gdImportColumns.OptionsView.ShowGroupPanel = False
@@ -571,12 +572,19 @@ Partial Class ucDataImportProperties
         Me.colParent.Visible = True
         Me.colParent.VisibleIndex = 3
         '
+        'colChildNode
+        '
+        Me.colChildNode.FieldName = "ChildNode"
+        Me.colChildNode.Name = "colChildNode"
+        Me.colChildNode.Visible = True
+        Me.colChildNode.VisibleIndex = 5
+        '
         'colFormatted
         '
         Me.colFormatted.FieldName = "FormatName"
         Me.colFormatted.Name = "colFormatted"
         Me.colFormatted.Visible = True
-        Me.colFormatted.VisibleIndex = 5
+        Me.colFormatted.VisibleIndex = 6
         '
         'colColumnID
         '
@@ -588,10 +596,13 @@ Partial Class ucDataImportProperties
         Me.colVariableName.FieldName = "VariableName"
         Me.colVariableName.Name = "colVariableName"
         '
-        'colChildNode
+        'gcCommand
         '
-        Me.colChildNode.FieldName = "ChildNode"
-        Me.colChildNode.Name = "colChildNode"
+        Me.gcCommand.Caption = "Commands"
+        Me.gcCommand.FieldName = "Commands"
+        Me.gcCommand.Name = "gcCommand"
+        Me.gcCommand.Visible = True
+        Me.gcCommand.VisibleIndex = 7
         '
         'txtDataTransportObject
         '
@@ -684,25 +695,6 @@ Partial Class ucDataImportProperties
         Me.TabbedControlGroup1.Size = New System.Drawing.Size(628, 320)
         Me.TabbedControlGroup1.TabPages.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlGroup3, Me.LayoutControlGroup2})
         '
-        'LayoutControlGroup3
-        '
-        Me.LayoutControlGroup3.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem4})
-        Me.LayoutControlGroup3.Location = New System.Drawing.Point(0, 0)
-        Me.LayoutControlGroup3.Name = "LayoutControlGroup3"
-        Me.LayoutControlGroup3.Size = New System.Drawing.Size(604, 273)
-        Me.LayoutControlGroup3.Text = "Validation Rules"
-        '
-        'LayoutControlItem4
-        '
-        Me.LayoutControlItem4.Control = Me.gridValidators
-        Me.LayoutControlItem4.Location = New System.Drawing.Point(0, 0)
-        Me.LayoutControlItem4.Name = "LayoutControlItem4"
-        Me.LayoutControlItem4.Size = New System.Drawing.Size(604, 273)
-        Me.LayoutControlItem4.Text = "Validation Rules"
-        Me.LayoutControlItem4.TextLocation = DevExpress.Utils.Locations.Top
-        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
-        Me.LayoutControlItem4.TextVisible = False
-        '
         'LayoutControlGroup2
         '
         Me.LayoutControlGroup2.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem3})
@@ -721,6 +713,25 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top
         Me.LayoutControlItem3.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem3.TextVisible = False
+        '
+        'LayoutControlGroup3
+        '
+        Me.LayoutControlGroup3.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem4})
+        Me.LayoutControlGroup3.Location = New System.Drawing.Point(0, 0)
+        Me.LayoutControlGroup3.Name = "LayoutControlGroup3"
+        Me.LayoutControlGroup3.Size = New System.Drawing.Size(604, 273)
+        Me.LayoutControlGroup3.Text = "Validation Rules"
+        '
+        'LayoutControlItem4
+        '
+        Me.LayoutControlItem4.Control = Me.gridValidators
+        Me.LayoutControlItem4.Location = New System.Drawing.Point(0, 0)
+        Me.LayoutControlItem4.Name = "LayoutControlItem4"
+        Me.LayoutControlItem4.Size = New System.Drawing.Size(604, 273)
+        Me.LayoutControlItem4.Text = "Validation Rules"
+        Me.LayoutControlItem4.TextLocation = DevExpress.Utils.Locations.Top
+        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
+        Me.LayoutControlItem4.TextVisible = False
         '
         'SplitterItem2
         '
@@ -930,10 +941,10 @@ Partial Class ucDataImportProperties
         CType(Me.txtReturnValueName.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtFileLocationColumn.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtEntityColumn.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtGraphQLQuery.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gridVariables, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gdVariables, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtGraphQLQuery.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.sePriority.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSelectQuery.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtAPIQuery.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -961,10 +972,10 @@ Partial Class ucDataImportProperties
         CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TabbedControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.SplitterItem2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem7, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1071,4 +1082,5 @@ Partial Class ucDataImportProperties
     Friend WithEvents txtGroup As DevExpress.XtraEditors.TextEdit
     Friend WithEvents LayoutControlItem9 As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents SplitterItem1 As DevExpress.XtraLayout.SplitterItem
+    Friend WithEvents gcCommand As DevExpress.XtraGrid.Columns.GridColumn
 End Class

@@ -74,6 +74,7 @@ Public Class frmMainMenu
           AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
 
 
+
      End Sub
 
      Private Function CreateButtonImage() As Image
@@ -740,6 +741,7 @@ Public Class frmMainMenu
 
                mbContainsHierarchies = False
                If poImportTemplate.GraphQLQuery Is Nothing Then poImportTemplate.GraphQLQuery = ""
+               If poImportTemplate.ID Is Nothing Then poImportTemplate.ID = GenerateGUID()
 
                'extract list of columns from the Json code
                Dim oColumns As List(Of clsImportColum) = ExactExcelColumns(poImportTemplate.DTOObject).OrderBy(Function(n) n.No).ToList
@@ -840,7 +842,7 @@ Public Class frmMainMenu
                                    End If
                               End If
 
-                              End If
+                         End If
 
                     Next
                End If
@@ -856,6 +858,8 @@ Public Class frmMainMenu
                With UcProperties1
                     .gridVariables.DataSource = ._DataImportTemplate.Variables.ToList
                End With
+
+               LoadLogs(poImportTemplate.ID)
 
           Catch ex As Exception
                With UcProperties1
@@ -947,6 +951,8 @@ Public Class frmMainMenu
                sColumn = sColumn.Replace("""", String.Empty)
                sColumn = sColumn.Replace(vbNewLine, String.Empty)
 
+
+
                If sColumn.Contains(":") Then
                     Dim sValues As List(Of String) = sColumn.Split(":").ToList
                     If sValues IsNot Nothing AndAlso sValues.Count > 1 Then
@@ -977,6 +983,26 @@ Public Class frmMainMenu
 
      End Function
 
+     Public Function RemoveCommands(psDTO As String) As String
+
+
+          Dim oDataSource As List(Of String) = psDTO.Split(New Char() {"(", ")"}, StringSplitOptions.RemoveEmptyEntries).ToList
+          Dim sReturnValue As String = ""
+          Dim bIsCommand As Boolean = False
+          For Each sString As String In oDataSource
+               If bIsCommand = False Then
+                    sReturnValue = sReturnValue & sString
+                    bIsCommand = True
+               Else
+                    bIsCommand = False
+               End If
+
+          Next
+
+          Return sReturnValue
+
+
+     End Function
      Public Sub ExtractColumnDetails2(poObject As String, psParent As String, poListOfColumn As List(Of clsImportColum))
 
           Try
@@ -988,6 +1014,9 @@ Public Class frmMainMenu
                Dim sFormat As String = String.Empty
                Dim sChild As String = String.Empty
                Dim sParent As String = String.Empty
+               Dim sChildNode As String = String.Empty
+               Dim sCommands As String = String.Empty
+
 
                If InStr(poObject, "<!") > 0 Then
                     sColumnData = (Replace(Replace(poObject, "<!", String.Empty), "!>", String.Empty))
@@ -998,6 +1027,34 @@ Public Class frmMainMenu
                'sColumnData = sColumnData.Replace(" ", "")
                'sColumnData = sColumnData.Replace("""", "")
                'sColumnData = sColumnData.Replace(vbNewLine, "")
+
+               If sColumnData.Contains("(") Then
+                    sCommands = sColumnData.Substring(sColumnData.IndexOf("("), sColumnData.IndexOf(")") - sColumnData.IndexOf("(") + 1)
+                    sColumnData = Replace(sColumnData, sCommands, "")
+                    sCommands = sCommands.Substring(sCommands.IndexOf("(") + 1, sCommands.IndexOf(")") - 1)
+
+
+                    For Each sCommnad As String In sCommands.Split(",")
+                         If sCommnad IsNot Nothing Then
+                              If sCommnad.Contains("=") Then
+                                   Dim oObjects() As String = sCommnad.Split("=")
+
+                                   If oObjects(0) IsNot Nothing Then
+                                        Select Case oObjects(0).ToString
+                                             Case "parent" : sParent = oObjects(1)
+                                             Case "childnode" : sChildNode = oObjects(1)
+                                             Case "format" : sFormat = oObjects(1).ToString.ToUpper.Substring(0, 1)
+                                        End Select
+                                   End If
+
+                              End If
+                         End If
+                    Next
+
+
+
+               End If
+
 
                If sColumnData.Contains(":") Then
                     Dim sValues As List(Of String) = sColumnData.Split(":").ToList
@@ -1041,7 +1098,6 @@ Public Class frmMainMenu
                     End If
                Else
                     sColumnFieldName = psParent
-                    sParent = String.Empty
                End If
 
                Dim oColumn As New clsImportColum
@@ -1052,12 +1108,14 @@ Public Class frmMainMenu
                     .Formatted = sFormat
                     .ColumnName = sColumnHeader
                     .VariableName = sVariable
+                    .Commands = sCommands
+                    .Type = JTokenType.String
+                    .ChildNode = sChildNode
                     If String.IsNullOrEmpty(sChild) = False Then
                          .ChildNode = sChild
                          .Type = JTokenType.Array
-                    Else
-                         .Type = JTokenType.String
                     End If
+
 
                End With
 
@@ -1187,19 +1245,28 @@ Public Class frmMainMenu
           tcgTabs.SelectedTabPage = lcgSpreedsheet
           Application.DoEvents()
 
+          Dim oTemplate As clsDataImportTemplate = poImportTemplate
           Dim bHasErrors As Boolean = False
           Dim bFormatted As Boolean = False
           Dim bAutoColumnWidth As Boolean = False
+          Dim dStartDateTime As DateTime = Now
           Try
 
 
-               Dim oTemplate As clsDataImportTemplate = poImportTemplate
-
                If oTemplate IsNot Nothing Then
                     If oTemplate.Validators IsNot Nothing AndAlso oTemplate.Validators.Count > 0 Then
+
+
+                         goHTTPServer.LogEvent("User has started validation of Template", "Validation", oTemplate.Name, oTemplate.ID)
+
+
                          For Each oValidation In oTemplate.Validators.Where(Function(n) n.Enabled = "1").OrderBy(Function(n) n.Priority).ToList
 
                               If oValidation IsNot Nothing Then
+
+                                   goHTTPServer.LogEvent(String.Format("Validating {0}", oValidation.Comments), "Validation", oTemplate.Name, oTemplate.ID)
+
+
 
                                    Dim sTemplateDTO As String = poImportTemplate.DTOObject
                                    sTemplateDTO = Replace(sTemplateDTO, vbNewLine, String.Empty)
@@ -1324,6 +1391,8 @@ Public Class frmMainMenu
                               End If
 
                               If mbCancel Then
+                                   goHTTPServer.LogEvent(String.Format("User requested Cancel of valication"), "Valication", poImportTemplate.Name, poImportTemplate.ID)
+
                                    Exit For
                               End If
 
@@ -1344,6 +1413,8 @@ Public Class frmMainMenu
                bbiCancel.Enabled = False
                mbCancel = False
                Call UpdateProgressStatus()
+               goHTTPServer.LogEvent(String.Format("Completed validation in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Validation", oTemplate.Name, oTemplate.ID)
+               LoadLogs(oTemplate.ID)
           End Try
      End Function
 
@@ -2252,19 +2323,27 @@ Public Class frmMainMenu
      End Function
 
      Public Sub ImportData(poImportTemplate As clsDataImportTemplate)
+
+
+          Dim mbIgnore As Boolean = False
+          Dim bAutoColumnWidth As Boolean = False
+          Dim dStartDateTime As DateTime = Now
+
+
           Try
 
                If ValidateHierarchiesIsSelected() = False Then Exit Sub
 
-               Dim mbIgnore As Boolean = False
-               Dim bAutoColumnWidth As Boolean = False
 
                'set focus to the excel spreed sheet
                tcgTabs.SelectedTabPage = lcgSpreedsheet
                Application.DoEvents()
 
                Dim sTemplateDTO As String = poImportTemplate.DTOObject
+               sTemplateDTO = RemoveCommands(sTemplateDTO)
                sTemplateDTO = Replace(sTemplateDTO, vbNewLine, String.Empty)
+
+
 
                'validate that the specified worksheet exists
                With spreadsheetControl
@@ -2280,6 +2359,9 @@ Public Class frmMainMenu
                If goHTTPServer.TestConnection(True, UcConnectionDetails1._Connection) Then
 
                     Dim eStatus As HttpStatusCode = goHTTPServer.LogIntoIAM()
+
+                    goHTTPServer.LogEvent(String.Format("User has start import of template"), "Import", poImportTemplate.Name, poImportTemplate.ID)
+
 
                     With spreadsheetControl.ActiveWorksheet
                          Dim nCountRows As Integer = .Rows.LastUsedIndex
@@ -2320,6 +2402,17 @@ Public Class frmMainMenu
 
                          bbiCancel.Enabled = True
                          mbCancel = False
+
+                         Dim nTotalRowsToImport As Integer = 0
+                         For nRow = 2 To nCountRows + 1
+                              If .Rows.Item(nRow - 1).Visible = True Then
+                                   nTotalRowsToImport += 1
+                              End If
+                         Next
+
+                         goHTTPServer.LogEvent(String.Format("Total of {0} found to import", nTotalRowsToImport), "Import", poImportTemplate.Name, poImportTemplate.ID)
+
+
 
                          For nRow = 2 To nCountRows + 1
 
@@ -2456,10 +2549,14 @@ Public Class frmMainMenu
                                                   sReplyMessage = "Record Not Found"
 
                                                   FormatCells(True, nRow - 1, nCountColumns)
-                                             Case Else
+                                             Case HttpStatusCode.Unauthorized
                                                   Dim json As JObject = JObject.Parse(oResponse.Content)
                                                   .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
-                                                  .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
+                                                  .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = "Request was unauthorized."
+                                                  FormatCells(True, nRow - 1, nCountColumns)
+                                             Case Else
+                                                  .Cells(String.Format("{0}{1}", poImportTemplate.StatusCodeColumn, nRow)).Value = oResponse.StatusCode.ToString
+                                                  .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = oResponse.StatusDescription
                                                   FormatCells(True, nRow - 1, nCountColumns)
                                         End Select
 
@@ -2479,6 +2576,7 @@ Public Class frmMainMenu
                               End If
 
                               If mbCancel Then
+                                   goHTTPServer.LogEvent(String.Format("User requested Cancel of Import"), "Import", poImportTemplate.Name, poImportTemplate.ID)
                                    Exit For
                               End If
 
@@ -2496,19 +2594,25 @@ Public Class frmMainMenu
                Call UpdateProgressStatus(String.Empty)
                bbiCancel.Enabled = False
                mbCancel = False
+               goHTTPServer.LogEvent(String.Format("Completed import in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Import", poImportTemplate.Name, poImportTemplate.ID)
+               LoadLogs(poImportTemplate.ID)
+
           End Try
 
 
      End Sub
 
      Public Sub ImportFiles(poImportTemplate As clsDataImportTemplate)
+
+
+          Dim mbIgnore As Boolean = False
+          Dim bAutoColumnWidth As Boolean = False
+          Dim dStartDateTime As DateTime = Now
+
+
           Try
 
                If ValidateHierarchiesIsSelected() = False Then Exit Sub
-
-               Dim mbIgnore As Boolean = False
-               Dim bAutoColumnWidth As Boolean = False
-
                'set focus to the excel spreed sheet
                tcgTabs.SelectedTabPage = lcgSpreedsheet
                Application.DoEvents()
@@ -2530,6 +2634,7 @@ Public Class frmMainMenu
                If goHTTPServer.TestConnection(True, UcConnectionDetails1._Connection) Then
 
                     Dim eStatus As HttpStatusCode = goHTTPServer.LogIntoIAM()
+                    goHTTPServer.LogEvent(String.Format("User has start import of template"), "Import Files", poImportTemplate.Name, poImportTemplate.ID)
 
                     With spreadsheetControl.ActiveWorksheet
                          Dim nCountRows As Integer = .Rows.LastUsedIndex
@@ -2570,6 +2675,15 @@ Public Class frmMainMenu
 
                          bbiCancel.Enabled = True
                          mbCancel = False
+                         Dim nTotalRowsToImport As Integer = 0
+                         For nRow = 2 To nCountRows + 1
+                              If .Rows.Item(nRow - 1).Visible = True Then
+                                   nTotalRowsToImport += 1
+                              End If
+                         Next
+
+                         goHTTPServer.LogEvent(String.Format("Total of {0} found to import", nTotalRowsToImport), "Import Files", poImportTemplate.Name, poImportTemplate.ID)
+
 
                          For nRow = 2 To nCountRows + 1
 
@@ -2683,6 +2797,7 @@ Public Class frmMainMenu
                               End If
 
                               If mbCancel Then
+                                   goHTTPServer.LogEvent(String.Format("User requested Cancel of Import"), "Import File", poImportTemplate.Name, poImportTemplate.ID)
                                    Exit For
                               End If
 
@@ -2700,6 +2815,8 @@ Public Class frmMainMenu
                Call UpdateProgressStatus(String.Empty)
                bbiCancel.Enabled = False
                mbCancel = False
+               goHTTPServer.LogEvent(String.Format("Completed import in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Import Files", poImportTemplate.Name, poImportTemplate.ID)
+               LoadLogs(poImportTemplate.ID)
           End Try
 
 
@@ -3070,7 +3187,7 @@ Public Class frmMainMenu
 
      Public Sub QueryandLoad(poImportTemplate As clsDataImportTemplate)
 
-
+          Dim dStartDateTime As DateTime = Now
           If ValidateHierarchiesIsSelected() = False Then Exit Sub
 
           'set focus to the excel spreed sheet
@@ -3090,6 +3207,7 @@ Public Class frmMainMenu
                Dim oTemplate As clsDataImportTemplate = poImportTemplate
                If oTemplate IsNot Nothing Then
 
+                    goHTTPServer.LogEvent("User has started Query of Template", "Query", oTemplate.Name, oTemplate.ID)
 
 
                     If oTemplate.ImportColumns IsNot Nothing AndAlso oTemplate.ImportColumns.Count >= 0 Then
@@ -3195,6 +3313,7 @@ Public Class frmMainMenu
                                                        Dim nCounter As Integer = 0
 
                                                        For nPage = IIf(bGraphQL, 0, 1) To IIf(bGraphQL, nPages - 1, nPages)
+                                                            goHTTPServer.LogEvent(String.Format("Loading Page {0} of {1}", IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages, nPages)), "Query", oTemplate.Name, oTemplate.ID)
 
                                                             If nPage > IIf(bGraphQL, 0, 1) Then
 
@@ -3220,7 +3339,7 @@ Public Class frmMainMenu
 
                                                                  End If
 
-                                                                      jsServerResponse = JObject.Parse(oResponse.Content)
+                                                                 jsServerResponse = JObject.Parse(oResponse.Content)
                                                                  oObject = jsServerResponse.SelectToken(sNodeLoad)
 
                                                             End If
@@ -3234,13 +3353,16 @@ Public Class frmMainMenu
                                                                                 nRow += 1
                                                                                 nCounter += 1
 
-                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} objects ", nCounter, IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages + 1, nPages)))
+                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} pages ", nCounter, IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages, nPages)))
 
                                                                                 For Each ocolumn In oTemplate.ImportColumns.OrderBy(Function(n) n.No).ToList
 
                                                                                      Try
 
-                                                                                          If mbCancel = True Then Exit For
+                                                                                          If mbCancel = True Then
+                                                                                               goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
+                                                                                               Exit For
+                                                                                          End If
 
                                                                                           Dim sValue As String = String.Empty
                                                                                           Dim sColumnName As String = String.Empty
@@ -3262,6 +3384,11 @@ Public Class frmMainMenu
 
                                                                                                Case JTokenType.Object
 
+
+                                                                                                    If String.IsNullOrEmpty(ocolumn.ChildNode) = False Then
+                                                                                                         sNodeName = sNodeName + "." + ocolumn.ChildNode
+                                                                                                    End If
+
                                                                                                     oJsn = oRow.SelectToken(sNodeName)
                                                                                                     If oJsn IsNot Nothing Then
                                                                                                          oCell.Value = oJsn.ToString
@@ -3276,6 +3403,10 @@ Public Class frmMainMenu
                                                                                                     End If
 
                                                                                                Case JTokenType.String
+
+                                                                                                    If String.IsNullOrEmpty(ocolumn.ChildNode) = False Then
+                                                                                                         sNodeName = sNodeName + "." + ocolumn.ChildNode
+                                                                                                    End If
 
                                                                                                     oJsn = oRow.SelectToken(sNodeName)
                                                                                                     If oJsn IsNot Nothing Then
@@ -3293,6 +3424,7 @@ Public Class frmMainMenu
                                                                                                Case JTokenType.Array
 
                                                                                                     Dim sValues As String = String.Empty
+
                                                                                                     oJsn = oRow.SelectToken(IIf(ocolumn.Parent = String.Empty, ocolumn.Name, ocolumn.Parent))
                                                                                                     If oJsn IsNot Nothing Then
                                                                                                          For Each oChildren In oJsn.Children
@@ -3394,6 +3526,7 @@ Public Class frmMainMenu
                                                                       End Try
 
                                                                       If mbCancel Then
+                                                                           goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                                            Exit For
                                                                       End If
 
@@ -3401,12 +3534,17 @@ Public Class frmMainMenu
                                                             End If
 
                                                             If mbCancel Then
+                                                                 goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                                  Exit For
                                                             End If
 
                                                        Next
 
+                                                       goHTTPServer.LogEvent(String.Format("Downloaded total of {0} records", nRow), "Query", oTemplate.Name, oTemplate.ID)
+
+
                                                        If mbCancel Then
+                                                            goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                             Exit Sub
                                                        End If
 
@@ -3504,12 +3642,18 @@ Public Class frmMainMenu
                                                                                           oReturnNode = String.Format("{1}{0}", sDataSource, sRootNode)
                                                                                      End If
 
+                                                                                     goHTTPServer.LogEvent(String.Format("Reverse engineering records {0}", oValidation.Comments), "Query", oTemplate.Name, oTemplate.ID)
 
 
                                                                                      For nRow = 2 To .ActiveWorksheet.Rows.LastUsedIndex + 1
                                                                                           'only extract if the destination cell are empty
                                                                                           If String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sKey, nRow)).Value.ToString) = True Then
-                                                                                               If mbCancel = True Then Exit Sub
+
+                                                                                               If mbCancel = True Then
+                                                                                                    goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
+                                                                                                    Exit Sub
+                                                                                               End If
+
                                                                                                Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
 
                                                                                                If .ActiveWorksheet.Cells(String.Format("{0}{1}", oValidation.ReturnCell, nRow)).Value IsNot Nothing AndAlso
@@ -3553,10 +3697,11 @@ Public Class frmMainMenu
                                                                                                     End If
 
                                                                                                End If
-                                                                                               End If
+                                                                                          End If
 
 
                                                                                           If mbCancel Then
+                                                                                               goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                                                                Exit Sub
                                                                                           End If
 
@@ -3616,13 +3761,19 @@ Public Class frmMainMenu
 
                                                                                      Dim oReturnNode As String = String.Format("{1}{0}", sDataSource, sRootNode)
 
+                                                                                     goHTTPServer.LogEvent(String.Format("Reverse engineering records {0}", oValidation.Comments), "Query", oTemplate.Name, oTemplate.ID)
+
+
                                                                                      For nRow = 2 To .ActiveWorksheet.Rows.LastUsedIndex + 1
                                                                                           Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
 
                                                                                           'only extract if the destination cell are empty
                                                                                           If String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sColumnCode, nRow)).Value.ToString) = True Then
 
-                                                                                               If mbCancel = True Then Exit Sub
+                                                                                               If mbCancel = True Then
+                                                                                                    goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
+                                                                                                    Exit Sub
+                                                                                               End If
 
                                                                                                If .ActiveWorksheet.Cells(String.Format("{0}{1}", sReturnCell, nRow)).Value IsNot Nothing AndAlso
                                                                                               String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sReturnCell, nRow)).Value.ToString) = False Then
@@ -3722,6 +3873,8 @@ Public Class frmMainMenu
 
 
                                                                                           If mbCancel Then
+                                                                                               goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
+
                                                                                                Exit Sub
                                                                                           End If
 
@@ -3764,6 +3917,7 @@ Public Class frmMainMenu
 
 
                                                                                      If mbCancel Then
+                                                                                          goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                                                           Exit Sub
                                                                                      End If
 
@@ -3850,6 +4004,9 @@ Public Class frmMainMenu
                     End If
                End If
 
+               goHTTPServer.LogEvent(String.Format("Completed export in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Query", oTemplate.Name, oTemplate.ID)
+               LoadLogs(oTemplate.ID)
+
           Catch ex As Exception
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
@@ -3858,6 +4015,8 @@ Public Class frmMainMenu
                mbCancel = False
                Call UpdateProgressStatus(String.Empty)
                bbiQuery.Enabled = True
+
+
           End Try
 
      End Sub
@@ -3958,6 +4117,68 @@ Public Class frmMainMenu
 
      End Function
 
+     Private Sub LoadLogs(psTemplateID As String)
+
+          Try
+
+
+
+               If tcgImport.SelectedTabPage.Name = lcgLogs.Name Then
+
+                    Call UpdateProgressStatus(String.Format("Downloading Logs"))
+
+
+                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/logs", "", String.Format("eventType=={0}{1}{0};logEntities.objectId=={0}{2}{0}", ControlChars.Quote, "DATA_IMPORT", Replace(psTemplateID, "-", "")), "utcDatetime,desc", "", 0, 2000)
+                    Dim oListLogs As New List(Of clsLogs)
+
+
+                    If oResponse IsNot Nothing Then
+                         Dim jsServerResponse As JObject = JObject.Parse(oResponse.Content)
+                         If jsServerResponse IsNot Nothing Then
+
+                              If oResponse.StatusCode = HttpStatusCode.OK Then
+
+
+                                   Dim oObject As JToken = jsServerResponse.SelectToken("responsePayload.content")
+
+                                   Call UpdateProgressStatus(String.Format("Populating logs with {0} records", oObject.Children.Count))
+
+
+                                   For Each oToken As JObject In oObject.Children
+
+                                        Dim oObjectChild As JArray = oToken.SelectToken("logEntities")
+
+                                        oListLogs.Add(New clsLogs(oToken.SelectToken("id"), oToken.SelectToken("microserviceName"), oToken.SelectToken("microserviceVersion"),
+                                                             oToken.SelectToken("microserviceInstanceId"), oToken.SelectToken("currentHierarchyId"),
+                                                             oToken.SelectToken("currentLocation"), oToken.SelectToken("datetime"), oToken.SelectToken("utcDatetime"),
+                                                             oToken.SelectToken("hostName"), oToken.SelectToken("hostIpAddress"), oToken.SelectToken("user"),
+                                                             oToken.SelectToken("eventType"), oToken.SelectToken("logGroup"),
+                                                             oObjectChild.First.SelectToken("message"), oObjectChild.First.SelectToken("className"),
+                                                             oObjectChild.First.SelectToken("objectId"), oObjectChild.First.SelectToken("objectFriendlyName")))
+                                   Next
+
+
+                                   oObject = Nothing
+
+                              End If
+                         End If
+                         jsServerResponse = Nothing
+                    End If
+
+                    oResponse = Nothing
+
+                    gridLogs.DataSource = oListLogs
+                    gridLogs.RefreshDataSource()
+                    gdLogs.BestFitColumns()
+               End If
+          Catch ex As Exception
+
+          Finally
+               Call UpdateProgressStatus()
+          End Try
+
+     End Sub
+
 #End Region
 
 #Region "Objects"
@@ -4004,10 +4225,17 @@ Public Class frmMainMenu
                               End If
                          End With
                     End If
+
+
+
                End If
           End If
 
 
+     End Sub
+
+     Private Sub tcgImport_SelectedPageChanged(sender As Object, e As DevExpress.XtraLayout.LayoutTabPageChangedEventArgs) Handles tcgImport.SelectedPageChanged
+          Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
      End Sub
 
 
