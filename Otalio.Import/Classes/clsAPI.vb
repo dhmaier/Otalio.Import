@@ -590,6 +590,7 @@ Public Class clsAPI
                psEndPoint = ExtractSystemVariables(psEndPoint)
                psDTOJson = ExtractSystemVariables(psDTOJson)
 
+
                psDTOJson = Replace(psDTOJson, vbNewLine, "")
                psDTOJson = Replace(psDTOJson, ControlChars.Quote, "\" & ControlChars.Quote)
 

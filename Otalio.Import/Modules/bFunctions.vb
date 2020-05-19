@@ -264,65 +264,69 @@ Module bFunctions
     End Using
   End Function
 
-  Public Function CompareFiles(ByVal FileFullPath1 As String,
+     Public Function CompareFiles(ByVal FileFullPath1 As String,
     ByVal FileFullPath2 As String) As Boolean
 
-    'returns true if two files passed to is are identical, false
-    'otherwise
+          'returns true if two files passed to is are identical, false
+          'otherwise
 
-    'does byte comparison; works for both text and binary files
+          'does byte comparison; works for both text and binary files
 
-    'Throws exception on errors; you can change to just return 
-    'false if you prefer
+          'Throws exception on errors; you can change to just return 
+          'false if you prefer
 
 
-    Dim objMD5 As New System.Security.Cryptography.MD5CryptoServiceProvider
-    Dim objEncoding As New System.Text.ASCIIEncoding()
+          Dim objMD5 As New System.Security.Cryptography.MD5CryptoServiceProvider
+          Dim objEncoding As New System.Text.ASCIIEncoding()
 
-    Dim aFile1() As Byte, aFile2() As Byte
-    Dim strContents1, strContents2 As String
-    Dim objReader As StreamReader
-    Dim objFS As FileStream
-    Dim bAns As Boolean
-    If Not File.Exists(FileFullPath1) Then _
+          Dim aFile1() As Byte, aFile2() As Byte
+          Dim strContents1, strContents2 As String
+          Dim objReader As StreamReader
+          Dim objFS As FileStream
+          Dim bAns As Boolean
+          If Not File.Exists(FileFullPath1) Then _
             Throw New Exception(FileFullPath1 & " doesn't exist")
-    If Not File.Exists(FileFullPath2) Then _
+          If Not File.Exists(FileFullPath2) Then _
          Throw New Exception(FileFullPath2 & " doesn't exist")
 
-    Try
+          Try
 
-      objFS = New FileStream(FileFullPath1, FileMode.Open)
-      objReader = New StreamReader(objFS)
-      aFile1 = objEncoding.GetBytes(objReader.ReadToEnd)
-      strContents1 =
+               objFS = New FileStream(FileFullPath1, FileMode.Open)
+               objReader = New StreamReader(objFS)
+               aFile1 = objEncoding.GetBytes(objReader.ReadToEnd)
+               strContents1 =
               objEncoding.GetString(objMD5.ComputeHash(aFile1))
-      objReader.Close()
-      objFS.Close()
+               objReader.Close()
+               objFS.Close()
 
 
-      objFS = New FileStream(FileFullPath2, FileMode.Open)
-      objReader = New StreamReader(objFS)
-      aFile2 = objEncoding.GetBytes(objReader.ReadToEnd)
-      strContents2 =
+               objFS = New FileStream(FileFullPath2, FileMode.Open)
+               objReader = New StreamReader(objFS)
+               aFile2 = objEncoding.GetBytes(objReader.ReadToEnd)
+               strContents2 =
              objEncoding.GetString(objMD5.ComputeHash(aFile2))
 
-      bAns = strContents1 = strContents2
-      objReader.Close()
-      objFS.Close()
-      aFile1 = Nothing
-      aFile2 = Nothing
+               bAns = strContents1 = strContents2
+               objReader.Close()
+               objFS.Close()
+               aFile1 = Nothing
+               aFile2 = Nothing
 
-    Catch ex As Exception
-      Throw ex
+          Catch ex As Exception
+               Throw ex
 
-    End Try
+          End Try
 
-    Return bAns
-  End Function
+          Return bAns
+     End Function
+
+     Public Function IsDateOrTime(psString As String) As Boolean
+          If IsDate(psString) Then Return True
+     End Function
 
 
 #Region "Drawing Functions"
-  Public Function ResizeImage(img As Image, width As Integer, height As Integer) As Image
+     Public Function ResizeImage(img As Image, width As Integer, height As Integer) As Image
     Dim newImage = New Bitmap(width, height)
     Using gr = Graphics.FromImage(newImage)
       gr.SmoothingMode = SmoothingMode.HighQuality

@@ -17,7 +17,7 @@ Public Class frmMainMenu
 
 #Region "Form"
 
-     Private Const EventLogHistory As Integer = 1000000
+     Private Const EventLogHistory As Integer = 10000
      Private msFilePath As String = String.Empty
      Private msFileName As String
      Private moCopyObject As New List(Of clsValidation)
@@ -187,22 +187,25 @@ Public Class frmMainMenu
                               goConnectionHistory.LastUsedExportFolder = sFolderName
 
                               For Each nRowID As Integer In gdWorkbook.GetSelectedRows
-                                   Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-                                   If oItem IsNot Nothing Then
-                                        Try
+                                   If nRowID >= 0 Then
+                                        Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                                        If oItem IsNot Nothing Then
+                                             Try
 
-                                             Dim otemplate As clsDataImportTemplate = TryCast(oItem, clsDataImportTemplate)
-                                             If otemplate IsNot Nothing Then
-                                                  Call ValidateDataTempalte(otemplate)
-                                                  UcProperties1.SaveSettings(String.Format("{0}\{1}.dit", sFolderName, otemplate.Name), otemplate)
-                                             End If
+                                                  Dim otemplate As clsDataImportTemplate = TryCast(oItem, clsDataImportTemplate)
+                                                  If otemplate IsNot Nothing Then
+                                                       Call ValidateDataTempalte(otemplate)
+                                                       UcProperties1.SaveSettings(String.Format("{0}\{1}.dit", sFolderName, otemplate.Name), otemplate)
+                                                  End If
 
-                                        Catch ex As Exception
+                                             Catch ex As Exception
 
-                                        End Try
+                                             End Try
 
-                                        Application.DoEvents()
+                                             Application.DoEvents()
+                                        End If
                                    End If
+
                               Next
                          End If
                     End Using
@@ -228,10 +231,11 @@ Public Class frmMainMenu
      Private Sub bbiCreateEmptyExcelDocument_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiCreateEmptyExcelDocument.ItemClick
 
           For Each nRowID As Integer In gdWorkbook.GetSelectedRows
-
-               Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-               Call createNewExcelSheet(TryCast(oItem, clsDataImportTemplate))
-               Application.DoEvents()
+               If nRowID >= 0 Then
+                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                    Call createNewExcelSheet(TryCast(oItem, clsDataImportTemplate))
+                    Application.DoEvents()
+               End If
           Next
 
      End Sub
@@ -246,16 +250,17 @@ Public Class frmMainMenu
           If MsgBox("You are about to import data from the Excel sheet.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
 
                For Each nRowID As Integer In gdWorkbook.GetSelectedRows
-                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-                    Select Case TryCast(oItem, clsDataImportTemplate).ImportType
-                         Case "XX"
-                              ImportFiles(TryCast(oItem, clsDataImportTemplate))
-                              Application.DoEvents()
-                         Case Else
-                              ImportData(TryCast(oItem, clsDataImportTemplate))
-                              Application.DoEvents()
-                    End Select
-
+                    If nRowID >= 0 Then
+                         Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                         Select Case TryCast(oItem, clsDataImportTemplate).ImportType
+                              Case "XX"
+                                   ImportFiles(TryCast(oItem, clsDataImportTemplate))
+                                   Application.DoEvents()
+                              Case Else
+                                   ImportData(TryCast(oItem, clsDataImportTemplate))
+                                   Application.DoEvents()
+                         End Select
+                    End If
                Next
 
           End If
@@ -274,18 +279,20 @@ Public Class frmMainMenu
                End If
 
                For Each nRowID As Integer In gdWorkbook.GetSelectedRows
-                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-                    If oItem IsNot Nothing Then
-                         Try
-                              Call ValidateDataTempalte(TryCast(oItem, clsDataImportTemplate))
+                    If nRowID >= 0 Then
+                         Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                         If oItem IsNot Nothing Then
+                              Try
+                                   Call ValidateDataTempalte(TryCast(oItem, clsDataImportTemplate))
 
-                              Call ValidateData(TryCast(oItem, clsDataImportTemplate))
+                                   Call ValidateData(TryCast(oItem, clsDataImportTemplate))
 
-                         Catch ex As Exception
+                              Catch ex As Exception
 
-                         End Try
+                              End Try
 
-                         Application.DoEvents()
+                              Application.DoEvents()
+                         End If
                     End If
                Next
           Catch ex As Exception
@@ -357,16 +364,24 @@ Public Class frmMainMenu
      Private Sub bbiValidatorDelete_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiValidatorDelete.ItemClick
 
           Dim oSelectedRows As List(Of Integer) = TryCast(UcProperties1.gdValidators.GetSelectedRows.ToList, List(Of Integer))
-
+          Dim oValidations As New List(Of clsValidation)
           If oSelectedRows IsNot Nothing And oSelectedRows.Count > 0 Then
                For Each orow As Integer In oSelectedRows
 
                     Dim oValidation As clsValidation = TryCast(UcProperties1.gdValidators.GetRow(orow), clsValidation)
                     If oValidation IsNot Nothing Then
-                         UcProperties1._DataImportTemplate.Validators.Remove(oValidation)
-                         UcProperties1.gridValidators.RefreshDataSource()
+                         oValidations.Add(oValidation)
                     End If
                Next
+
+               If oValidations.Count > 0 Then
+                    For Each oValidation As clsValidation In oValidations
+                         UcProperties1._DataImportTemplate.Validators.Remove(oValidation)
+                    Next
+               End If
+
+               UcProperties1.gridValidators.RefreshDataSource()
+
           End If
 
      End Sub
@@ -451,8 +466,10 @@ Public Class frmMainMenu
           If MsgBox("You are about to remove one or more import templates.  Are you sure?", vbYesNoCancel, "Confirm...") = vbYes Then
 
                For Each nRowID As Integer In gdWorkbook.GetSelectedRows
-                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-                    goOpenWorkBook.Templates.Remove(TryCast(oItem, clsDataImportTemplate))
+                    If nRowID >= 0 Then
+                         Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                         goOpenWorkBook.Templates.Remove(TryCast(oItem, clsDataImportTemplate))
+                    End If
                Next
 
                loadWorkbook()
@@ -531,23 +548,24 @@ Public Class frmMainMenu
                Dim bIgnore As Boolean = False
 
                For Each nRowID As Integer In gdWorkbook.GetSelectedRows
+                    If nRowID >= 0 Then
+                         Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
+                         If oItem IsNot Nothing Then
 
-                    Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
-                    If oItem IsNot Nothing Then
+                              Dim bApply As Boolean = True
 
-                         Dim bApply As Boolean = True
+                              If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
+                                   Select Case MsgBox(String.Format("This import template {0} requires a valid {1} selected.{2}{2}Select Abort to exit, retry to move to next template and ignore to ignore all errors.", oItem.Name, IIf(oItem.IsShipEntity, "Ship", "Hierarchy"), vbNewLine), vbAbortRetryIgnore, "Warning...")
+                                        Case MsgBoxResult.Abort : Exit Sub
+                                        Case MsgBoxResult.Ignore : bIgnore = True : bApply = False
+                                        Case MsgBoxResult.Retry : bApply = False
+                                   End Select
+                              End If
 
-                         If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
-                              Select Case MsgBox(String.Format("This import template {0} requires a valid {1} selected.{2}{2}Select Abort to exit, retry to move to next template and ignore to ignore all errors.", oItem.Name, IIf(oItem.IsShipEntity, "Ship", "Hierarchy"), vbNewLine), vbAbortRetryIgnore, "Warning...")
-                                   Case MsgBoxResult.Abort : Exit Sub
-                                   Case MsgBoxResult.Ignore : bIgnore = True : bApply = False
-                                   Case MsgBoxResult.Retry : bApply = False
-                              End Select
-                         End If
-
-                         If bApply Then
-                              QueryandLoad(TryCast(oItem, clsDataImportTemplate))
-                              Application.DoEvents()
+                              If bApply Then
+                                   QueryandLoad(TryCast(oItem, clsDataImportTemplate))
+                                   Application.DoEvents()
+                              End If
                          End If
                     End If
                Next
@@ -3247,6 +3265,10 @@ Public Class frmMainMenu
                                              bPaged = True
                                         End If
 
+                                        If sQuery.Contains("@@SEARCH@@") Then
+                                             sQuery = Replace(sQuery, "@@SEARCH@@", oTemplate.SelectQuery)
+                                        End If
+
                                         oResponse = goHTTPServer.CallGraphQL("apollo-server", sQuery)
                                         sNodeLoad = String.Format("data.{0}.content", oTemplate.GraphQLRootNode)
                                         If sNodeLoad.EndsWith(".") Then
@@ -3325,6 +3347,10 @@ Public Class frmMainMenu
                                                                       If sQuery.Contains("@@PAGE@@") Then
                                                                            sQuery = Replace(sQuery, "@@PAGE@@", nPage.ToString)
                                                                            bPaged = True
+                                                                      End If
+
+                                                                      If sQuery.Contains("@@SEARCH@@") Then
+                                                                           sQuery = Replace(sQuery, "@@SEARCH@@", oTemplate.SelectQuery)
                                                                       End If
 
                                                                       oResponse = goHTTPServer.CallGraphQL("apollo-server", sQuery)
@@ -3410,6 +3436,11 @@ Public Class frmMainMenu
 
                                                                                                     oJsn = oRow.SelectToken(sNodeName)
                                                                                                     If oJsn IsNot Nothing Then
+
+                                                                                                         If IsDate(oJsn.ToString) Then
+                                                                                                              oCell.NumberFormat = "@"
+                                                                                                         End If
+
                                                                                                          oCell.Value = oJsn.ToString
 
 
@@ -3469,7 +3500,6 @@ Public Class frmMainMenu
                                                                                                          Next
 
 
-
                                                                                                          oCell.Value = sValues
 
 
@@ -3483,6 +3513,7 @@ Public Class frmMainMenu
                                                                                                     End If
 
                                                                                           End Select
+
 
 
 

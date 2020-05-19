@@ -86,4 +86,10 @@ Public Class clsDataImportTemplate
           End Get
      End Property
 
+     Public ReadOnly Property IsLookupList As Boolean
+          Get
+               If String.IsNullOrEmpty(APIEndpoint) = False AndAlso APIEndpoint.ToLower.Trim.Contains("metadata/v1/lookup-values") Then Return True
+          End Get
+     End Property
+
 End Class
