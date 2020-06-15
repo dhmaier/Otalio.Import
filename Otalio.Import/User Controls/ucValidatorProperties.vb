@@ -164,8 +164,9 @@ Public Class ucValidatorProperties
                     End If
 
 
-                    If String.IsNullOrEmpty(txtReturnNode.EditValue) = True Then
+                    If String.IsNullOrEmpty(cbReturnNode.EditValue) = True Then
                          moValidation.ReturnNodeValue = "responsePayload.content[0].entityId"
+
                     End If
                Case Else
                     lciLookUpType.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
@@ -201,5 +202,11 @@ Public Class ucValidatorProperties
           End If
      End Sub
 
-
+     Private Sub cbReturnNode_EditValueChanged(sender As Object, e As EventArgs) Handles cbReturnNode.EditValueChanged
+          'If String.IsNullOrEmpty(cbReturnNode.EditValue) = True Then
+          '     moValidation.ReturnNodeValue = "responsePayload.content[0].entityId"
+          'Else
+          '     moValidation.ReturnNodeValue = cbReturnNode.EditValue
+          'End If
+     End Sub
 End Class

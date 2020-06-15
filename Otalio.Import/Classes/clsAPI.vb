@@ -389,6 +389,37 @@ Public Class clsAPI
 
      End Function
 
+     Public Function CallWebEndpointUsingDeleteByID(psEndPoint As String, psID As String) As IRestResponse
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+
+
+               Dim url As String = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+
+               If Not String.IsNullOrEmpty(psID) Then
+                    url = url + String.Format("/{0}", (psID))
+               End If
+
+               Dim oClient = New RestClient(url)
+
+
+               Dim oRequest = New RestRequest(Method.DELETE)
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
+
+               RaiseEvent APICallEvent(oRequest, oResponse)
+
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+          Return Nothing
+
+     End Function
+
      Public Function CallWebEndpointUsingPut(psEndPoint As String, psEntityID As String, psQuery As String, psDTOJson As String) As IRestResponse
           Try
                psEndPoint = ExtractSystemVariables(psEndPoint)

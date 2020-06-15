@@ -5095,8 +5095,8 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Otalio Import Tool"
         "ProductCode" = "8:{E2B49ABA-7369-4524-A106-831029E063D7}"
-        "PackageCode" = "8:{9397F071-F418-4123-B2C4-69801C3A5E5A}"
-        "UpgradeCode" = "8:{EA195920-D005-40A4-884A-2095DF9054C9}"
+        "PackageCode" = "8:{75436121-D587-4D20-BB8E-8DC97102D039}"
+        "UpgradeCode" = "8:{B179CBCD-BC09-4C81-B9B4-3D67086625EA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -5644,7 +5644,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1E29FEC5B78244F38E737BE64B66C747"
             {
-            "SourcePath" = "8:..\\Otalio.Import\\obj\\Release\\Otalio.Import.exe"
+            "SourcePath" = "8:..\\Otalio.Import\\obj\\Debug\\Otalio.Import.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3E6B556F61F6470DB6D37F8A2C35C27A"

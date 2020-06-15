@@ -23,6 +23,7 @@ Partial Class ucValidatorProperties
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
         Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
+        Me.cbReturnNode = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.txtGraphQLNode = New DevExpress.XtraEditors.TextEdit()
         Me.icbVisibility = New DevExpress.XtraEditors.ImageComboBoxEdit()
         Me.lueLookupTypes = New DevExpress.XtraEditors.LookUpEdit()
@@ -37,10 +38,10 @@ Partial Class ucValidatorProperties
         Me.txtHeader = New DevExpress.XtraEditors.MemoEdit()
         Me.icbType = New DevExpress.XtraEditors.ImageComboBoxEdit()
         Me.txtAPIEndpoint = New DevExpress.XtraEditors.TextEdit()
+        Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup1 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem1 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem2 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem6 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem3 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
@@ -52,10 +53,10 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem12 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem13 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem11 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.cbReturnNode = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.LayoutControlItem14 = New DevExpress.XtraLayout.LayoutControlItem()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
+        CType(Me.cbReturnNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.icbVisibility.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lueLookupTypes.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -70,10 +71,10 @@ Partial Class ucValidatorProperties
         CType(Me.txtHeader.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.icbType.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtAPIEndpoint.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -85,7 +86,6 @@ Partial Class ucValidatorProperties
         CType(Me.LayoutControlItem12, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem13, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.cbReturnNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -115,6 +115,19 @@ Partial Class ucValidatorProperties
         Me.LayoutControl1.Size = New System.Drawing.Size(563, 486)
         Me.LayoutControl1.TabIndex = 0
         Me.LayoutControl1.Text = "LayoutControl1"
+        '
+        'cbReturnNode
+        '
+        Me.cbReturnNode.Location = New System.Drawing.Point(114, 401)
+        Me.cbReturnNode.Name = "cbReturnNode"
+        Me.cbReturnNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
+        Me.cbReturnNode.Properties.Appearance.Options.UseFont = True
+        Me.cbReturnNode.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.cbReturnNode.Properties.Items.AddRange(New Object() {"responsePayload.content[0].entityId", "responsePayload.content[0].id", "responsePayload.translationMap.success.de.translatedText"})
+        Me.cbReturnNode.Properties.Sorted = True
+        Me.cbReturnNode.Size = New System.Drawing.Size(444, 20)
+        Me.cbReturnNode.StyleController = Me.LayoutControl1
+        Me.cbReturnNode.TabIndex = 21
         '
         'txtGraphQLNode
         '
@@ -280,6 +293,15 @@ Partial Class ucValidatorProperties
         Me.txtAPIEndpoint.StyleController = Me.LayoutControl1
         Me.txtAPIEndpoint.TabIndex = 5
         '
+        'LayoutControlItem5
+        '
+        Me.LayoutControlItem5.Control = Me.txtReturnNode
+        Me.LayoutControlItem5.Location = New System.Drawing.Point(0, 366)
+        Me.LayoutControlItem5.Name = "LayoutControlItem5"
+        Me.LayoutControlItem5.Size = New System.Drawing.Size(563, 30)
+        Me.LayoutControlItem5.Text = "Return Value Node:"
+        Me.LayoutControlItem5.TextSize = New System.Drawing.Size(104, 13)
+        '
         'LayoutControlGroup1
         '
         Me.LayoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.[True]
@@ -307,15 +329,6 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem2.Size = New System.Drawing.Size(563, 77)
         Me.LayoutControlItem2.Text = "Request Headers:"
         Me.LayoutControlItem2.TextSize = New System.Drawing.Size(104, 13)
-        '
-        'LayoutControlItem5
-        '
-        Me.LayoutControlItem5.Control = Me.txtReturnNode
-        Me.LayoutControlItem5.Location = New System.Drawing.Point(0, 366)
-        Me.LayoutControlItem5.Name = "LayoutControlItem5"
-        Me.LayoutControlItem5.Size = New System.Drawing.Size(563, 30)
-        Me.LayoutControlItem5.Text = "Return Value Node:"
-        Me.LayoutControlItem5.TextSize = New System.Drawing.Size(104, 13)
         '
         'LayoutControlItem6
         '
@@ -418,19 +431,6 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem11.Text = "Return Value Format:"
         Me.LayoutControlItem11.TextSize = New System.Drawing.Size(104, 13)
         '
-        'cbReturnNode
-        '
-        Me.cbReturnNode.Location = New System.Drawing.Point(114, 401)
-        Me.cbReturnNode.Name = "cbReturnNode"
-        Me.cbReturnNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
-        Me.cbReturnNode.Properties.Appearance.Options.UseFont = True
-        Me.cbReturnNode.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.cbReturnNode.Properties.Items.AddRange(New Object() {"responsePayload.content[0].entityId", "responsePayload.content[0].id", "responsePayload.translationMap.success.de.translatedText"})
-        Me.cbReturnNode.Properties.Sorted = True
-        Me.cbReturnNode.Size = New System.Drawing.Size(444, 20)
-        Me.cbReturnNode.StyleController = Me.LayoutControl1
-        Me.cbReturnNode.TabIndex = 21
-        '
         'LayoutControlItem14
         '
         Me.LayoutControlItem14.Control = Me.cbReturnNode
@@ -449,6 +449,7 @@ Partial Class ucValidatorProperties
         Me.Size = New System.Drawing.Size(563, 486)
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LayoutControl1.ResumeLayout(False)
+        CType(Me.cbReturnNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.icbVisibility.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lueLookupTypes.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -463,10 +464,10 @@ Partial Class ucValidatorProperties
         CType(Me.txtHeader.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.icbType.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtAPIEndpoint.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
@@ -478,7 +479,6 @@ Partial Class ucValidatorProperties
         CType(Me.LayoutControlItem12, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem13, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.cbReturnNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 

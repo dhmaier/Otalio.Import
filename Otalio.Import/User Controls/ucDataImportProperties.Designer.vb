@@ -79,16 +79,15 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem6 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.TabbedControlGroup1 = New DevExpress.XtraLayout.TabbedControlGroup()
-        Me.LayoutControlGroup2 = New DevExpress.XtraLayout.LayoutControlGroup()
-        Me.LayoutControlItem3 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup3 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlGroup2 = New DevExpress.XtraLayout.LayoutControlGroup()
+        Me.LayoutControlItem3 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.SplitterItem2 = New DevExpress.XtraLayout.SplitterItem()
         Me.LayoutControlItem11 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem7 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem12 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem13 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem8 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.lciReturnNodeColumn = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem16 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.TabbedControlGroup3 = New DevExpress.XtraLayout.TabbedControlGroup()
@@ -104,6 +103,7 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem14 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem15 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.SplitterItem1 = New DevExpress.XtraLayout.SplitterItem()
+        Me.LayoutControlItem8 = New DevExpress.XtraLayout.LayoutControlItem()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
         CType(Me.txtGroup.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -141,16 +141,15 @@ Partial Class ucDataImportProperties
         CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TabbedControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitterItem2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem7, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem12, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem13, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciReturnNodeColumn, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem16, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TabbedControlGroup3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -166,6 +165,7 @@ Partial Class ucDataImportProperties
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem15, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SplitterItem1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'LayoutControl1
@@ -214,7 +214,7 @@ Partial Class ucDataImportProperties
         '
         'txtReturnValueName
         '
-        Me.txtReturnValueName.Location = New System.Drawing.Point(140, 213)
+        Me.txtReturnValueName.Location = New System.Drawing.Point(140, 156)
         Me.txtReturnValueName.Name = "txtReturnValueName"
         Me.txtReturnValueName.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtReturnValueName.Properties.Appearance.Options.UseFont = True
@@ -227,7 +227,7 @@ Partial Class ucDataImportProperties
         '
         'txtFileLocationColumn
         '
-        Me.txtFileLocationColumn.Location = New System.Drawing.Point(479, 261)
+        Me.txtFileLocationColumn.Location = New System.Drawing.Point(479, 204)
         Me.txtFileLocationColumn.Name = "txtFileLocationColumn"
         Me.txtFileLocationColumn.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtFileLocationColumn.Properties.Appearance.Options.UseFont = True
@@ -237,7 +237,7 @@ Partial Class ucDataImportProperties
         '
         'txtEntityColumn
         '
-        Me.txtEntityColumn.Location = New System.Drawing.Point(140, 261)
+        Me.txtEntityColumn.Location = New System.Drawing.Point(140, 204)
         Me.txtEntityColumn.Name = "txtEntityColumn"
         Me.txtEntityColumn.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtEntityColumn.Properties.Appearance.Options.UseFont = True
@@ -310,21 +310,21 @@ Partial Class ucDataImportProperties
         '
         'txtSelectQuery
         '
-        Me.txtSelectQuery.Location = New System.Drawing.Point(365, 301)
+        Me.txtSelectQuery.Location = New System.Drawing.Point(365, 297)
         Me.txtSelectQuery.Name = "txtSelectQuery"
         Me.txtSelectQuery.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtSelectQuery.Properties.Appearance.Options.UseFont = True
-        Me.txtSelectQuery.Size = New System.Drawing.Size(271, 70)
+        Me.txtSelectQuery.Size = New System.Drawing.Size(271, 57)
         Me.txtSelectQuery.StyleController = Me.LayoutControl1
         Me.txtSelectQuery.TabIndex = 17
         '
         'txtAPIQuery
         '
-        Me.txtAPIQuery.Location = New System.Drawing.Point(12, 301)
+        Me.txtAPIQuery.Location = New System.Drawing.Point(12, 297)
         Me.txtAPIQuery.Name = "txtAPIQuery"
         Me.txtAPIQuery.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtAPIQuery.Properties.Appearance.Options.UseFont = True
-        Me.txtAPIQuery.Size = New System.Drawing.Size(339, 70)
+        Me.txtAPIQuery.Size = New System.Drawing.Size(339, 57)
         Me.txtAPIQuery.StyleController = Me.LayoutControl1
         Me.txtAPIQuery.TabIndex = 16
         '
@@ -336,7 +336,7 @@ Partial Class ucDataImportProperties
         Me.icbType.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbType.Properties.Appearance.Options.UseFont = True
         Me.icbType.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Update", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Update", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upload File", "3", -1)})
+        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Update", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Update", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upload File", "3", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Delete", "5", -1)})
         Me.icbType.Size = New System.Drawing.Size(182, 20)
         Me.icbType.StyleController = Me.LayoutControl1
         Me.icbType.TabIndex = 15
@@ -353,7 +353,7 @@ Partial Class ucDataImportProperties
         '
         'txtReturnValueColumn
         '
-        Me.txtReturnValueColumn.Location = New System.Drawing.Point(140, 237)
+        Me.txtReturnValueColumn.Location = New System.Drawing.Point(140, 180)
         Me.txtReturnValueColumn.Name = "txtReturnValueColumn"
         Me.txtReturnValueColumn.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtReturnValueColumn.Properties.Appearance.Options.UseFont = True
@@ -363,11 +363,11 @@ Partial Class ucDataImportProperties
         '
         'txtMemo
         '
-        Me.txtMemo.Location = New System.Drawing.Point(140, 156)
+        Me.txtMemo.Location = New System.Drawing.Point(140, 228)
         Me.txtMemo.Name = "txtMemo"
         Me.txtMemo.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtMemo.Properties.Appearance.Options.UseFont = True
-        Me.txtMemo.Size = New System.Drawing.Size(496, 53)
+        Me.txtMemo.Size = New System.Drawing.Size(496, 49)
         Me.txtMemo.StyleController = Me.LayoutControl1
         Me.txtMemo.TabIndex = 11
         '
@@ -403,11 +403,11 @@ Partial Class ucDataImportProperties
         '
         'gridValidators
         '
-        Me.gridValidators.Location = New System.Drawing.Point(24, 410)
+        Me.gridValidators.Location = New System.Drawing.Point(24, 393)
         Me.gridValidators.MainView = Me.gdValidators
         Me.gridValidators.Name = "gridValidators"
         Me.gridValidators.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.RepositoryItemImageComboBox1, Me.rchkEnabled, Me.RepositoryItemCheckEdit1})
-        Me.gridValidators.Size = New System.Drawing.Size(600, 269)
+        Me.gridValidators.Size = New System.Drawing.Size(600, 286)
         Me.gridValidators.TabIndex = 7
         Me.gridValidators.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdValidators})
         '
@@ -521,10 +521,10 @@ Partial Class ucDataImportProperties
         '
         'gridImportColumns
         '
-        Me.gridImportColumns.Location = New System.Drawing.Point(24, 410)
+        Me.gridImportColumns.Location = New System.Drawing.Point(24, 393)
         Me.gridImportColumns.MainView = Me.gdImportColumns
         Me.gridImportColumns.Name = "gridImportColumns"
-        Me.gridImportColumns.Size = New System.Drawing.Size(600, 269)
+        Me.gridImportColumns.Size = New System.Drawing.Size(600, 286)
         Me.gridImportColumns.TabIndex = 6
         Me.gridImportColumns.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdImportColumns})
         '
@@ -655,7 +655,7 @@ Partial Class ucDataImportProperties
         '
         Me.LayoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.[True]
         Me.LayoutControlGroup1.GroupBordersVisible = False
-        Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem5, Me.LayoutControlItem6, Me.TabbedControlGroup1, Me.SplitterItem2, Me.LayoutControlItem11, Me.LayoutControlItem7, Me.LayoutControlItem12, Me.LayoutControlItem13, Me.LayoutControlItem8, Me.lciReturnNodeColumn, Me.LayoutControlItem16, Me.TabbedControlGroup3, Me.lciEntityColumn, Me.lciFileLocationColumn, Me.lciReturnNodeName, Me.LayoutControlItem9, Me.LayoutControlItem14, Me.LayoutControlItem15, Me.SplitterItem1})
+        Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem5, Me.LayoutControlItem6, Me.TabbedControlGroup1, Me.SplitterItem2, Me.LayoutControlItem11, Me.LayoutControlItem7, Me.LayoutControlItem12, Me.LayoutControlItem13, Me.lciReturnNodeColumn, Me.LayoutControlItem16, Me.TabbedControlGroup3, Me.lciEntityColumn, Me.lciFileLocationColumn, Me.lciReturnNodeName, Me.LayoutControlItem9, Me.LayoutControlItem14, Me.LayoutControlItem15, Me.SplitterItem1, Me.LayoutControlItem8})
         Me.LayoutControlGroup1.Name = "Root"
         Me.LayoutControlGroup1.Size = New System.Drawing.Size(976, 703)
         Me.LayoutControlGroup1.TextVisible = False
@@ -689,37 +689,18 @@ Partial Class ucDataImportProperties
         '
         'TabbedControlGroup1
         '
-        Me.TabbedControlGroup1.Location = New System.Drawing.Point(0, 363)
+        Me.TabbedControlGroup1.Location = New System.Drawing.Point(0, 346)
         Me.TabbedControlGroup1.Name = "TabbedControlGroup1"
         Me.TabbedControlGroup1.SelectedTabPage = Me.LayoutControlGroup3
-        Me.TabbedControlGroup1.Size = New System.Drawing.Size(628, 320)
+        Me.TabbedControlGroup1.Size = New System.Drawing.Size(628, 337)
         Me.TabbedControlGroup1.TabPages.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlGroup3, Me.LayoutControlGroup2})
-        '
-        'LayoutControlGroup2
-        '
-        Me.LayoutControlGroup2.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem3})
-        Me.LayoutControlGroup2.Location = New System.Drawing.Point(0, 0)
-        Me.LayoutControlGroup2.Name = "LayoutControlGroup2"
-        Me.LayoutControlGroup2.Size = New System.Drawing.Size(604, 273)
-        Me.LayoutControlGroup2.Text = "Excel Columns"
-        '
-        'LayoutControlItem3
-        '
-        Me.LayoutControlItem3.Control = Me.gridImportColumns
-        Me.LayoutControlItem3.Location = New System.Drawing.Point(0, 0)
-        Me.LayoutControlItem3.Name = "LayoutControlItem3"
-        Me.LayoutControlItem3.Size = New System.Drawing.Size(604, 273)
-        Me.LayoutControlItem3.Text = "Excel columns"
-        Me.LayoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top
-        Me.LayoutControlItem3.TextSize = New System.Drawing.Size(0, 0)
-        Me.LayoutControlItem3.TextVisible = False
         '
         'LayoutControlGroup3
         '
         Me.LayoutControlGroup3.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem4})
         Me.LayoutControlGroup3.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup3.Name = "LayoutControlGroup3"
-        Me.LayoutControlGroup3.Size = New System.Drawing.Size(604, 273)
+        Me.LayoutControlGroup3.Size = New System.Drawing.Size(604, 290)
         Me.LayoutControlGroup3.Text = "Validation Rules"
         '
         'LayoutControlItem4
@@ -727,11 +708,30 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem4.Control = Me.gridValidators
         Me.LayoutControlItem4.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlItem4.Name = "LayoutControlItem4"
-        Me.LayoutControlItem4.Size = New System.Drawing.Size(604, 273)
+        Me.LayoutControlItem4.Size = New System.Drawing.Size(604, 290)
         Me.LayoutControlItem4.Text = "Validation Rules"
         Me.LayoutControlItem4.TextLocation = DevExpress.Utils.Locations.Top
         Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem4.TextVisible = False
+        '
+        'LayoutControlGroup2
+        '
+        Me.LayoutControlGroup2.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem3})
+        Me.LayoutControlGroup2.Location = New System.Drawing.Point(0, 0)
+        Me.LayoutControlGroup2.Name = "LayoutControlGroup2"
+        Me.LayoutControlGroup2.Size = New System.Drawing.Size(604, 290)
+        Me.LayoutControlGroup2.Text = "Excel Columns"
+        '
+        'LayoutControlItem3
+        '
+        Me.LayoutControlItem3.Control = Me.gridImportColumns
+        Me.LayoutControlItem3.Location = New System.Drawing.Point(0, 0)
+        Me.LayoutControlItem3.Name = "LayoutControlItem3"
+        Me.LayoutControlItem3.Size = New System.Drawing.Size(604, 290)
+        Me.LayoutControlItem3.Text = "Excel columns"
+        Me.LayoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top
+        Me.LayoutControlItem3.TextSize = New System.Drawing.Size(0, 0)
+        Me.LayoutControlItem3.TextVisible = False
         '
         'SplitterItem2
         '
@@ -777,19 +777,10 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem13.Text = "Type:"
         Me.LayoutControlItem13.TextSize = New System.Drawing.Size(125, 13)
         '
-        'LayoutControlItem8
-        '
-        Me.LayoutControlItem8.Control = Me.txtMemo
-        Me.LayoutControlItem8.Location = New System.Drawing.Point(0, 144)
-        Me.LayoutControlItem8.Name = "LayoutControlItem8"
-        Me.LayoutControlItem8.Size = New System.Drawing.Size(628, 57)
-        Me.LayoutControlItem8.Text = "Notes:"
-        Me.LayoutControlItem8.TextSize = New System.Drawing.Size(125, 13)
-        '
         'lciReturnNodeColumn
         '
         Me.lciReturnNodeColumn.Control = Me.txtReturnValueColumn
-        Me.lciReturnNodeColumn.Location = New System.Drawing.Point(0, 225)
+        Me.lciReturnNodeColumn.Location = New System.Drawing.Point(0, 168)
         Me.lciReturnNodeColumn.Name = "lciReturnNodeColumn"
         Me.lciReturnNodeColumn.Size = New System.Drawing.Size(628, 24)
         Me.lciReturnNodeColumn.Text = "Return Node Column:"
@@ -864,7 +855,7 @@ Partial Class ucDataImportProperties
         'lciEntityColumn
         '
         Me.lciEntityColumn.Control = Me.txtEntityColumn
-        Me.lciEntityColumn.Location = New System.Drawing.Point(0, 249)
+        Me.lciEntityColumn.Location = New System.Drawing.Point(0, 192)
         Me.lciEntityColumn.Name = "lciEntityColumn"
         Me.lciEntityColumn.Size = New System.Drawing.Size(339, 24)
         Me.lciEntityColumn.Text = "Entity Column:"
@@ -874,7 +865,7 @@ Partial Class ucDataImportProperties
         'lciFileLocationColumn
         '
         Me.lciFileLocationColumn.Control = Me.txtFileLocationColumn
-        Me.lciFileLocationColumn.Location = New System.Drawing.Point(339, 249)
+        Me.lciFileLocationColumn.Location = New System.Drawing.Point(339, 192)
         Me.lciFileLocationColumn.Name = "lciFileLocationColumn"
         Me.lciFileLocationColumn.Size = New System.Drawing.Size(289, 24)
         Me.lciFileLocationColumn.Text = "File Location Column:"
@@ -884,7 +875,7 @@ Partial Class ucDataImportProperties
         'lciReturnNodeName
         '
         Me.lciReturnNodeName.Control = Me.txtReturnValueName
-        Me.lciReturnNodeName.Location = New System.Drawing.Point(0, 201)
+        Me.lciReturnNodeName.Location = New System.Drawing.Point(0, 144)
         Me.lciReturnNodeName.Name = "lciReturnNodeName"
         Me.lciReturnNodeName.Size = New System.Drawing.Size(628, 24)
         Me.lciReturnNodeName.Text = "Return Node Name:"
@@ -904,9 +895,9 @@ Partial Class ucDataImportProperties
         'LayoutControlItem14
         '
         Me.LayoutControlItem14.Control = Me.txtAPIQuery
-        Me.LayoutControlItem14.Location = New System.Drawing.Point(0, 273)
+        Me.LayoutControlItem14.Location = New System.Drawing.Point(0, 269)
         Me.LayoutControlItem14.Name = "LayoutControlItem14"
-        Me.LayoutControlItem14.Size = New System.Drawing.Size(343, 90)
+        Me.LayoutControlItem14.Size = New System.Drawing.Size(343, 77)
         Me.LayoutControlItem14.Text = "Update Query"
         Me.LayoutControlItem14.TextLocation = DevExpress.Utils.Locations.Top
         Me.LayoutControlItem14.TextSize = New System.Drawing.Size(125, 13)
@@ -914,9 +905,9 @@ Partial Class ucDataImportProperties
         'LayoutControlItem15
         '
         Me.LayoutControlItem15.Control = Me.txtSelectQuery
-        Me.LayoutControlItem15.Location = New System.Drawing.Point(353, 273)
+        Me.LayoutControlItem15.Location = New System.Drawing.Point(353, 269)
         Me.LayoutControlItem15.Name = "LayoutControlItem15"
-        Me.LayoutControlItem15.Size = New System.Drawing.Size(275, 90)
+        Me.LayoutControlItem15.Size = New System.Drawing.Size(275, 77)
         Me.LayoutControlItem15.Text = "Select Query"
         Me.LayoutControlItem15.TextLocation = DevExpress.Utils.Locations.Top
         Me.LayoutControlItem15.TextSize = New System.Drawing.Size(125, 13)
@@ -924,9 +915,18 @@ Partial Class ucDataImportProperties
         'SplitterItem1
         '
         Me.SplitterItem1.AllowHotTrack = True
-        Me.SplitterItem1.Location = New System.Drawing.Point(343, 273)
+        Me.SplitterItem1.Location = New System.Drawing.Point(343, 269)
         Me.SplitterItem1.Name = "SplitterItem1"
-        Me.SplitterItem1.Size = New System.Drawing.Size(10, 90)
+        Me.SplitterItem1.Size = New System.Drawing.Size(10, 77)
+        '
+        'LayoutControlItem8
+        '
+        Me.LayoutControlItem8.Control = Me.txtMemo
+        Me.LayoutControlItem8.Location = New System.Drawing.Point(0, 216)
+        Me.LayoutControlItem8.Name = "LayoutControlItem8"
+        Me.LayoutControlItem8.Size = New System.Drawing.Size(628, 53)
+        Me.LayoutControlItem8.Text = "Notes:"
+        Me.LayoutControlItem8.TextSize = New System.Drawing.Size(125, 13)
         '
         'ucDataImportProperties
         '
@@ -972,16 +972,15 @@ Partial Class ucDataImportProperties
         CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TabbedControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlGroup2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.SplitterItem2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem7, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem12, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem13, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciReturnNodeColumn, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem16, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TabbedControlGroup3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -997,6 +996,7 @@ Partial Class ucDataImportProperties
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem15, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.SplitterItem1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
