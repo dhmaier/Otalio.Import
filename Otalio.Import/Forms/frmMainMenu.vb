@@ -10,6 +10,7 @@ Imports System.IO
 Imports System.Linq
 Imports System.Net
 Imports System.Threading
+Imports System.IO.Compression
 
 
 Public Class frmMainMenu
@@ -32,6 +33,8 @@ Public Class frmMainMenu
      Private moOverlayLabel As OverlayTextPainter
      Private mnCounter As Integer = 0
 
+
+
      Sub New()
 
           ' Open a Splash Screen
@@ -47,6 +50,8 @@ Public Class frmMainMenu
           InitSkins()
           InitializeComponent()
           Me.InitSkinGallery()
+
+          bbiPublish.Visibility = If(Debugger.IsAttached, DevExpress.XtraBars.BarItemVisibility.Always, DevExpress.XtraBars.BarItemVisibility.Never)
 
      End Sub
 
@@ -673,6 +678,40 @@ Public Class frmMainMenu
           End If
      End Sub
 
+     Private Sub bbiPublish_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiPublish.ItemClick
+
+          Dim sPath As String = ""
+          Dim sFileName As String = String.Format("{0} {1}", msFileName, goOpenWorkBook.WorkbookVersion)
+
+          'first save everything
+          bbiSaveAll_ItemClick(Me, e)
+
+          Using oFolder As New FolderBrowserDialog
+
+               oFolder.Description = "Please select a folder to save template in"
+               oFolder.SelectedPath = msFilePath
+               If String.IsNullOrEmpty(goConnectionHistory.LastUsedWorkbookFolder) = False Then
+                    oFolder.SelectedPath = goConnectionHistory.LastUsedWorkbookFolder
+               End If
+
+               If oFolder.ShowDialog = DialogResult.OK Then
+                    sPath = oFolder.SelectedPath
+               End If
+          End Using
+
+          Dim sFullFileName As String = sPath & "\" & (sFileName.Replace(".ditw", "")) & ".zip"
+
+          If File.Exists(sFullFileName) Then
+               File.Delete(sFullFileName)
+          End If
+
+          Dim oZipFile As ZipArchive = ZipFile.Open(sFullFileName, ZipArchiveMode.Create)
+          oZipFile.CreateEntryFromFile(msFilePath & "\" & msFileName, msFileName)
+          oZipFile.Dispose()
+
+
+
+     End Sub
 
 #End Region
 
@@ -1057,6 +1096,7 @@ Public Class frmMainMenu
 
 
      End Function
+
      Public Sub ExtractColumnDetails2(poObject As String, psParent As String, poListOfColumn As List(Of clsImportColum))
 
           Try
@@ -1659,6 +1699,7 @@ Public Class frmMainMenu
 
                          Call UpdateProgressStatus(String.Format("Validating {3} Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1, poValidation.Comments))
                          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow))
+                         oCell.Value = ""
                          FormatCell(False, oCell, Color.Transparent)
                          If (oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True) Or mbForceValidate Then
 
@@ -2106,6 +2147,8 @@ Public Class frmMainMenu
                          Call UpdateProgressStatus(String.Format("Validating Priority {0} of row {1} of {2} rows ", poValidation.Priority, nRow, nCountRows + 1))
 
                          Dim oCell As Cell = .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, nRow))
+                         oCell.Value = ""
+
                          If (oCell.Value.IsEmpty Or String.IsNullOrEmpty(oCell.Value.ToString) = True) Or mbForceValidate Then
 
                               'get copy of query
@@ -3288,10 +3331,18 @@ Public Class frmMainMenu
 
      Public Sub UpdateProgressStatus(Optional psStatus As String = "", Optional mbCacelEnabled As Boolean = True)
 
+
+          Me.miButtonImage = CreateButtonImage()
+          Me.miHotButtonImage = CreateHotButtonImage()
+
+
           If psStatus = String.Empty Then
 
                Try
-                    SplashScreenManager.CloseOverlayForm(moOverlayHandle)
+                    If moOverlayHandle IsNot Nothing Then
+                         SplashScreenManager.CloseOverlayForm(moOverlayHandle)
+                         moOverlayHandle = Nothing
+                    End If
                Catch ex As Exception
 
                End Try
@@ -3313,6 +3364,7 @@ Public Class frmMainMenu
 
                     End Try
                End If
+
 
                moOverlayLabel.Text = Replace(psStatus, vbNewLine, "")
 
@@ -3513,9 +3565,10 @@ Public Class frmMainMenu
 
                                    Dim oResponse As IRestResponse
                                    Dim sNodeLoad As String = String.Empty
-                                   Dim nPages As Integer = 1
+                                   Dim nPages As Integer = 0
                                    Dim bPaged As Boolean = False
                                    Dim bGraphQL As Boolean = False
+                                   Dim nItems As Integer = 0
 
 
                                    If oTemplate.GraphQLQuery IsNot Nothing AndAlso String.IsNullOrEmpty(oTemplate.GraphQLQuery.ToString) = False Then
@@ -3555,11 +3608,17 @@ Public Class frmMainMenu
                                         If oResponse.StatusCode = HttpStatusCode.OK Then
                                              Dim oObject As JToken = jsServerResponse.SelectToken(sNodeLoad)
 
+                                             If bGraphQL Then
+                                                  nItems = CInt(jsServerResponse.SelectToken(String.Format("data.{0}.totalElements", oTemplate.GraphQLRootNode)))
+                                             Else
+                                                  nItems = CInt(jsServerResponse.SelectToken("responsePayload.totalElements"))
+                                             End If
+
                                              If bPaged Then
                                                   If bGraphQL Then
                                                        nPages = CInt(jsServerResponse.SelectToken(String.Format("data.{0}.totalPages", oTemplate.GraphQLRootNode)))
                                                   Else
-                                                       nPages = CInt(jsServerResponse.SelectToken("responsePayload.totalPages"))
+                                                       nPages = CInt(jsServerResponse.SelectToken("responsePayload.totalPages")) - 1
                                                   End If
 
                                              End If
@@ -3598,7 +3657,8 @@ Public Class frmMainMenu
                                                        Dim nRow As Integer = 1
                                                        Dim nCounter As Integer = 0
 
-                                                       For nPage = IIf(bGraphQL, 0, 1) To IIf(bGraphQL, nPages - 1, nPages)
+                                                       For nPage = 0 To IIf(bGraphQL, nPages - 1, nPages)
+
                                                             goHTTPServer.LogEvent(String.Format("Loading Page {0} of {1}", IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages, nPages)), "Query", oTemplate.Name, oTemplate.ID)
 
                                                             If nPage > IIf(bGraphQL, 0, 1) Then
@@ -3643,7 +3703,7 @@ Public Class frmMainMenu
                                                                                 nRow += 1
                                                                                 nCounter += 1
 
-                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} pages ", nCounter, IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages, nPages)))
+                                                                                Call UpdateProgressStatus(String.Format("Downloading object {0}  page {1} of {2} pages for {3} Items ", nCounter, IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages, nPages), nItems))
 
                                                                                 For Each ocolumn In oTemplate.ImportColumns.OrderBy(Function(n) n.No).ToList
 
@@ -3825,6 +3885,8 @@ Public Class frmMainMenu
                                                                            Exit For
                                                                       End If
 
+
+
                                                                  Next
                                                             End If
 
@@ -3874,7 +3936,7 @@ Public Class frmMainMenu
 
 
                                                        Dim oListReferencedColumns As New Dictionary(Of String, clsValidation)
-                                                       For Each oValidation As clsValidation In oTemplate.Validators.Where(Function(n) n.Enabled = "1" Or n.Visibility = "1").ToList
+                                                       For Each oValidation As clsValidation In oTemplate.Validators.Where(Function(n) n.Enabled = "1" Or n.Visibility = "1").OrderBy(Function(n) n.Priority).ToList
                                                             If oValidation.Query IsNot Nothing AndAlso String.IsNullOrEmpty(oValidation.Query) = False Then
                                                                  Dim olist As List(Of String) = ExtractColumnDetails(oValidation.Query)
                                                                  If olist IsNot Nothing And olist.Count > 0 Then
@@ -3939,6 +4001,9 @@ Public Class frmMainMenu
 
 
                                                                                      For nRow = 2 To .ActiveWorksheet.Rows.LastUsedIndex + 1
+
+                                                                                          Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
+
                                                                                           'only extract if the destination cell are empty
                                                                                           If String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sKey, nRow)).Value.ToString) = True Then
 
@@ -3997,6 +4062,10 @@ Public Class frmMainMenu
                                                                                                goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                                                                Exit Sub
                                                                                           End If
+
+
+
+
 
                                                                                      Next nRow
 
@@ -4226,6 +4295,7 @@ Public Class frmMainMenu
 
                                                        .ActiveWorksheet.Columns.AutoFit(0, spreadsheetControl.ActiveWorksheet.Columns.LastUsedIndex)
 
+                                                       Call UpdateProgressStatus(String.Format("Formating Sheet"))
                                                        'Hide unused columns
                                                        Call HideShowColumns(oTemplate, True)
 
@@ -4492,7 +4562,7 @@ Public Class frmMainMenu
 
                End If
           Catch ex As Exception
-
+               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
 
@@ -4556,6 +4626,7 @@ Public Class frmMainMenu
      Private Sub tcgImport_SelectedPageChanged(sender As Object, e As DevExpress.XtraLayout.LayoutTabPageChangedEventArgs) Handles tcgImport.SelectedPageChanged
           Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
      End Sub
+
 
 
 

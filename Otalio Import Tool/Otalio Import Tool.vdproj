@@ -1305,6 +1305,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B818CDAD1A2CE5DBDFB7273AC8FC5F7B"
+        "OwnerKey" = "8:_1E29FEC5B78244F38E737BE64B66C747"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B9D32F534D2A8CB07C7D51AB7F15BB29"
         "OwnerKey" = "8:_1E29FEC5B78244F38E737BE64B66C747"
         "MsmSig" = "8:_UNDEFINED"
@@ -1467,6 +1473,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_EFD8AFA3C5FE6729BEB580C44118F13D"
+        "OwnerKey" = "8:_1E29FEC5B78244F38E737BE64B66C747"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EFD8AFA3C5FE6729BEB580C44118F13D"
+        "OwnerKey" = "8:_B818CDAD1A2CE5DBDFB7273AC8FC5F7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F1E69B23E2F27FB45DBBC0B19296BC47"
         "OwnerKey" = "8:_6DEA948A312B599F57943D1C3A6D5259"
         "MsmSig" = "8:_UNDEFINED"
@@ -1583,6 +1601,18 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_1E29FEC5B78244F38E737BE64B66C747"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B818CDAD1A2CE5DBDFB7273AC8FC5F7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_EFD8AFA3C5FE6729BEB580C44118F13D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -4336,6 +4366,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B818CDAD1A2CE5DBDFB7273AC8FC5F7B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                "ScatterAssemblies"
+                {
+                    "_B818CDAD1A2CE5DBDFB7273AC8FC5F7B"
+                    {
+                    "Name" = "8:System.IO.Compression.FileSystem.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.IO.Compression.FileSystem.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3E6B556F61F6470DB6D37F8A2C35C27A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B9D32F534D2A8CB07C7D51AB7F15BB29"
             {
             "AssemblyRegister" = "3:1"
@@ -4852,6 +4913,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EFD8AFA3C5FE6729BEB580C44118F13D"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Compression, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                "ScatterAssemblies"
+                {
+                    "_EFD8AFA3C5FE6729BEB580C44118F13D"
+                    {
+                    "Name" = "8:System.IO.Compression.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.IO.Compression.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3E6B556F61F6470DB6D37F8A2C35C27A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F1E69B23E2F27FB45DBBC0B19296BC47"
             {
             "AssemblyRegister" = "3:1"
@@ -5096,7 +5188,7 @@
         "ProductName" = "8:Otalio Import Tool"
         "ProductCode" = "8:{E2B49ABA-7369-4524-A106-831029E063D7}"
         "PackageCode" = "8:{75436121-D587-4D20-BB8E-8DC97102D039}"
-        "UpgradeCode" = "8:{B179CBCD-BC09-4C81-B9B4-3D67086625EA}"
+        "UpgradeCode" = "8:{ECC57FAC-F4CC-44D2-AB3F-D77EF093A212}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -5644,7 +5736,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1E29FEC5B78244F38E737BE64B66C747"
             {
-            "SourcePath" = "8:..\\Otalio.Import\\obj\\Debug\\Otalio.Import.exe"
+            "SourcePath" = "8:..\\Otalio.Import\\obj\\Release\\Otalio.Import.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3E6B556F61F6470DB6D37F8A2C35C27A"
