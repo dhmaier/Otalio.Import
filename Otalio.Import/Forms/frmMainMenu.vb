@@ -3363,20 +3363,19 @@ Public Class frmMainMenu
                     Catch ex As Exception
 
                     End Try
-               End If
 
+                    mnCounter = 0
+
+               End If
 
                moOverlayLabel.Text = Replace(psStatus, vbNewLine, "")
 
           End If
 
-          If mnCounter >= 0 Then
-
-               Application.DoEvents()
-               mnCounter = 0
-          End If
+          siStatus.Caption = Replace(psStatus, vbNewLine, "")
 
           mnCounter += 1
+          Application.DoEvents()
 
      End Sub
 
@@ -4002,7 +4001,6 @@ Public Class frmMainMenu
 
                                                                                      For nRow = 2 To .ActiveWorksheet.Rows.LastUsedIndex + 1
 
-                                                                                          Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
 
                                                                                           'only extract if the destination cell are empty
                                                                                           If String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sKey, nRow)).Value.ToString) = True Then
@@ -4012,10 +4010,11 @@ Public Class frmMainMenu
                                                                                                     Exit Sub
                                                                                                End If
 
-                                                                                               Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
 
                                                                                                If .ActiveWorksheet.Cells(String.Format("{0}{1}", oValidation.ReturnCell, nRow)).Value IsNot Nothing AndAlso
                                                                                               String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", oValidation.ReturnCell, nRow)).Value.ToString) = False Or sDataSource = "" Then
+
+
 
                                                                                                     Dim sNewQuery As String = sQuery
                                                                                                     Dim sColumns As List(Of String) = ExtractColumnDetails(oValidation.Query)
@@ -4041,10 +4040,13 @@ Public Class frmMainMenu
 
                                                                                                     If sNewQuery.Contains("<!") = False Then
 
+
                                                                                                          Dim sValue As String = String.Empty
                                                                                                          If oListValues.ContainsKey(sNewQuery) Then
                                                                                                               sValue = oListValues(sNewQuery)
                                                                                                          Else
+                                                                                                              Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
+
                                                                                                               sValue = goHTTPServer.GetValueFromEndpoint(sAPIendpoint, sNewQuery, oReturnNode, sRootNode)
                                                                                                               If String.IsNullOrEmpty(sValue) = False Then
                                                                                                                    oListValues.Add(sNewQuery, sValue)
@@ -4127,7 +4129,6 @@ Public Class frmMainMenu
 
 
                                                                                      For nRow = 2 To .ActiveWorksheet.Rows.LastUsedIndex + 1
-                                                                                          Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
 
                                                                                           'only extract if the destination cell are empty
                                                                                           If String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sColumnCode, nRow)).Value.ToString) = True Then
@@ -4139,6 +4140,7 @@ Public Class frmMainMenu
 
                                                                                                If .ActiveWorksheet.Cells(String.Format("{0}{1}", sReturnCell, nRow)).Value IsNot Nothing AndAlso
                                                                                               String.IsNullOrEmpty(.ActiveWorksheet.Cells(String.Format("{0}{1}", sReturnCell, nRow)).Value.ToString) = False Then
+
 
                                                                                                     Dim sArray As String = String.Empty
 
@@ -4198,6 +4200,7 @@ Public Class frmMainMenu
                                                                                                                              If oListValues.ContainsKey(sNewQuery) Then
                                                                                                                                   sValue = oListValues(sNewQuery)
                                                                                                                              Else
+                                                                                                                                  Call UpdateProgressStatus(String.Format("Linked Object {2} with Priority {3} - {0} of {1} objects ", nRow, .ActiveWorksheet.Rows.LastUsedIndex + 1, oValidation.Comments, oValidation.Priority))
                                                                                                                                   sValue = goHTTPServer.GetValueFromEndpoint(sAPIendpoint, sNewQuery, oReturnNode, sRootNode)
 
                                                                                                                                   If String.IsNullOrEmpty(sValue) = False Then
@@ -4535,7 +4538,9 @@ Public Class frmMainMenu
                     gdLogs.BestFitColumns()
                End If
           Catch ex As Exception
-
+               gridLogs.DataSource = Nothing
+               gridLogs.RefreshDataSource()
+               gdLogs.BestFitColumns()
           Finally
                Call UpdateProgressStatus()
           End Try
