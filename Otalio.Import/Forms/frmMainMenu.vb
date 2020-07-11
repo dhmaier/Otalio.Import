@@ -580,6 +580,8 @@ Public Class frmMainMenu
 
      Private Sub bbiQuery_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiQuery.ItemClick
 
+          Dim oLastSelectedTemplate As clsDataImportTemplate = Nothing
+
           If gdWorkbook.SelectedRowsCount = 0 Then
                MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
                Exit Sub
@@ -592,7 +594,7 @@ Public Class frmMainMenu
                     If nRowID >= 0 Then
                          Dim oItem As clsDataImportTemplate = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportTemplate)
                          If oItem IsNot Nothing Then
-
+                              oLastSelectedTemplate = oItem
                               Dim bApply As Boolean = True
 
                               If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
@@ -604,12 +606,24 @@ Public Class frmMainMenu
                               End If
 
                               If bApply Then
-                                   QueryandLoad(TryCast(oItem, clsDataImportTemplate))
-                                   Application.DoEvents()
+                                   Try
+                                        QueryandLoad(TryCast(oItem, clsDataImportTemplate))
+                                        Application.DoEvents()
+                                   Catch ex As Exception
+
+                                   End Try
+
+
                               End If
                          End If
                     End If
+
+
                Next
+
+               If oLastSelectedTemplate IsNot Nothing Then
+                    SetEditExcelMode(False, oLastSelectedTemplate, True)
+               End If
           End If
 
 
@@ -3331,52 +3345,65 @@ Public Class frmMainMenu
 
      Public Sub UpdateProgressStatus(Optional psStatus As String = "", Optional mbCacelEnabled As Boolean = True)
 
+          Try
+               Call ShowWaitDialog(Replace(psStatus, vbNewLine, ""))
 
-          Me.miButtonImage = CreateButtonImage()
-          Me.miHotButtonImage = CreateHotButtonImage()
+               Exit Sub
+          Catch ex As Exception
 
-
-          If psStatus = String.Empty Then
-
-               Try
-                    If moOverlayHandle IsNot Nothing Then
-                         SplashScreenManager.CloseOverlayForm(moOverlayHandle)
-                         moOverlayHandle = Nothing
-                    End If
-               Catch ex As Exception
-
-               End Try
-               moOverlayHandle = Nothing
-
-          Else
+          End Try
 
 
-               If moOverlayHandle Is Nothing Then
+          Try
+
+               Me.miButtonImage = CreateButtonImage()
+               Me.miHotButtonImage = CreateHotButtonImage()
+
+
+               If psStatus = String.Empty Then
+
                     Try
-
-                         If mbCacelEnabled Then
-                              moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel, moOverlayButton), opacity:=220)
-                         Else
-                              moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel), opacity:=220)
+                         If moOverlayHandle IsNot Nothing Then
+                              SplashScreenManager.CloseOverlayForm(moOverlayHandle)
+                              moOverlayHandle = Nothing
                          End If
-
                     Catch ex As Exception
 
                     End Try
+                    moOverlayHandle = Nothing
 
-                    mnCounter = 0
+               Else
+
+
+                    If moOverlayHandle Is Nothing Then
+                         Try
+
+                              If mbCacelEnabled Then
+                                   moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel, moOverlayButton), opacity:=220)
+                              Else
+                                   moOverlayHandle = SplashScreenManager.ShowOverlayForm(LayoutControl1, customPainter:=New OverlayWindowCompositePainter(moOverlayLabel), opacity:=220)
+                              End If
+
+                         Catch ex As Exception
+
+                         End Try
+
+                         mnCounter = 0
+
+                    End If
+
+                    moOverlayLabel.Text = Replace(psStatus, vbNewLine, "")
 
                End If
 
-               moOverlayLabel.Text = Replace(psStatus, vbNewLine, "")
+               siStatus.Caption = Replace(psStatus, vbNewLine, "")
 
-          End If
+               mnCounter += 1
+               Application.DoEvents()
 
-          siStatus.Caption = Replace(psStatus, vbNewLine, "")
+          Catch ex As Exception
 
-          mnCounter += 1
-          Application.DoEvents()
-
+          End Try
      End Sub
 
      Private Sub OnCancelButtonClick()
@@ -4547,7 +4574,7 @@ Public Class frmMainMenu
 
      End Sub
 
-     Private Sub SetEditExcelMode(pbStart As Boolean, potemplate As clsDataImportTemplate)
+     Private Sub SetEditExcelMode(pbStart As Boolean, potemplate As clsDataImportTemplate, Optional pbSetFocus As Boolean = False)
 
           Try
                If pbStart Then
@@ -4558,19 +4585,23 @@ Public Class frmMainMenu
                     spreadsheetControl.BeginUpdate()
 
                Else
-                    spreadsheetControl.EndUpdate()
+                    If spreadsheetControl.IsUpdateLocked Then spreadsheetControl.EndUpdate()
                     lcgSpreedsheet.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-                    spreadsheetControl.Document.Worksheets.ActiveWorksheet = spreadsheetControl.Document.Worksheets(potemplate.WorkbookSheetName)
-                    tcgTabs.SelectedTabPage = lcgSpreedsheet
                     Me.Refresh()
                     Application.DoEvents()
-
                End If
+
           Catch ex As Exception
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
+          If pbSetFocus Then
+               spreadsheetControl.Document.Worksheets.ActiveWorksheet = spreadsheetControl.Document.Worksheets(potemplate.WorkbookSheetName)
+               tcgTabs.SelectedTabPage = lcgSpreedsheet
+               Me.Refresh()
+               Application.DoEvents()
 
+          End If
      End Sub
 
 #End Region

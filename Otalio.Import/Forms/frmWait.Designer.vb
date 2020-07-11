@@ -22,8 +22,8 @@ Partial Class frmWait
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
-    Me.progressPanel1 = New DevExpress.XtraWaitForm.ProgressPanel()
-    Me.tableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+        Me.progressPanel1 = New DevExpress.XtraWaitForm.ProgressPanel()
+        Me.tableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.tableLayoutPanel1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -40,7 +40,7 @@ Partial Class frmWait
         Me.progressPanel1.Location = New System.Drawing.Point(0, 17)
         Me.progressPanel1.Margin = New System.Windows.Forms.Padding(0, 3, 0, 3)
         Me.progressPanel1.Name = "progressPanel1"
-        Me.progressPanel1.Size = New System.Drawing.Size(303, 39)
+        Me.progressPanel1.Size = New System.Drawing.Size(614, 39)
         Me.progressPanel1.TabIndex = 0
         Me.progressPanel1.Text = "progressPanel1"
         '
@@ -58,7 +58,7 @@ Partial Class frmWait
         Me.tableLayoutPanel1.Padding = New System.Windows.Forms.Padding(0, 14, 0, 14)
         Me.tableLayoutPanel1.RowCount = 1
         Me.tableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.tableLayoutPanel1.Size = New System.Drawing.Size(303, 73)
+        Me.tableLayoutPanel1.Size = New System.Drawing.Size(614, 73)
         Me.tableLayoutPanel1.TabIndex = 1
         '
         'frmWait
@@ -67,7 +67,7 @@ Partial Class frmWait
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoSize = True
         Me.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.ClientSize = New System.Drawing.Size(303, 73)
+        Me.ClientSize = New System.Drawing.Size(614, 73)
         Me.Controls.Add(Me.tableLayoutPanel1)
         Me.DoubleBuffered = True
         Me.Name = "frmWait"
