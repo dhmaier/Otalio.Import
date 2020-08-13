@@ -150,6 +150,7 @@ Public Class frmMainMenu
 
 
                               Else
+                                   UpdateProgressStatus()
                                    MsgBox("Failed to load Data import template file")
                               End If
                          End If
@@ -466,6 +467,7 @@ Public Class frmMainMenu
 
 
                          Else
+                              UpdateProgressStatus()
                               MsgBox("Failed to load Data import workbook file",, "Warning...")
                          End If
 
@@ -1005,6 +1007,7 @@ Public Class frmMainMenu
                End If
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
 
@@ -1033,6 +1036,7 @@ Public Class frmMainMenu
                Return oColumns
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -1084,6 +1088,7 @@ Public Class frmMainMenu
                End Select
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -1231,6 +1236,7 @@ Public Class frmMainMenu
 
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -1257,6 +1263,7 @@ Public Class frmMainMenu
                Return sColumns
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -1283,6 +1290,7 @@ Public Class frmMainMenu
                Return sColumns
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -1306,6 +1314,7 @@ Public Class frmMainMenu
 
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -1382,6 +1391,7 @@ Public Class frmMainMenu
                                    'validate that the specified worksheet exists
                                    With spreadsheetControl
                                         If .Document.Worksheets.Contains(poImportTemplate.WorkbookSheetName) = False Then
+                                             UpdateProgressStatus()
                                              MsgBox(String.Format("Cannot find worksheet {0}", poImportTemplate.WorkbookSheetName))
                                              Return False
                                         Else
@@ -1391,7 +1401,8 @@ Public Class frmMainMenu
                                    End With
 
 
-                                   bbiCancel.Enabled = True
+                                   EnableCancelButton(True)
+
                                    mbCancel = False
 
                                    Dim sColumns As List(Of String) = ExtractColumnDetails(oValidation.Query)
@@ -1512,10 +1523,11 @@ Public Class frmMainMenu
 
                Return bHasErrors
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
                SetEditExcelMode(False, poImportTemplate)
-               bbiCancel.Enabled = False
+               EnableCancelButton(False)
                mbCancel = False
                Call UpdateProgressStatus()
                goHTTPServer.LogEvent(String.Format("Completed validation in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Validation", oTemplate.Name, oTemplate.ID)
@@ -2474,6 +2486,7 @@ Public Class frmMainMenu
                'validate that the specified worksheet exists
                With spreadsheetControl
                     If .Document.Worksheets.Contains(poImportTemplate.WorkbookSheetName) = False Then
+                         UpdateProgressStatus()
                          MsgBox(String.Format("Cannot find worksheet {0}", poImportTemplate.WorkbookSheetName))
                          Exit Sub
                     Else
@@ -2524,7 +2537,7 @@ Public Class frmMainMenu
                          .Tables(0).Style = tableStyle
 
 
-                         bbiCancel.Enabled = True
+                         EnableCancelButton(True)
                          mbCancel = False
 
                          Dim nTotalRowsToImport As Integer = 0
@@ -2613,7 +2626,7 @@ Public Class frmMainMenu
                                         Case "5"
 
                                              oResponse = goHTTPServer.CallWebEndpointUsingDeleteByID(poImportTemplate.APIEndpoint,
-                                                                                        .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCell, nRow)).Value.ToString)
+                                                                                        .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCell, nRow)).Value.ToString, sQuery)
 
                                         Case Else
                                              Exit Sub
@@ -2656,6 +2669,7 @@ Public Class frmMainMenu
                                                   FormatCells(True, nRow - 1, nCountColumns)
 
                                                   If mbIgnore = False Then
+                                                       UpdateProgressStatus()
                                                        'located the begining of the stack trace
                                                        Dim sMessage As String = oResponse.Content.ToString.Substring(0, oResponse.Content.ToString.IndexOf("stackTrace"))
 
@@ -2724,12 +2738,13 @@ Public Class frmMainMenu
                End If
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
 
                SetEditExcelMode(False, poImportTemplate)
                Call UpdateProgressStatus(String.Empty)
-               bbiCancel.Enabled = False
+               EnableCancelButton(False)
                mbCancel = False
                goHTTPServer.LogEvent(String.Format("Completed import in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Import", poImportTemplate.Name, poImportTemplate.ID)
                LoadLogs(poImportTemplate.ID)
@@ -2760,6 +2775,7 @@ Public Class frmMainMenu
                'validate that the specified worksheet exists
                With spreadsheetControl
                     If .Document.Worksheets.Contains(poImportTemplate.WorkbookSheetName) = False Then
+                         UpdateProgressStatus()
                          MsgBox(String.Format("Cannot find worksheet {0}", poImportTemplate.WorkbookSheetName))
                          Exit Sub
                     Else
@@ -2810,7 +2826,7 @@ Public Class frmMainMenu
 
                          Application.DoEvents()
 
-                         bbiCancel.Enabled = True
+                         EnableCancelButton(True)
                          mbCancel = False
                          Dim nTotalRowsToImport As Integer = 0
                          For nRow = 2 To nCountRows + 1
@@ -2898,6 +2914,7 @@ Public Class frmMainMenu
                                              .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
 
                                              If mbIgnore = False Then
+                                                  UpdateProgressStatus()
                                                   'located the beging of the stack trace
                                                   Dim sMessage As String = oResponse.Content.ToString.Substring(0, oResponse.Content.ToString.IndexOf("stackTrace"))
 
@@ -2944,13 +2961,14 @@ Public Class frmMainMenu
                End If
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
 
                Call HideShowColumns(poImportTemplate, mbHideCalulationColumns)
                SetEditExcelMode(False, poImportTemplate)
                Call UpdateProgressStatus(String.Empty)
-               bbiCancel.Enabled = False
+               EnableCancelButton(False)
                mbCancel = False
                goHTTPServer.LogEvent(String.Format("Completed import in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Import Files", poImportTemplate.Name, poImportTemplate.ID)
                LoadLogs(poImportTemplate.ID)
@@ -2980,6 +2998,7 @@ Public Class frmMainMenu
                'validate that the specified worksheet exists
                With spreadsheetControl
                     If .Document.Worksheets.Contains(poImportTemplate.WorkbookSheetName) = False Then
+                         UpdateProgressStatus()
                          MsgBox(String.Format("Cannot find worksheet {0}", poImportTemplate.WorkbookSheetName))
                          Exit Sub
                     Else
@@ -3030,7 +3049,7 @@ Public Class frmMainMenu
 
                          Application.DoEvents()
 
-                         bbiCancel.Enabled = True
+                         EnableCancelButton(True)
                          mbCancel = False
                          Dim nTotalRowsToImport As Integer = 0
                          For nRow = 2 To nCountRows + 1
@@ -3048,8 +3067,23 @@ Public Class frmMainMenu
 
                                    Dim sID As String = .Cells(String.Format("{0}{1}", poImportTemplate.ReturnCell, nRow)).Value.ToString
 
+
+                                   Dim sQuery As String = poImportTemplate.UpdateQuery.ToString
+
+                                   Dim sColumns As List(Of String) = ExtractColumnDetails(sQuery)
+
+
+                                   'find all columns that are reference from the excel sheet to do the query
+                                   For Each sColumn As String In sColumns
+                                        Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+                                        sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+                                   Next
+
+
+
+
                                    Dim oResponse As IRestResponse
-                                   oResponse = goHTTPServer.CallWebEndpointUsingDeleteByID(poImportTemplate.APIEndpoint, sID)
+                                   oResponse = goHTTPServer.CallWebEndpointUsingDeleteByID(poImportTemplate.APIEndpoint, sID, sQuery)
 
 
                                    Call UpdateProgressStatus(String.Format("Deleting row {0} of {1} with {2}", nRow, nCountRows + 2, oResponse.StatusCode))
@@ -3078,6 +3112,7 @@ Public Class frmMainMenu
                                              .Cells(String.Format("{0}{1}", poImportTemplate.StatusDescirptionColumn, nRow)).Value = json.SelectToken("message").ToString
 
                                              If mbIgnore = False Then
+                                                  UpdateProgressStatus()
                                                   'located the beging of the stack trace
                                                   Dim sMessage As String = oResponse.Content.ToString.Substring(0, oResponse.Content.ToString.IndexOf("stackTrace"))
 
@@ -3124,13 +3159,14 @@ Public Class frmMainMenu
                End If
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
 
                Call HideShowColumns(poImportTemplate, mbHideCalulationColumns)
                SetEditExcelMode(False, poImportTemplate)
                Call UpdateProgressStatus(String.Empty)
-               bbiCancel.Enabled = False
+               EnableCancelButton(False)
                mbCancel = False
                goHTTPServer.LogEvent(String.Format("Completed import in {0} minutes", DateDiff(DateInterval.Minute, dStartDateTime, Now)), "Import Files", poImportTemplate.Name, poImportTemplate.ID)
                LoadLogs(poImportTemplate.ID)
@@ -3219,6 +3255,7 @@ Public Class frmMainMenu
                                    End If
                               End If
                          Catch ex As Exception
+                              UpdateProgressStatus()
                               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
 
                          End Try
@@ -3254,6 +3291,7 @@ Public Class frmMainMenu
                                                        End If
                                                   End If
                                              Catch ex As Exception
+                                                  UpdateProgressStatus()
                                                   MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
 
                                              End Try
@@ -3318,6 +3356,7 @@ Public Class frmMainMenu
                                                        End If
                                                   End If
                                              Catch ex As Exception
+                                                  UpdateProgressStatus()
                                                   MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
 
                                              End Try
@@ -3341,6 +3380,14 @@ Public Class frmMainMenu
                SplashScreenManager.ShowForm(Me, GetType(frmWait), True, True, False)
                SplashScreenManager.Default.SetWaitFormDescription(psStatus)
           End If
+
+
+          mnCounter += 1
+          If mnCounter >= 100 Then
+               Application.DoEvents()
+               mnCounter = 0
+          End If
+
      End Sub
 
      Public Sub UpdateProgressStatus(Optional psStatus As String = "", Optional mbCacelEnabled As Boolean = True)
@@ -3612,6 +3659,8 @@ Public Class frmMainMenu
                                              sQuery = Replace(sQuery, "@@SEARCH@@", oTemplate.SelectQuery)
                                         End If
 
+
+
                                         oResponse = goHTTPServer.CallGraphQL("apollo-server", sQuery)
                                         sNodeLoad = String.Format("data.{0}.content", oTemplate.GraphQLRootNode)
                                         If sNodeLoad.EndsWith(".") Then
@@ -3654,7 +3703,7 @@ Public Class frmMainMenu
                                              If oObject IsNot Nothing Then
                                                   If oObject.Count > 0 Then
 
-                                                       bbiCancel.Enabled = True
+                                                       EnableCancelButton(True)
                                                        mbCancel = False
 
 
@@ -3687,7 +3736,7 @@ Public Class frmMainMenu
 
                                                             goHTTPServer.LogEvent(String.Format("Loading Page {0} of {1}", IIf(bGraphQL, nPage + 1, nPage), IIf(bGraphQL, nPages, nPages)), "Query", oTemplate.Name, oTemplate.ID)
 
-                                                            If nPage > IIf(bGraphQL, 0, 1) Then
+                                                            If nPage > IIf(bGraphQL, 0, 0) Then
 
                                                                  If bGraphQL Then
 
@@ -3874,6 +3923,7 @@ Public Class frmMainMenu
 
                                                                                      Catch ex As Exception
                                                                                           If bIgnore = False Then
+                                                                                               UpdateProgressStatus()
                                                                                                Select Case MsgBox(String.Format("Error, do you which to continue?{0}{0}{1}{0}{0}If you exit, error message will be copied to clipboard.", vbNewLine, ex.Message), MsgBoxStyle.AbortRetryIgnore)
                                                                                                     Case MsgBoxResult.Abort
                                                                                                          Clipboard.SetText(ex.ToString)
@@ -3903,6 +3953,7 @@ Public Class frmMainMenu
                                                                            End If
 
                                                                       Catch ex As Exception
+                                                                           UpdateProgressStatus()
                                                                            MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
                                                                       End Try
 
@@ -4100,6 +4151,7 @@ Public Class frmMainMenu
 
                                                                                 Catch ex As Exception
                                                                                      If bIgnore = False Then
+                                                                                          UpdateProgressStatus()
                                                                                           Select Case MsgBox(String.Format("Error, do you which to continue?{0}{0}{1}{0}{0}If you exit, error message will be copied to clipboard.", vbNewLine, ex.Message), MsgBoxStyle.AbortRetryIgnore)
                                                                                                Case MsgBoxResult.Abort
                                                                                                     Clipboard.SetText(ex.ToString)
@@ -4274,6 +4326,7 @@ Public Class frmMainMenu
 
                                                                                 Catch ex As Exception
                                                                                      If bIgnore = False Then
+                                                                                          UpdateProgressStatus()
                                                                                           Select Case MsgBox(String.Format("Error, do you which to continue?{0}{0}{1}{0}{0}If you exit, error message will be copied to clipboard.", vbNewLine, ex.Message), MsgBoxStyle.AbortRetryIgnore)
                                                                                                Case MsgBoxResult.Abort
                                                                                                     Clipboard.SetText(ex.ToString)
@@ -4368,7 +4421,7 @@ Public Class frmMainMenu
                                              'located the beging of the stack trace
                                              Dim nIndex As Integer = oResponse.Content.ToString.IndexOf("stackTrace")
                                              Dim sMessage As String = oResponse.Content.ToString.Substring(0, IIf(nIndex > 0, nIndex, oResponse.Content.ToString.Length))
-
+                                             UpdateProgressStatus()
                                              Select Case MsgBox(String.Format("Error in select query.{0}{0}{1}{0}{0}Error message will be copied to your clipboard.", vbNewLine, sMessage), MsgBoxStyle.OkOnly)
                                                   Case MsgBoxResult.Ok
                                                        Clipboard.SetText(sMessage)
@@ -4401,10 +4454,11 @@ Public Class frmMainMenu
                LoadLogs(oTemplate.ID)
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           Finally
                SetEditExcelMode(False, poImportTemplate)
-               bbiCancel.Enabled = False
+               EnableCancelButton(False)
                mbCancel = False
                Call UpdateProgressStatus(String.Empty)
                bbiQuery.Enabled = True
@@ -4466,6 +4520,7 @@ Public Class frmMainMenu
 
      Private Function ValidateHierarchiesIsSelected() As Boolean
           If mbContainsHierarchies And gsSelectedHierarchy Is Nothing AndAlso String.IsNullOrEmpty(gsSelectedHierarchy) = True Then
+               UpdateProgressStatus()
                MsgBox("This template requires a Hierarchy to be selected.", MsgBoxStyle.OkOnly)
                Return False
           Else
@@ -4592,6 +4647,7 @@ Public Class frmMainMenu
                End If
 
           Catch ex As Exception
+               UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
@@ -4604,6 +4660,12 @@ Public Class frmMainMenu
           End If
      End Sub
 
+     Public Sub EnableCancelButton(pbEnabled As Boolean)
+
+          bbiCancel.Enabled = pbEnabled
+          Application.DoEvents()
+
+     End Sub
 #End Region
 
 #Region "Objects"

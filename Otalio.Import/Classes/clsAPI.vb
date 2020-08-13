@@ -389,8 +389,9 @@ Public Class clsAPI
 
      End Function
 
-     Public Function CallWebEndpointUsingDeleteByID(psEndPoint As String, psID As String) As IRestResponse
+     Public Function CallWebEndpointUsingDeleteByID(psEndPoint As String, psID As String, psQuery As String) As IRestResponse
           Try
+               psQuery = ExtractSystemVariables(psQuery)
                psEndPoint = ExtractSystemVariables(psEndPoint)
 
 
@@ -399,6 +400,11 @@ Public Class clsAPI
                If Not String.IsNullOrEmpty(psID) Then
                     url = url + String.Format("/{0}", (psID))
                End If
+
+               If Not String.IsNullOrEmpty(psQuery) Then
+                    url = url + String.Format("?{0}", (psQuery))
+               End If
+
 
                Dim oClient = New RestClient(url)
 

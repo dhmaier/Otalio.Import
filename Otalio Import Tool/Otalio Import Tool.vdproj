@@ -5188,7 +5188,7 @@
         "ProductName" = "8:Otalio Import Tool"
         "ProductCode" = "8:{E2B49ABA-7369-4524-A106-831029E063D7}"
         "PackageCode" = "8:{64ED5573-B2BE-40A4-A886-611C1F81C93B}"
-        "UpgradeCode" = "8:{4E0D2C6F-D3AC-4D90-B174-D2D3D795BFB0}"
+        "UpgradeCode" = "8:{9E2C61B9-08E0-426D-B879-597E9BBDB8C2}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
