@@ -561,6 +561,7 @@ Public Class frmMainMenu
                           Path.GetExtension(goOpenWorkBook.WorkbookName), False)
 
 
+               SortWorksheets()
 
                SaveWorkbook(False)
 
@@ -575,6 +576,8 @@ Public Class frmMainMenu
                spreadsheetControl.SaveDocument(sCurrentFilename)
 
           End If
+
+
 
           UpdateProgressStatus()
 
@@ -727,6 +730,10 @@ Public Class frmMainMenu
 
 
 
+     End Sub
+
+     Private Sub rbiSortTabs_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles rbiSortTabs.ItemClick
+          SortWorksheets()
      End Sub
 
 #End Region
@@ -4468,6 +4475,46 @@ Public Class frmMainMenu
 
      End Sub
 
+     Sub SortWorksheets()
+
+          Try
+               ' sort worksheets in a workbook in ascending order
+               Dim sCount As Integer, i As Integer, j As Integer
+
+               If spreadsheetControl IsNot Nothing AndAlso spreadsheetControl.Document IsNot Nothing Then
+
+                    With spreadsheetControl.Document
+
+                         sCount = spreadsheetControl.Document.Worksheets.Count - 1
+
+                         If sCount = 0 Then Exit Sub
+
+                         For i = 0 To sCount
+
+                              For j = i To sCount
+
+                                   If .Worksheets(j).Name < .Worksheets(i).Name Then
+
+                                        .Worksheets(j).Move(i)
+
+                                   End If
+
+                              Next j
+
+                         Next i
+                    End With
+               End If
+
+          Catch ex As Exception
+               UpdateProgressStatus()
+               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+
+          End Try
+
+
+     End Sub
+
+
      Private Sub HideShowColumns(poImportTemplate As clsDataImportTemplate, psHide As Boolean)
           Try
 
@@ -4724,6 +4771,8 @@ Public Class frmMainMenu
      Private Sub tcgImport_SelectedPageChanged(sender As Object, e As DevExpress.XtraLayout.LayoutTabPageChangedEventArgs) Handles tcgImport.SelectedPageChanged
           Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
      End Sub
+
+
 
 
 

@@ -22,7 +22,7 @@ Partial Class frmSplashScreen
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
-    Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmSplashScreen))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmSplashScreen))
         Me.peImage = New DevExpress.XtraEditors.PictureEdit()
         Me.peLogo = New DevExpress.XtraEditors.PictureEdit()
         Me.labelStatus = New DevExpress.XtraEditors.LabelControl()
