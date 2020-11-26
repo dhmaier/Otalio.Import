@@ -16,9 +16,10 @@
      Public Property gsSelectedHierarchy As String = ""
      Public Property gsSelectedHierarchyType As String = ""
 
+     Public mbCancel As Boolean = False
 
      Public Enum UserControlWaitFormCommand
-    SetSize
-  End Enum
+          SetSize
+     End Enum
 
 End Module

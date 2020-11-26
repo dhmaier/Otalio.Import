@@ -28,7 +28,6 @@ Public Class frmMainMenu
      Private moOverlayHandle As IOverlaySplashScreenHandle
      Private miButtonImage As Image
      Private miHotButtonImage As Image
-     Private mbCancel As Boolean = False
      Private moOverlayButton As OverlayImagePainter
      Private moOverlayLabel As OverlayTextPainter
      Private mnCounter As Integer = 0
@@ -948,14 +947,32 @@ Public Class frmMainMenu
 
                               If String.IsNullOrEmpty(oValidation.ReturnCell) = False Then
                                    Dim sCol As String = oValidation.ReturnCell
+                                   Dim oCol As New clsImportColum
+                                   With oCol
 
-                                   If sCol.Contains(":") Then
-                                        sCol = sCol.Substring(0, sCol.IndexOf(":"))
-                                   End If
+                                        .ColumnName = oValidation.ReturnCell
+                                        .Name = oValidation.Comments
+                                        .Type = JTokenType.None
+                                        .ColumnID = oValidation.ReturnCell
 
-                                   If oActiveColumns.Exists(Function(n) n.ColumnName = sCol) = False Then
-                                        oActiveColumns.Add(New clsImportColum With {.ColumnName = sCol, .Name = oValidation.Comments, .Type = JTokenType.None, .ColumnID = oValidation.ReturnCell})
-                                   End If
+                                        If sCol.Contains(":") Then
+                                             Dim oValues As String() = sCol.Split(":")
+                                             If oValues.Count > 1 Then
+                                                  .ColumnName = oValues(0)
+                                             End If
+
+                                             If oValues.Count > 4 Then
+                                                  .ArrayID = oValues(4)
+                                             End If
+                                        End If
+
+                                        If oActiveColumns.Exists(Function(n) n.ColumnName = .ColumnName) = False Then
+                                             oActiveColumns.Add(oCol)
+                                        End If
+
+                                   End With
+
+
                               End If
 
                          End If
@@ -1127,120 +1144,134 @@ Public Class frmMainMenu
 
           Try
 
-               Dim sColumnData As String = String.Empty
-               Dim sColumnHeader As String = String.Empty
-               Dim sColumnFieldName As String = String.Empty
-               Dim sVariable As String = String.Empty
-               Dim sFormat As String = String.Empty
-               Dim sChild As String = String.Empty
-               Dim sParent As String = String.Empty
-               Dim sChildNode As String = String.Empty
-               Dim sCommands As String = String.Empty
+
+               Dim sColumnDataList As New List(Of String)
 
 
                If InStr(poObject, "<!") > 0 Then
-                    sColumnData = (Replace(Replace(poObject, "<!", String.Empty), "!>", String.Empty))
-               End If
-
-               'sColumnData = sColumnData.Replace("[", "")
-               'sColumnData = sColumnData.Replace("]", "")
-               'sColumnData = sColumnData.Replace(" ", "")
-               'sColumnData = sColumnData.Replace("""", "")
-               'sColumnData = sColumnData.Replace(vbNewLine, "")
-
-               If sColumnData.Contains("(") Then
-                    sCommands = sColumnData.Substring(sColumnData.IndexOf("("), sColumnData.IndexOf(")") - sColumnData.IndexOf("(") + 1)
-                    sColumnData = Replace(sColumnData, sCommands, "")
-                    sCommands = sCommands.Substring(sCommands.IndexOf("(") + 1, sCommands.IndexOf(")") - 1)
+                    poObject = (Replace(Replace(poObject, "<!", String.Empty), "!>", String.Empty))
 
 
-                    For Each sCommnad As String In sCommands.Split(",")
-                         If sCommnad IsNot Nothing Then
-                              If sCommnad.Contains("=") Then
-                                   Dim oObjects() As String = sCommnad.Split("=")
+                    If poObject.Contains("|") = True Then
+                         sColumnDataList = poObject.Split("|").ToList
+                    Else
+                         sColumnDataList.Add(poObject)
+                    End If
 
-                                   If oObjects(0) IsNot Nothing Then
-                                        Select Case oObjects(0).ToString
-                                             Case "parent" : sParent = oObjects(1)
-                                             Case "childnode" : sChildNode = oObjects(1)
-                                             Case "format" : sFormat = oObjects(1).ToString.ToUpper.Substring(0, 1)
-                                        End Select
+                    For Each sColumnData As String In sColumnDataList
+
+                         Dim sColumnHeader As String = String.Empty
+                         Dim sColumnFieldName As String = String.Empty
+                         Dim sVariable As String = String.Empty
+                         Dim sFormat As String = String.Empty
+                         Dim sChild As String = String.Empty
+                         Dim sParent As String = String.Empty
+                         Dim sChildNode As String = String.Empty
+                         Dim sCommands As String = String.Empty
+                         Dim sArrayID As String = String.Empty
+
+                         If sColumnData.Contains("(") Then
+                              sCommands = sColumnData.Substring(sColumnData.IndexOf("("), sColumnData.IndexOf(")") - sColumnData.IndexOf("(") + 1)
+                              sColumnData = Replace(sColumnData, sCommands, "")
+                              sCommands = sCommands.Substring(sCommands.IndexOf("(") + 1, sCommands.IndexOf(")") - 1)
+
+
+                              For Each sCommnad As String In sCommands.Split(",")
+                                   If sCommnad IsNot Nothing Then
+                                        If sCommnad.Contains("=") Then
+                                             Dim oObjects() As String = sCommnad.Split("=")
+
+                                             If oObjects(0) IsNot Nothing Then
+                                                  Select Case oObjects(0).ToString
+                                                       Case "parent" : sParent = oObjects(1)
+                                                       Case "childnode" : sChildNode = oObjects(1)
+                                                       Case "format" : sFormat = oObjects(1).ToString.ToUpper.Substring(0, 1)
+                                                  End Select
+                                             End If
+
+                                        End If
+                                   End If
+                              Next
+
+
+
+                         End If
+
+
+                         If sColumnData.Contains(":") Then
+                              Dim sValues As List(Of String) = sColumnData.Split(":").ToList
+                              If sValues IsNot Nothing AndAlso sValues.Count > 1 Then
+                                   'columnn name
+                                   sColumnHeader = sValues(0)
+                                   'column formating
+                                   sFormat = sValues(1)
+                                   'column arry objects
+                                   If sValues.Count > 2 Then
+                                        sChild = sValues(2)
+                                   End If
+
+                                   If sValues.Count > 3 Then
+                                        sVariable = sValues(3)
+                                   End If
+
+                                   If sValues.Count > 4 Then
+                                        sArrayID = sValues(4)
                                    End If
 
                               End If
-                         End If
-                    Next
-
-
-
-               End If
-
-
-               If sColumnData.Contains(":") Then
-                    Dim sValues As List(Of String) = sColumnData.Split(":").ToList
-                    If sValues IsNot Nothing AndAlso sValues.Count > 1 Then
-                         'columnn name
-                         sColumnHeader = sValues(0)
-                         'column formating
-                         sFormat = sValues(1)
-                         'column arry objects
-                         If sValues.Count > 2 Then
-                              sChild = sValues(2)
+                         Else
+                              sColumnHeader = sColumnData
                          End If
 
-                         If sValues.Count > 3 Then
-                              sVariable = sValues(3)
-                         End If
+                         'if this is a sub noode get properites name
+                         If psParent.Contains(".") Then
+                              Dim sNodes As String() = psParent.ToString.Split(".")
+                              If sNodes IsNot Nothing Then
+                                   Dim nCount As Integer = 1
+                                   For Each snode As String In sNodes
+                                        If nCount = sNodes.Count Then
+                                             sColumnFieldName = snode
+                                        Else
+                                             sParent = sParent & snode & "."
+                                        End If
+                                        nCount += 1
+                                   Next
 
-                    End If
-               Else
-                    sColumnHeader = sColumnData
-               End If
+                                   If sParent.EndsWith(".") Then
+                                        sParent = sParent.Substring(0, sParent.Length - 1)
+                                   End If
 
-               'if this is a sub noode get properites name
-               If psParent.Contains(".") Then
-                    Dim sNodes As String() = psParent.ToString.Split(".")
-                    If sNodes IsNot Nothing Then
-                         Dim nCount As Integer = 1
-                         For Each snode As String In sNodes
-                              If nCount = sNodes.Count Then
-                                   sColumnFieldName = snode
-                              Else
-                                   sParent = sParent & snode & "."
                               End If
-                              nCount += 1
-                         Next
-
-                         If sParent.EndsWith(".") Then
-                              sParent = sParent.Substring(0, sParent.Length - 1)
+                         Else
+                              sColumnFieldName = psParent
                          End If
 
-                    End If
-               Else
-                    sColumnFieldName = psParent
+                         Dim oColumn As New clsImportColum
+                         With oColumn
+                              .Name = sColumnFieldName
+                              .ColumnID = sColumnData
+                              .Parent = sParent
+                              .Formatted = sFormat
+                              .ColumnName = sColumnHeader
+                              .VariableName = sVariable
+                              .Commands = sCommands
+                              .Type = JTokenType.String
+                              .ChildNode = sChildNode
+                              .ArrayID = sArrayID
+                              If String.IsNullOrEmpty(sChild) = False Then
+                                   .ChildNode = sChild
+                                   .Type = JTokenType.Array
+                              End If
+
+                              If String.IsNullOrEmpty(.ArrayID) = False Then
+                                   .Type = JTokenType.Property
+                              End If
+
+                         End With
+
+                         poListOfColumn.Add(oColumn)
+                    Next
                End If
-
-               Dim oColumn As New clsImportColum
-               With oColumn
-                    .Name = sColumnFieldName
-                    .ColumnID = sColumnData
-                    .Parent = sParent
-                    .Formatted = sFormat
-                    .ColumnName = sColumnHeader
-                    .VariableName = sVariable
-                    .Commands = sCommands
-                    .Type = JTokenType.String
-                    .ChildNode = sChildNode
-                    If String.IsNullOrEmpty(sChild) = False Then
-                         .ChildNode = sChild
-                         .Type = JTokenType.Array
-                    End If
-
-
-               End With
-
-               poListOfColumn.Add(oColumn)
-
 
           Catch ex As Exception
                UpdateProgressStatus()
@@ -1515,7 +1546,6 @@ Public Class frmMainMenu
 
                               If mbCancel Then
                                    goHTTPServer.LogEvent(String.Format("User requested Cancel of validation"), "Validation", poImportTemplate.Name, poImportTemplate.ID)
-
                                    Exit For
                               End If
 
@@ -1691,7 +1721,7 @@ Public Class frmMainMenu
                                                        For Each oitem In sProperties
 
                                                             'special handling for the translation properties
-                                                            If oitem.Value = "description" And json.ContainsKey("description") = False Then
+                                                            If oitem.Value = "description" And jnode.ContainsKey("description") = False Then
                                                                  Dim sValue As String = ""
                                                                  Try
                                                                       sValue = jnode.SelectToken("translations.en.description").ToString
@@ -3225,7 +3255,7 @@ Public Class frmMainMenu
           End With
      End Sub
 
-     Public Sub CheckChildrenNodes(poNode As JProperty, pnRow As Integer)
+     Public Sub CheckChildrenNodes(ByRef poNode As JProperty, pnRow As Integer)
 
           Try
 
@@ -3239,15 +3269,25 @@ Public Class frmMainMenu
 
                     Case JTokenType.String
                          Try
-
-
                               Dim sColumn As List(Of String) = ExtractColumnDetails2(poNode.Value.ToString)
                               If sColumn IsNot Nothing AndAlso sColumn.Count > 0 Then
                                    Dim oColumnPropeties As clsColumnProperties = ExtractColumnProperties(sColumn(0))
 
                                    If oColumnPropeties IsNot Nothing Then
 
+
+
                                         Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
+
+                                        If spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).IsDisplayedAsDateTime Then
+
+                                             'check if there is a time values attached.
+                                             If CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
+                                                  sValue = CDate(sValue).ToString("yyyy-MM-dd")
+                                             End If
+
+
+                                        End If
 
                                         If oColumnPropeties.Format <> String.Empty Then
                                              sValue = FormatString(sValue, oColumnPropeties.Format)
@@ -3274,6 +3314,7 @@ Public Class frmMainMenu
                                    Select Case oChild.Type
 
                                         Case JTokenType.Property
+
                                         Case JTokenType.String
                                              Try
                                                   Dim sColumn As List(Of String) = ExtractColumnDetails(poNode.Value.ToString)
@@ -3306,60 +3347,74 @@ Public Class frmMainMenu
 
                                         Case JTokenType.Object
                                              Try
-                                                  Dim oToken As JToken = poNode.First.DeepClone
+                                                  Dim oToken As JToken = oChild
 
-                                                  Dim sColumns As List(Of String) = ExtractColumnDetails(oToken.ToString)
-                                                  If sColumns.Count > 0 Then
-                                                       Dim oColumnPropeties As clsColumnProperties = ExtractColumnProperties(sColumns(0))
-                                                       Dim sCellData As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
+                                                  If oToken.Children.Count > 1 Then
 
-                                                       Dim sValues As New List(Of String)
-                                                       If sCellData IsNot Nothing And String.IsNullOrEmpty(sCellData) = False Then
-                                                            sValues = sCellData.Split(",").ToList
+                                                       For Each oChildlist In oToken.Children
+                                                            If oChildlist.Type = JTokenType.Property Then
+                                                                 CheckChildrenNodes(oChildlist, pnRow)
+                                                            End If
+                                                       Next
 
-                                                            For Each oVal As String In sValues
-                                                                 If oVal IsNot Nothing And String.IsNullOrEmpty(oVal) = False Then
-                                                                      Dim oNewToken As JToken = oToken.DeepClone
-                                                                      Dim oArray As New List(Of String)
-                                                                      If oVal.Contains(":") Then
-                                                                           oArray = oVal.Split(":").ToList
-                                                                      End If
+                                                  Else
+                                                       oToken = oChild.First
+                                                       Dim sColumns As List(Of String) = ExtractColumnDetails(oToken.ToString)
+                                                       If sColumns.Count > 0 Then
 
-                                                                      For Each oProp As JProperty In oNewToken.Values
-                                                                           Dim sCol As List(Of String) = ExtractColumnDetails(oProp)
-                                                                           Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
+                                                            Dim oColumnPropeties As clsColumnProperties = ExtractColumnProperties(sColumns(0))
+                                                            Dim sCellData As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
 
-                                                                           If oCP.IndexID <> String.Empty Then
-                                                                                If oArray.Count >= CInt(oCP.IndexID) Then
+                                                            Dim sValues As New List(Of String)
+                                                            If sCellData IsNot Nothing And String.IsNullOrEmpty(sCellData) = False Then
+                                                                 sValues = sCellData.Split(",").ToList
 
-                                                                                     If oColumnPropeties.Format <> String.Empty Then
-                                                                                          oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
-                                                                                     End If
-
-                                                                                     oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
-                                                                                End If
-                                                                           Else
-                                                                                oProp.Value = oVal
+                                                                 For Each oVal As String In sValues
+                                                                      If oVal IsNot Nothing And String.IsNullOrEmpty(oVal) = False Then
+                                                                           Dim oNewToken As JToken = oToken.DeepClone
+                                                                           Dim oArray As New List(Of String)
+                                                                           If oVal.Contains(":") Then
+                                                                                oArray = oVal.Split(":").ToList
                                                                            End If
-                                                                      Next
 
-                                                                      poNode.Values.First.AddAfterSelf(oNewToken.First)
+                                                                           For Each oProp As JProperty In oNewToken.Values
+                                                                                Dim sCol As List(Of String) = ExtractColumnDetails(oProp)
+                                                                                If sCol.Count > 0 Then
+                                                                                     Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
 
+                                                                                     If oCP.IndexID <> String.Empty Then
+                                                                                          If oArray.Count >= CInt(oCP.IndexID) Then
+
+                                                                                               If oColumnPropeties.Format <> String.Empty Then
+                                                                                                    oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
+                                                                                               End If
+
+                                                                                               oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
+                                                                                          End If
+                                                                                     Else
+                                                                                          oProp.Value = oVal
+                                                                                     End If
+                                                                                End If
+                                                                           Next
+
+                                                                           poNode.Values.First.AddAfterSelf(oNewToken.First)
+
+                                                                      End If
+                                                                 Next
+
+                                                                 'now remove the first value
+                                                                 If poNode.Values.Count > 0 Then
+                                                                      poNode.Values.First.Remove()
                                                                  End If
-                                                            Next
 
-                                                            'now remove the first value
-                                                            If poNode.Values.Count > 0 Then
-                                                                 poNode.Values.First.Remove()
+                                                                 Exit For
+                                                            Else
+
+                                                                 If poNode.Values.Count > 0 Then
+                                                                      poNode.Values.First.Remove()
+                                                                 End If
+
                                                             End If
-
-                                                            Exit For
-                                                       Else
-
-                                                            If poNode.Values.Count > 0 Then
-                                                                 poNode.Values.First.Remove()
-                                                            End If
-
                                                        End If
                                                   End If
                                              Catch ex As Exception
@@ -3379,7 +3434,73 @@ Public Class frmMainMenu
           End Try
 
      End Sub
+     Public Function ExactChildObjects(psToken As JToken, ByRef poNode As JProperty, pnRow As Integer) As String
 
+          If psToken.Children.Count = 1 Then
+               For Each oChildToken As JToken In psToken.Children
+                    Dim sColumns As List(Of String) = ExtractColumnDetails(oChildToken)
+                    If sColumns.Count > 0 Then
+                         Dim oColumnPropeties As clsColumnProperties = ExtractColumnProperties(sColumns(0))
+                         Dim sCellData As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
+
+                         Dim sValues As New List(Of String)
+                         If sCellData IsNot Nothing And String.IsNullOrEmpty(sCellData) = False Then
+                              sValues = sCellData.Split(",").ToList
+
+                              For Each oVal As String In sValues
+                                   If oVal IsNot Nothing And String.IsNullOrEmpty(oVal) = False Then
+                                        Dim oNewToken As JToken = oChildToken.DeepClone
+                                        Dim oArray As New List(Of String)
+                                        If oVal.Contains(":") Then
+                                             oArray = oVal.Split(":").ToList
+                                        End If
+
+                                        For Each oProp As JProperty In oNewToken.Values
+                                             Dim sCol As List(Of String) = ExtractColumnDetails(oProp)
+                                             If sCol.Count > 0 Then
+                                                  Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
+
+                                                  If oCP.IndexID <> String.Empty Then
+                                                       If oArray.Count >= CInt(oCP.IndexID) Then
+
+                                                            If oColumnPropeties.Format <> String.Empty Then
+                                                                 oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
+                                                            End If
+
+                                                            oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
+                                                       End If
+                                                  Else
+                                                       oProp.Value = oVal
+                                                  End If
+                                             End If
+                                        Next
+
+                                        poNode.Values.First.AddAfterSelf(oNewToken.First)
+
+                                   End If
+                              Next
+
+                              'now remove the first value
+                              If poNode.Values.Count > 0 Then
+                                   poNode.Values.First.Remove()
+                              End If
+
+                              Exit For
+                         Else
+                              If poNode.Values.Count > 0 Then
+                                   poNode.Values.First.Remove()
+                              End If
+
+                         End If
+                    End If
+               Next
+          Else
+               For Each oChild In psToken.Children
+                    ExactChildObjects(oChild, poNode, pnRow)
+               Next
+          End If
+
+     End Function
      Public Sub ShowWaitDialog(Optional psStatus As String = "")
           If psStatus = String.Empty Then
                SplashScreenManager.CloseForm(False)
@@ -3397,10 +3518,28 @@ Public Class frmMainMenu
 
      End Sub
 
+     Public Sub ShowWaitDialogWithCancel(Optional psStatus As String = "")
+          If psStatus = String.Empty Then
+               SplashScreenManager.CloseForm(False)
+          Else
+               SplashScreenManager.ShowForm(Me, GetType(frmWaitWithCancel), True, True, False)
+               SplashScreenManager.Default.SetWaitFormDescription(psStatus)
+          End If
+
+
+          mnCounter += 1
+          If mnCounter >= 100 Then
+               Application.DoEvents()
+               mnCounter = 0
+          End If
+
+     End Sub
+
+
      Public Sub UpdateProgressStatus(Optional psStatus As String = "", Optional mbCacelEnabled As Boolean = True)
 
           Try
-               Call ShowWaitDialog(Replace(psStatus, vbNewLine, ""))
+               Call ShowWaitDialogWithCancel(Replace(psStatus, vbNewLine, ""))
 
                Exit Sub
           Catch ex As Exception
@@ -3674,6 +3813,16 @@ Public Class frmMainMenu
                                              sNodeLoad = sNodeLoad.Substring(0, sNodeLoad.Length - 1)
                                         End If
 
+                                        Try
+                                             Dim jsServerResponse1 As JObject = JObject.Parse(oResponse.Content)
+                                             nPages = CInt(jsServerResponse1.SelectToken(String.Format("data.{0}.totalPages", oTemplate.GraphQLRootNode)))
+                                             If nPages > 0 Then
+                                                  bPaged = True
+                                             End If
+                                        Catch ex As Exception
+                                             bPaged = False
+                                        End Try
+
 
                                    Else
 
@@ -3791,6 +3940,7 @@ Public Class frmMainMenu
 
                                                                                      Try
 
+
                                                                                           If mbCancel = True Then
                                                                                                goHTTPServer.LogEvent(String.Format("User requested Cancel of Query"), "Query", poImportTemplate.Name, poImportTemplate.ID)
                                                                                                Exit For
@@ -3813,6 +3963,51 @@ Public Class frmMainMenu
                                                                                           Dim oNodes As List(Of String) = ocolumn.Parent.Split(".").ToList
 
                                                                                           Select Case ocolumn.Type
+                                                                                               Case JTokenType.Property
+
+                                                                                                    If String.IsNullOrEmpty(ocolumn.ArrayID) = False Then
+
+                                                                                                         Dim sRootNode As String = ""
+                                                                                                         Dim sSubNodes As String = ""
+                                                                                                         If ocolumn.Parent.Contains(".") Then
+                                                                                                              Dim sNodes As List(Of String) = ocolumn.Parent.Split(".").ToList
+                                                                                                              sRootNode = sNodes(0)
+
+                                                                                                              If sNodes.Count > 1 Then
+                                                                                                                   sSubNodes = Replace(ocolumn.Parent, sRootNode & ".", "")
+                                                                                                              End If
+                                                                                                         Else
+                                                                                                              sRootNode = ocolumn.Parent
+                                                                                                         End If
+
+
+                                                                                                         oJsn = oRow.SelectToken(sRootNode)
+                                                                                                         If oJsn IsNot Nothing And String.IsNullOrEmpty(ocolumn.ArrayID) = False AndAlso oJsn.Children.Count > 0 Then
+
+                                                                                                              oJsn = oJsn(CInt(ocolumn.ArrayID))
+
+                                                                                                              For Each sNode As String In oNodes
+                                                                                                                   If sNode <> sRootNode Then
+                                                                                                                        oJsn = oJsn.SelectToken(sNode)
+                                                                                                                   End If
+
+                                                                                                                   If oJsn.GetType = GetType(JArray) Then
+                                                                                                                        oJsn = oJsn(0)
+                                                                                                                   End If
+                                                                                                              Next
+
+                                                                                                              oJsn = oJsn.SelectToken(ocolumn.Name)
+                                                                                                              oCell.Value = oJsn.ToString
+
+
+                                                                                                              With oListUsedColumns
+                                                                                                                   If .Contains(ocolumn.ColumnName) = False Then
+                                                                                                                        .Add(ocolumn.ColumnName)
+                                                                                                                   End If
+                                                                                                              End With
+
+                                                                                                         End If
+                                                                                                    End If
 
                                                                                                Case JTokenType.Object
 
@@ -3864,47 +4059,62 @@ Public Class frmMainMenu
 
                                                                                                     oJsn = oRow.SelectToken(IIf(ocolumn.Parent = String.Empty, ocolumn.Name, ocolumn.Parent))
                                                                                                     If oJsn IsNot Nothing Then
-                                                                                                         For Each oChildren In oJsn.Children
-                                                                                                              If oChildren IsNot Nothing Then
-                                                                                                                   Select Case oChildren.Type
-                                                                                                                        Case JTokenType.String
-
-                                                                                                                             sValues = sValues & String.Format("{0},", TryCast(oChildren, JValue).Value)
-
-                                                                                                                        Case JTokenType.Object
-
-                                                                                                                             Dim sUsedProperties As New List(Of String)
-                                                                                                                             If ocolumn.ChildNode <> String.Empty Then
-                                                                                                                                  Dim oCols As List(Of clsImportColum) = oTemplate.ImportColumns.Where(Function(n) n.ColumnName = ocolumn.ColumnName).ToList
-                                                                                                                                  If oCols IsNot Nothing AndAlso oCols.Count > 0 Then
-                                                                                                                                       For Each oC As clsImportColum In oCols
-                                                                                                                                            sUsedProperties.Add(oC.Name)
-                                                                                                                                       Next
-                                                                                                                                  End If
-                                                                                                                             Else
-                                                                                                                                  sUsedProperties.Add(ocolumn.Name)
-                                                                                                                             End If
-
-                                                                                                                             For Each oProperty As JProperty In oChildren
-                                                                                                                                  If oProperty IsNot Nothing Then
-                                                                                                                                       If sUsedProperties.Contains(oProperty.Name) Then
-                                                                                                                                            sValues = sValues & String.Format("{1}:", oProperty.Name, oProperty.Value)
-                                                                                                                                       End If
-                                                                                                                                  End If
-                                                                                                                             Next
-
-                                                                                                                             If sValues.EndsWith(":") Then
-                                                                                                                                  sValues = sValues.Substring(0, sValues.Length - 1)
-                                                                                                                             End If
-
-                                                                                                                             sValues = sValues & ","
-
-                                                                                                                   End Select
+                                                                                                         If String.IsNullOrEmpty(ocolumn.ArrayID) = False Then
+                                                                                                              Dim nRowID As Integer = CInt(ocolumn.ArrayID)
+                                                                                                              If oJsn.Count >= nRowID + 1 Then
+                                                                                                                   oJsn = oJsn(CInt(ocolumn.ArrayID))
+                                                                                                                   oJsn = oJsn.SelectToken(ocolumn.Name)
+                                                                                                                   sValues = oJsn.ToString
+                                                                                                              Else
+                                                                                                                   Debug.Print("")
                                                                                                               End If
 
+                                                                                                         Else
 
-                                                                                                         Next
 
+
+
+                                                                                                                   For Each oChildren In oJsn.Children
+                                                                                                                   If oChildren IsNot Nothing Then
+                                                                                                                        Select Case oChildren.Type
+                                                                                                                             Case JTokenType.String
+
+                                                                                                                                  sValues = sValues & String.Format("{0},", TryCast(oChildren, JValue).Value)
+
+                                                                                                                             Case JTokenType.Object
+
+                                                                                                                                  Dim sUsedProperties As New List(Of String)
+                                                                                                                                  If ocolumn.ChildNode <> String.Empty Then
+                                                                                                                                       Dim oCols As List(Of clsImportColum) = oTemplate.ImportColumns.Where(Function(n) n.ColumnName = ocolumn.ColumnName).ToList
+                                                                                                                                       If oCols IsNot Nothing AndAlso oCols.Count > 0 Then
+                                                                                                                                            For Each oC As clsImportColum In oCols
+                                                                                                                                                 sUsedProperties.Add(oC.Name)
+                                                                                                                                            Next
+                                                                                                                                       End If
+                                                                                                                                  Else
+                                                                                                                                       sUsedProperties.Add(ocolumn.Name)
+                                                                                                                                  End If
+
+                                                                                                                                  For Each oProperty As JProperty In oChildren
+                                                                                                                                       If oProperty IsNot Nothing Then
+                                                                                                                                            If sUsedProperties.Contains(oProperty.Name) Then
+                                                                                                                                                 sValues = sValues & String.Format("{1}:", oProperty.Name, oProperty.Value)
+                                                                                                                                            End If
+                                                                                                                                       End If
+                                                                                                                                  Next
+
+                                                                                                                                  If sValues.EndsWith(":") Then
+                                                                                                                                       sValues = sValues.Substring(0, sValues.Length - 1)
+                                                                                                                                  End If
+
+                                                                                                                                  sValues = sValues & ","
+
+                                                                                                                        End Select
+                                                                                                                   End If
+
+
+                                                                                                              Next
+                                                                                                         End If
 
                                                                                                          oCell.Value = sValues
 

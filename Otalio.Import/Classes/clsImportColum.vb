@@ -53,6 +53,7 @@ Public Class clsImportColum
      Public Property VariableName As String = ""
      Public Property ChildNode As String = ""
      Public Property Commands As String = ""
+     Public Property ArrayID As String = ""
 
      Public ReadOnly Property FormatName As String
           Get

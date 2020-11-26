@@ -22,7 +22,7 @@ Partial Class ucConnectionDetails
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()>
   Private Sub InitializeComponent()
-    Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
+        Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
         Me.txtHTTPSPassword = New DevExpress.XtraEditors.TextEdit()
         Me.txtHTTPSUserName = New DevExpress.XtraEditors.TextEdit()
         Me.gridHistory = New DevExpress.XtraGrid.GridControl()

@@ -201,34 +201,39 @@ Module bFunctions
     End Select
   End Function
 
-  Public Function ExtractColumnProperties(psNode As String) As clsColumnProperties
-
-    If psNode IsNot Nothing Then
-
-      Dim oCP As New clsColumnProperties
-
-      If psNode.Contains(":") Then
-        Dim oValues As List(Of String) = psNode.Split(":").ToList
-
-        If oValues.Count >= 1 Then oCP.CellName = oValues(0).ToString
-        If oValues.Count >= 2 Then oCP.Format = oValues(1).ToString
-        If oValues.Count >= 3 Then oCP.IndexID = oValues(2).ToString
-
-      Else
-        oCP.CellName = psNode
-      End If
-
-      Return oCP
-    Else
-      Return Nothing
-    End If
+     Public Function ExtractColumnProperties(psNode As String) As clsColumnProperties
+          Try
 
 
 
-  End Function
+               If psNode IsNot Nothing Then
+
+                    Dim oCP As New clsColumnProperties
+
+                    If psNode.Contains(":") Then
+                         Dim oValues As List(Of String) = psNode.Split(":").ToList
+
+                         If oValues.Count >= 1 Then oCP.CellName = oValues(0).ToString
+                         If oValues.Count >= 2 Then oCP.Format = oValues(1).ToString
+                         If oValues.Count >= 3 Then oCP.IndexID = oValues(2).ToString
+
+                    Else
+                         oCP.CellName = psNode
+                    End If
+
+                    Return oCP
+               Else
+                    Return Nothing
+               End If
+
+          Catch ex As Exception
+
+          End Try
+
+     End Function
 
 
-  Public Function CompareFilesOld(ByVal file1FullPath As String, ByVal file2FullPath As String) As Boolean
+     Public Function CompareFilesOld(ByVal file1FullPath As String, ByVal file2FullPath As String) As Boolean
 
     If Not File.Exists(file1FullPath) Or Not File.Exists(file2FullPath) Then
       'One or both of the files does not exist.
