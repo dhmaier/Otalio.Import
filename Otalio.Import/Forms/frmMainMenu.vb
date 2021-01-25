@@ -3273,33 +3273,68 @@ Public Class frmMainMenu
                               If sColumn IsNot Nothing AndAlso sColumn.Count > 0 Then
                                    Dim oColumnPropeties As clsColumnProperties = ExtractColumnProperties(sColumn(0))
 
-                                   If oColumnPropeties IsNot Nothing Then
+                                   If String.IsNullOrEmpty(oColumnPropeties.IndexID) Then
+                                        If oColumnPropeties IsNot Nothing Then
+
+                                             Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
+
+                                             If spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).IsDisplayedAsDateTime Then
+
+                                                  'check if there is a time values attached.
+                                                  If CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
+                                                       sValue = CDate(sValue).ToString("yyyy-MM-dd")
+                                                  End If
 
 
-
-                                        Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
-
-                                        If spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).IsDisplayedAsDateTime Then
-
-                                             'check if there is a time values attached.
-                                             If CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
-                                                  sValue = CDate(sValue).ToString("yyyy-MM-dd")
                                              End If
 
+                                             If oColumnPropeties.Format <> String.Empty Then
+                                                  sValue = FormatString(sValue, oColumnPropeties.Format)
+                                             End If
 
+                                             If sValue = String.Empty Then
+                                                  poNode.Value = Nothing
+                                             Else
+                                                  poNode.Value = sValue
+                                             End If
                                         End If
 
-                                        If oColumnPropeties.Format <> String.Empty Then
-                                             sValue = FormatString(sValue, oColumnPropeties.Format)
-                                        End If
+                                   Else
 
-                                        If sValue = String.Empty Then
-                                             poNode.Value = Nothing
-                                        Else
-                                             poNode.Value = sValue
-                                        End If
+                                        Dim oToken As JToken = poNode
+                                        Dim sCellData As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.ToString.Trim
+                                        Dim sValues As New List(Of String)
+                                        If sCellData IsNot Nothing And String.IsNullOrEmpty(sCellData) = False Then
+                                             sValues = sCellData.Split(",").ToList
 
+                                             For Each oVal As String In sValues
+                                                  If oVal IsNot Nothing And String.IsNullOrEmpty(oVal) = False Then
+                                                       Dim oNewToken As JToken = oToken.DeepClone
+                                                       Dim oArray As New List(Of String)
+                                                       If oVal.Contains(":") Then
+                                                            oArray = oVal.Split(":").ToList
+                                                       End If
+
+                                                       If oColumnPropeties.IndexID <> String.Empty Then
+                                                            If oArray.Count >= CInt(oColumnPropeties.IndexID) Then
+
+                                                                 If oColumnPropeties.Format <> String.Empty Then
+                                                                      oArray(CInt(oColumnPropeties.IndexID) - 1) = FormatString(oArray(CInt(oColumnPropeties.IndexID) - 1), oColumnPropeties.Format)
+                                                                 End If
+
+                                                                 poNode.Value = oArray(CInt(oColumnPropeties.IndexID) - 1).ToString
+                                                            End If
+                                                       Else
+                                                            poNode.Value = oVal
+                                                       End If
+
+
+                                                  End If
+                                             Next
+                                        End If
                                    End If
+
+
                               End If
                          Catch ex As Exception
                               UpdateProgressStatus()

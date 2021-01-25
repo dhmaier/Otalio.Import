@@ -186,7 +186,6 @@ Public Class clsAPI
 
                               Dim oResponse = ExecuteAPI(oClient, oRequest, True)
 
-
                               If oResponse.StatusCode = HttpStatusCode.OK Then
 
 
