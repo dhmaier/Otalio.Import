@@ -3331,6 +3331,8 @@ Public Class frmMainMenu
 
                                                   End If
                                              Next
+                                        Else
+                                             poNode.Parent.Remove()
                                         End If
                                    End If
 
@@ -3384,7 +3386,7 @@ Public Class frmMainMenu
                                              Try
                                                   Dim oToken As JToken = oChild
 
-                                                  If oToken.Children.Count > 1 Then
+                                                  If oToken.Children.Count = 9999 Then
 
                                                        For Each oChildlist In oToken.Children
                                                             If oChildlist.Type = JTokenType.Property Then
@@ -3393,6 +3395,7 @@ Public Class frmMainMenu
                                                        Next
 
                                                   Else
+
                                                        oToken = oChild.First
                                                        Dim sColumns As List(Of String) = ExtractColumnDetails(oToken.ToString)
                                                        If sColumns.Count > 0 Then
@@ -3403,6 +3406,7 @@ Public Class frmMainMenu
                                                             Dim sValues As New List(Of String)
                                                             If sCellData IsNot Nothing And String.IsNullOrEmpty(sCellData) = False Then
                                                                  sValues = sCellData.Split(",").ToList
+                                                                 Dim nCounter As Integer = 0
 
                                                                  For Each oVal As String In sValues
                                                                       If oVal IsNot Nothing And String.IsNullOrEmpty(oVal) = False Then
@@ -3412,30 +3416,67 @@ Public Class frmMainMenu
                                                                                 oArray = oVal.Split(":").ToList
                                                                            End If
 
-                                                                           For Each oProp As JProperty In oNewToken.Values
-                                                                                Dim sCol As List(Of String) = ExtractColumnDetails(oProp)
-                                                                                If sCol.Count > 0 Then
-                                                                                     Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
 
-                                                                                     If oCP.IndexID <> String.Empty Then
-                                                                                          If oArray.Count >= CInt(oCP.IndexID) Then
 
-                                                                                               If oColumnPropeties.Format <> String.Empty Then
-                                                                                                    oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
+                                                                           If oNewToken.Type = JTokenType.Property Then
+                                                                                Dim oObject As JObject = oChild.DeepClone
+
+                                                                                Dim oToken1 As JToken = TryCast(oObject, JToken)
+                                                                                For Each oProperty1 As JProperty In oToken1.Children
+                                                                                     Dim sCol As List(Of String) = ExtractColumnDetails(oProperty1)
+                                                                                     If sCol.Count > 0 Then
+                                                                                          Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
+
+                                                                                          If oCP.IndexID <> String.Empty Then
+                                                                                               If oArray.Count >= CInt(oCP.IndexID) Then
+
+                                                                                                    If oColumnPropeties.Format <> String.Empty Then
+                                                                                                         oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
+                                                                                                    End If
+
+                                                                                                    oProperty1.Value = oArray(CInt(oCP.IndexID) - 1).ToString
                                                                                                End If
-
-                                                                                               oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
+                                                                                          Else
+                                                                                               oProperty1.Value = oVal
                                                                                           End If
-                                                                                     Else
-                                                                                          oProp.Value = oVal
                                                                                      End If
-                                                                                End If
-                                                                           Next
+                                                                                Next
 
-                                                                           poNode.Values.First.AddAfterSelf(oNewToken.First)
+                                                                                'Dim oProperty As JProperty = TryCast(oToken1.First, JProperty)
+
+                                                                                'If oProperty IsNot Nothing Then
+                                                                                '     oProperty.Value = oVal
+                                                                                'End If
+                                                                                poNode.First.First.AddAfterSelf(oObject)
+
+                                                                           Else
+                                                                                For Each oProp As JProperty In oNewToken.Values
+                                                                                     Dim sCol As List(Of String) = ExtractColumnDetails(oProp)
+                                                                                     If sCol.Count > 0 Then
+                                                                                          Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
+
+                                                                                          If oCP.IndexID <> String.Empty Then
+                                                                                               If oArray.Count >= CInt(oCP.IndexID) Then
+
+                                                                                                    If oColumnPropeties.Format <> String.Empty Then
+                                                                                                         oArray(CInt(oCP.IndexID) - 1) = FormatString(oArray(CInt(oCP.IndexID) - 1), oColumnPropeties.Format)
+                                                                                                    End If
+
+                                                                                                    oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
+                                                                                               End If
+                                                                                          Else
+                                                                                               oProp.Value = oVal
+                                                                                          End If
+                                                                                     End If
+                                                                                Next
+                                                                                poNode.Values.First.AddAfterSelf(oNewToken.First)
+                                                                           End If
+
 
                                                                       End If
                                                                  Next
+
+
 
                                                                  'now remove the first value
                                                                  If poNode.Values.Count > 0 Then
@@ -4938,18 +4979,19 @@ Public Class frmMainMenu
                     Application.DoEvents()
                End If
 
+               If pbSetFocus Then
+                    spreadsheetControl.Document.Worksheets.ActiveWorksheet = spreadsheetControl.Document.Worksheets(potemplate.WorkbookSheetName)
+                    tcgTabs.SelectedTabPage = lcgSpreedsheet
+                    Me.Refresh()
+                    Application.DoEvents()
+               End If
+
           Catch ex As Exception
                UpdateProgressStatus()
                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
 
-          If pbSetFocus Then
-               spreadsheetControl.Document.Worksheets.ActiveWorksheet = spreadsheetControl.Document.Worksheets(potemplate.WorkbookSheetName)
-               tcgTabs.SelectedTabPage = lcgSpreedsheet
-               Me.Refresh()
-               Application.DoEvents()
 
-          End If
      End Sub
 
      Public Sub EnableCancelButton(pbEnabled As Boolean)

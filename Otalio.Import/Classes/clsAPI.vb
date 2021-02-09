@@ -49,18 +49,6 @@ Public Class clsAPI
                     oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
 
                End If
-               'If goConnection._UserName <> String.Empty Then
-               '     oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
-
-               '     If Not isLogin Then
-               '          oRequest.AddHeader("X-API-Token", "Bearer " & msAccessToken)
-               '     End If
-               'Else
-
-               '     If Not isLogin Then
-               '          oRequest.AddHeader("Authorization", "Bearer " & msAccessToken)
-               '     End If
-               'End If
 
                If goConnection._HTTPUserName <> String.Empty Then
                     oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
