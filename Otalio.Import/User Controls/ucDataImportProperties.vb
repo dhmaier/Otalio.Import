@@ -136,6 +136,11 @@ Public Class ucDataImportProperties
                          .DataBindings.Add(New Binding("Text", moDataImportTemplate, "APIEndpoint"))
                     End With
 
+                    With txtAPIEndpointSelect
+                         .DataBindings.Clear()
+                         .DataBindings.Add(New Binding("Text", moDataImportTemplate, "APIEndpointSelect"))
+                    End With
+
                     With txtDataTransportObject
                          .DataBindings.Clear()
                          .DataBindings.Add(New Binding("Text", moDataImportTemplate, "DTOObject"))
@@ -222,6 +227,10 @@ Public Class ucDataImportProperties
                          .DataBindings.Clear()
                          .DataBindings.Add(New Binding("Text", moDataImportTemplate, "Group"))
                     End With
+
+
+
+
 
 
                     gridValidators.DataSource = moDataImportTemplate.Validators

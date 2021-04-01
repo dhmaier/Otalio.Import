@@ -3834,6 +3834,8 @@ Public Class frmMainMenu
                Dim oTemplate As clsDataImportTemplate = poImportTemplate
                If oTemplate IsNot Nothing Then
 
+                    Dim sEndpointSelect As String = IIf(String.IsNullOrEmpty(oTemplate.APIEndpointSelect), oTemplate.APIEndpoint, oTemplate.APIEndpointSelect)
+
                     goHTTPServer.LogEvent("User has started Query of Template", "Query", oTemplate.Name, oTemplate.ID)
                     SetEditExcelMode(True, poImportTemplate)
 
@@ -3852,7 +3854,7 @@ Public Class frmMainMenu
                               End If
 
 
-                              Call UpdateProgressStatus(String.Format("Requesting Data from Server {0} on API {1} ", goConnection._ServerAddress, oTemplate.APIEndpoint, vbNewLine))
+                              Call UpdateProgressStatus(String.Format("Requesting Data from Server {0} on API {1} ", goConnection._ServerAddress, sEndpointSelect, vbNewLine))
 
 
 
@@ -3902,7 +3904,7 @@ Public Class frmMainMenu
 
                                    Else
 
-                                        oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint, String.Empty, oTemplate.SelectQuery.ToString)
+                                        oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, oTemplate.SelectQuery.ToString)
                                         sNodeLoad = "responsePayload.content"
                                         bPaged = True
 
@@ -3991,7 +3993,7 @@ Public Class frmMainMenu
                                                                       'call the end point to get the query results
 
 
-                                                                      oResponse = goHTTPServer.CallWebEndpointUsingGet(oTemplate.APIEndpoint, String.Empty, oTemplate.SelectQuery.ToString, , , nPage)
+                                                                      oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, oTemplate.SelectQuery.ToString, , , nPage)
 
 
                                                                  End If
@@ -4150,7 +4152,7 @@ Public Class frmMainMenu
 
 
 
-                                                                                                                   For Each oChildren In oJsn.Children
+                                                                                                              For Each oChildren In oJsn.Children
                                                                                                                    If oChildren IsNot Nothing Then
                                                                                                                         Select Case oChildren.Type
                                                                                                                              Case JTokenType.String
@@ -4894,6 +4896,12 @@ Public Class frmMainMenu
                If oHierarchy.Level <> "SHIP" Then Return False
           End If
 
+          If poTemplate.IsRVCEntity Then
+               Dim oHierarchy As clsHierarchies = TryCast(lueHierarchies.GetSelectedDataRow, clsHierarchies)
+               If oHierarchy Is Nothing Then Return False
+               If oHierarchy.Level <> "REVENUECENTER" Then Return False
+          End If
+
           Return True
 
      End Function
@@ -5016,8 +5024,16 @@ Public Class frmMainMenu
 
 
      Private Sub lueHierarchies_EditValueChanged(sender As Object, e As EventArgs) Handles lueHierarchies.EditValueChanged
+
           If lueHierarchies.EditValue IsNot Nothing Then
+
                gsSelectedHierarchy = lueHierarchies.EditValue.ToString
+
+               Dim oHierarchy As clsHierarchies = TryCast(lueHierarchies.GetSelectedDataRow, clsHierarchies)
+               If oHierarchy IsNot Nothing Then
+                    gsSelectedHierarchyParent = oHierarchy.ParentHierarchyId
+               End If
+
           Else
                gsSelectedHierarchy = Nothing
           End If

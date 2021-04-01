@@ -14,6 +14,7 @@
 
   Public Const gsSettingFileName As String = "OtalioImport.Setting"
      Public Property gsSelectedHierarchy As String = ""
+     Public Property gsSelectedHierarchyParent As String = ""
      Public Property gsSelectedHierarchyType As String = ""
 
      Public mbCancel As Boolean = False

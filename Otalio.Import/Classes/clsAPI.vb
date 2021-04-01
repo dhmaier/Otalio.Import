@@ -744,6 +744,8 @@ Public Class clsAPI
                     If psObject.ToString.ToUpper.Contains("@@HIERARCHYID@@") = True Then psObject = Replace(psObject, "@@HIERARCHYID@@", gsSelectedHierarchy.ToString)
                     If psObject.ToString.ToUpper.Contains("@@EMPTYARRAY@@") = True Then psObject = Replace(psObject, ControlChars.Quote & "@@EMPTYARRAY@@" & ControlChars.Quote, "[]")
                     If psObject.ToString.ToUpper.Contains("@@SHIPID@@") = True Then psObject = Replace(psObject, "@@SHIPID@@", gsSelectedHierarchy.ToString)
+                    If psObject.ToString.ToUpper.Contains("@@RVCID@@") = True Then psObject = Replace(psObject, "@@RVCID@@", gsSelectedHierarchy.ToString)
+                    If psObject.ToString.ToUpper.Contains("@@PARENTID@@") = True Then psObject = Replace(psObject, "@@PARENTID@@", gsSelectedHierarchyParent.ToString)
 
                End If
 

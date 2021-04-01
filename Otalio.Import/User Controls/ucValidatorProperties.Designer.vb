@@ -123,7 +123,7 @@ Partial Class ucValidatorProperties
         Me.cbReturnNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.cbReturnNode.Properties.Appearance.Options.UseFont = True
         Me.cbReturnNode.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.cbReturnNode.Properties.Items.AddRange(New Object() {"responsePayload.content[0].entityId", "responsePayload.content[0].id", "responsePayload.translationMap.success.de.translatedText"})
+        Me.cbReturnNode.Properties.Items.AddRange(New Object() {"responsePayload.content[0].code", "responsePayload.content[0].entityId", "responsePayload.content[0].id"})
         Me.cbReturnNode.Properties.Sorted = True
         Me.cbReturnNode.Size = New System.Drawing.Size(444, 20)
         Me.cbReturnNode.StyleController = Me.LayoutControl1
@@ -154,6 +154,7 @@ Partial Class ucValidatorProperties
         '
         'lueLookupTypes
         '
+        Me.lueLookupTypes.AllowHtmlTextInToolTip = DevExpress.Utils.DefaultBoolean.[False]
         Me.lueLookupTypes.Location = New System.Drawing.Point(114, 65)
         Me.lueLookupTypes.Name = "lueLookupTypes"
         Me.lueLookupTypes.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
@@ -164,6 +165,8 @@ Partial Class ucValidatorProperties
         Me.lueLookupTypes.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("LookupGroup", "LookupGroup"), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("Code", "Code", 50, DevExpress.Utils.FormatType.None, "", True, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.None, DevExpress.Utils.DefaultBoolean.[Default]), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("Description", "Description", 100, DevExpress.Utils.FormatType.None, "", True, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Descending, DevExpress.Utils.DefaultBoolean.[Default])})
         Me.lueLookupTypes.Properties.DisplayMember = "Description"
         Me.lueLookupTypes.Properties.DropDownRows = 25
+        Me.lueLookupTypes.Properties.HideSelection = False
+        Me.lueLookupTypes.Properties.KeyMember = "Id"
         Me.lueLookupTypes.Properties.NullText = ""
         Me.lueLookupTypes.Properties.SearchMode = DevExpress.XtraEditors.Controls.SearchMode.OnlyInPopup
         Me.lueLookupTypes.Properties.SortColumnIndex = 1
