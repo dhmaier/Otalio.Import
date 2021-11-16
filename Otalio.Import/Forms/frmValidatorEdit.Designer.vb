@@ -24,21 +24,21 @@ Partial Class frmValidatorEdit
         Me.SimpleButton1 = New DevExpress.XtraEditors.SimpleButton()
         Me.butCancel = New DevExpress.XtraEditors.SimpleButton()
         Me.butOk = New DevExpress.XtraEditors.SimpleButton()
+        Me._ucValidationProperties = New Otalio.Import.ucValidatorProperties()
         Me.LayoutControlGroup1 = New DevExpress.XtraLayout.LayoutControlGroup()
+        Me.LayoutControlItem1 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem3 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem2 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.EmptySpaceItem1 = New DevExpress.XtraLayout.EmptySpaceItem()
         Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me._ucValidationProperties = New Otalio.Import.ucValidatorProperties()
-        Me.LayoutControlItem1 = New DevExpress.XtraLayout.LayoutControlItem()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.EmptySpaceItem1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'LayoutControl1
@@ -87,6 +87,14 @@ Partial Class frmValidatorEdit
         Me.butOk.TabIndex = 5
         Me.butOk.Text = "Ok"
         '
+        '_ucValidationProperties
+        '
+        Me._ucValidationProperties._Validation = CType(resources.GetObject("_ucValidationProperties._Validation"), Otalio.Import.clsValidation)
+        Me._ucValidationProperties.Location = New System.Drawing.Point(5, 5)
+        Me._ucValidationProperties.Name = "_ucValidationProperties"
+        Me._ucValidationProperties.Size = New System.Drawing.Size(743, 549)
+        Me._ucValidationProperties.TabIndex = 4
+        '
         'LayoutControlGroup1
         '
         Me.LayoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.[True]
@@ -96,6 +104,15 @@ Partial Class frmValidatorEdit
         Me.LayoutControlGroup1.OptionsItemText.TextToControlDistance = 5
         Me.LayoutControlGroup1.Size = New System.Drawing.Size(753, 591)
         Me.LayoutControlGroup1.TextVisible = False
+        '
+        'LayoutControlItem1
+        '
+        Me.LayoutControlItem1.Control = Me._ucValidationProperties
+        Me.LayoutControlItem1.Location = New System.Drawing.Point(0, 0)
+        Me.LayoutControlItem1.Name = "LayoutControlItem1"
+        Me.LayoutControlItem1.Size = New System.Drawing.Size(753, 559)
+        Me.LayoutControlItem1.TextSize = New System.Drawing.Size(0, 0)
+        Me.LayoutControlItem1.TextVisible = False
         '
         'LayoutControlItem3
         '
@@ -132,23 +149,6 @@ Partial Class frmValidatorEdit
         Me.LayoutControlItem4.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem4.TextVisible = False
         '
-        '_ucValidationProperties
-        '
-        Me._ucValidationProperties._Validation = CType(resources.GetObject("_ucValidationProperties._Validation"), Otalio.Import.clsValidation)
-        Me._ucValidationProperties.Location = New System.Drawing.Point(5, 5)
-        Me._ucValidationProperties.Name = "_ucValidationProperties"
-        Me._ucValidationProperties.Size = New System.Drawing.Size(743, 549)
-        Me._ucValidationProperties.TabIndex = 4
-        '
-        'LayoutControlItem1
-        '
-        Me.LayoutControlItem1.Control = Me._ucValidationProperties
-        Me.LayoutControlItem1.Location = New System.Drawing.Point(0, 0)
-        Me.LayoutControlItem1.Name = "LayoutControlItem1"
-        Me.LayoutControlItem1.Size = New System.Drawing.Size(753, 559)
-        Me.LayoutControlItem1.TextSize = New System.Drawing.Size(0, 0)
-        Me.LayoutControlItem1.TextVisible = False
-        '
         'frmValidatorEdit
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -161,11 +161,11 @@ Partial Class frmValidatorEdit
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LayoutControl1.ResumeLayout(False)
         CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.EmptySpaceItem1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

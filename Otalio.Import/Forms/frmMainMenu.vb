@@ -3423,7 +3423,7 @@ Public Class frmMainMenu
 
                                                                                 Dim oToken1 As JToken = TryCast(oObject, JToken)
                                                                                 For Each oProperty1 As JProperty In oToken1.Children
-                                                                                     Dim sCol As List(Of String) = ExtractColumnDetails(oProperty1)
+                                                                                     Dim sCol As List(Of String) = ExtractColumnDetails(oProperty1.ToString)
                                                                                      If sCol.Count > 0 Then
                                                                                           Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
 
