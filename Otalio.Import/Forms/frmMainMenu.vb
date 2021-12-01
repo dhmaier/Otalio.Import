@@ -247,6 +247,8 @@ Public Class frmMainMenu
 
      Private Sub bbiImportExcel_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiImportExcel.ItemClick
 
+          VerifySelectedHierarchy()
+
           If gdWorkbook.SelectedRowsCount = 0 Then
                MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
                Exit Sub
@@ -295,6 +297,7 @@ Public Class frmMainMenu
 
           Try
 
+               VerifySelectedHierarchy()
 
                If gdWorkbook.SelectedRowsCount = 0 Then
                     MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
@@ -585,6 +588,7 @@ Public Class frmMainMenu
      Private Sub bbiQuery_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiQuery.ItemClick
 
           Dim oLastSelectedTemplate As clsDataImportTemplate = Nothing
+          Call VerifySelectedHierarchy()
 
           If gdWorkbook.SelectedRowsCount = 0 Then
                MsgBox("Please select one or more import templates by checking them from the main list ",, "Warning...")
@@ -5008,6 +5012,11 @@ Public Class frmMainMenu
           Application.DoEvents()
 
      End Sub
+
+     Public Sub VerifySelectedHierarchy()
+          lueHierarchies_EditValueChanged(Nothing, Nothing)
+     End Sub
+
 #End Region
 
 #Region "Objects"
@@ -5073,6 +5082,10 @@ Public Class frmMainMenu
 
      Private Sub tcgImport_SelectedPageChanged(sender As Object, e As DevExpress.XtraLayout.LayoutTabPageChangedEventArgs) Handles tcgImport.SelectedPageChanged
           Call ValidateDataTempalte(UcProperties1._DataImportTemplate)
+     End Sub
+
+     Private Sub LcgImportProperties_Shown(sender As Object, e As EventArgs) Handles LcgImportProperties.Shown
+          lueHierarchies.Properties.DataSource = goHierarchies
      End Sub
 
 

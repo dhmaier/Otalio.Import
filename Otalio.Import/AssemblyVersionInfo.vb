@@ -2,7 +2,7 @@
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
-<Assembly: AssemblyVersion("1.1.29.0")>
+<Assembly: AssemblyVersion("1.1.30.0")>
 <Assembly: AssemblyDescription("Otalio Import Module")>
 <Assembly: AssemblyCompany("Otalio GmbH")>
 <Assembly: AssemblyProduct("Otalio Import")>

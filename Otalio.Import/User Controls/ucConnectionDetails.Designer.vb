@@ -22,6 +22,12 @@ Partial Class ucConnectionDetails
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()>
   Private Sub InitializeComponent()
+        Dim EditorButtonImageOptions1 As DevExpress.XtraEditors.Controls.EditorButtonImageOptions = New DevExpress.XtraEditors.Controls.EditorButtonImageOptions()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ucConnectionDetails))
+        Dim SerializableAppearanceObject1 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject2 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject3 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
+        Dim SerializableAppearanceObject4 As DevExpress.Utils.SerializableAppearanceObject = New DevExpress.Utils.SerializableAppearanceObject()
         Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
         Me.txtHTTPSPassword = New DevExpress.XtraEditors.TextEdit()
         Me.txtHTTPSUserName = New DevExpress.XtraEditors.TextEdit()
@@ -30,6 +36,7 @@ Partial Class ucConnectionDetails
         Me.GridColumn1 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn3 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn2 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.ribDelete = New DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit()
         Me.chkEnableLoging = New DevExpress.XtraEditors.CheckEdit()
         Me.btnSaveConnection = New DevExpress.XtraEditors.SimpleButton()
         Me.btnTestConnection = New DevExpress.XtraEditors.SimpleButton()
@@ -53,6 +60,7 @@ Partial Class ucConnectionDetails
         CType(Me.txtHTTPSUserName.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gridHistory, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.gdHistory, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ribDelete, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkEnableLoging.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPassword.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtUserName.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -111,6 +119,7 @@ Partial Class ucConnectionDetails
         Me.gridHistory.Location = New System.Drawing.Point(12, 158)
         Me.gridHistory.MainView = Me.gdHistory
         Me.gridHistory.Name = "gridHistory"
+        Me.gridHistory.RepositoryItems.AddRange(New DevExpress.XtraEditors.Repository.RepositoryItem() {Me.ribDelete})
         Me.gridHistory.Size = New System.Drawing.Size(441, 487)
         Me.gridHistory.TabIndex = 10
         Me.gridHistory.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.gdHistory})
@@ -141,6 +150,7 @@ Partial Class ucConnectionDetails
         Me.GridColumn3.OptionsColumn.AllowEdit = False
         Me.GridColumn3.Visible = True
         Me.GridColumn3.VisibleIndex = 1
+        Me.GridColumn3.Width = 239
         '
         'GridColumn2
         '
@@ -152,6 +162,14 @@ Partial Class ucConnectionDetails
         Me.GridColumn2.OptionsColumn.AllowEdit = False
         Me.GridColumn2.Visible = True
         Me.GridColumn2.VisibleIndex = 0
+        Me.GridColumn2.Width = 155
+        '
+        'ribDelete
+        '
+        Me.ribDelete.AutoHeight = False
+        EditorButtonImageOptions1.Image = CType(resources.GetObject("EditorButtonImageOptions1.Image"), System.Drawing.Image)
+        Me.ribDelete.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Glyph, "", 40, True, True, False, EditorButtonImageOptions1, New DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), SerializableAppearanceObject1, SerializableAppearanceObject2, SerializableAppearanceObject3, SerializableAppearanceObject4, "", Nothing, Nothing, DevExpress.Utils.ToolTipAnchor.[Default])})
+        Me.ribDelete.Name = "ribDelete"
         '
         'chkEnableLoging
         '
@@ -316,6 +334,7 @@ Partial Class ucConnectionDetails
         CType(Me.txtHTTPSUserName.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gridHistory, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.gdHistory, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ribDelete, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkEnableLoging.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPassword.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtUserName.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -360,4 +379,5 @@ Partial Class ucConnectionDetails
     Friend WithEvents txtHTTPSUserName As DevExpress.XtraEditors.TextEdit
     Friend WithEvents LayoutControlItem8 As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents LayoutControlItem9 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents ribDelete As DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit
 End Class
