@@ -652,7 +652,7 @@ Public Class clsAPI
                goHierarchies.Clear()
 
                If goHierarchies IsNot Nothing AndAlso goHierarchies.Count = 0 Then
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", String.Empty, String.Empty)
+                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/hierarchies", String.Empty, "")
                     If oResponse IsNot Nothing Then
 
                          Dim json As JObject = JObject.Parse(oResponse.Content)
@@ -662,9 +662,11 @@ Public Class clsAPI
                               If oNode IsNot Nothing Then
 
                                    Dim sDescription As JToken = oNode.SelectToken("translations.en.description")
-
-                                   goHierarchies.Add(New clsHierarchies With {.Id = oNode("id"), .Code = oNode("code"), .Description = sDescription, .ParentHierarchyId = oNode("parentHierarchyId"),
+                                   If oNode.SelectToken("deleted").ToString.ToLower = "false" Then
+                                        goHierarchies.Add(New clsHierarchies With {.Id = oNode("id"), .Code = oNode("code"), .Description = sDescription, .ParentHierarchyId = oNode("parentHierarchyId"),
                                                   .Enabled = IIf(oNode("enabled").ToString.ToUpper = "TRUE", True, False), .Level = oNode("level"), .Priority = oNode("priority")})
+                                   End If
+
                               End If
                          Next
 
