@@ -33,7 +33,6 @@ Public Class clsDataImportTemplate
 
 
 
-
      Public ReadOnly Property SortedName As String
           Get
                Return String.Format("{0:000} - {1}", Priority, StrConv(Name, vbProperCase))

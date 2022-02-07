@@ -199,4 +199,50 @@ Public Class ucConnectionDetails
 
      End Sub
 
+     Private Sub RepositoryItemButtonEdit1_ButtonPressed(sender As Object, e As DevExpress.XtraEditors.Controls.ButtonPressedEventArgs) Handles RepositoryItemButtonEdit1.ButtonPressed
+          If gdHistory.SelectedRowsCount > 0 Then
+               Dim oConnection As clsConnectionDetails = gdHistory.GetRow(gdHistory.GetSelectedRows(0))
+
+               Select Case e.Button.Tag.ToString
+                    Case "CONNECT"
+                         If gdHistory.SelectedRowsCount > 0 Then
+                              If oConnection IsNot Nothing Then
+
+                                   goConnectionHistory.ActiveConnection = oConnection.Clone
+                                   moConnection = goConnectionHistory.ActiveConnection
+                                   goConnection = moConnection
+
+                                   BindConnection()
+
+                                   btnSaveConnection_Click(Nothing, Nothing)
+                              End If
+
+                         End If
+
+                    Case "TEST" : TestConnection(oConnection)
+                    Case "DELETE" : DeleteConnection(oConnection)
+
+               End Select
+          End If
+
+     End Sub
+
+     Private Sub TestConnection(poConnection As clsConnectionDetails)
+          If poConnection IsNot Nothing Then
+               goHTTPServer.TestConnection(False, poConnection, True)
+          End If
+     End Sub
+
+     Private Sub DeleteConnection(poConnection As clsConnectionDetails)
+
+          Select Case MsgBox("You are about to delete a connection, are you sure?", vbYesNoCancel, "Confirm...")
+               Case vbYes
+                    goConnectionHistory.ConnectionHistory.Remove(poConnection)
+                    SaveFile(GetAppPath(gsSettingFileName), goConnectionHistory)
+                    LoadSettingFile(True)
+
+          End Select
+     End Sub
+
+
 End Class

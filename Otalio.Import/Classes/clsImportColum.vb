@@ -47,6 +47,7 @@ Public Class clsImportColum
      Public Property ColumnName As String = ""
      Public Property Type As JTokenType
      Public Property Name As String = ""
+     Public Property DTOField As String = ""
      Public Property Parent As String = ""
      Public Property Formatted As String = ""
      Public Property ColumnID As String = ""
@@ -54,6 +55,8 @@ Public Class clsImportColum
      Public Property ChildNode As String = ""
      Public Property Commands As String = ""
      Public Property ArrayID As String = ""
+     Public Property DataType As String = ""
+
 
      Public ReadOnly Property FormatName As String
           Get

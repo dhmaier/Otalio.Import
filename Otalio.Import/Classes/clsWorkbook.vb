@@ -6,14 +6,14 @@ Imports Newtonsoft.Json.Linq
   >
 Public Class clsWorkbook
 
-     Private moTempaltes As New List(Of clsDataImportTemplate)
+     Private moImportHeaders As New List(Of clsDataImportHeader)
 
-     Public Property Templates As List(Of clsDataImportTemplate)
+     Public Property Templates As List(Of clsDataImportHeader)
           Get
-               Return moTempaltes
+               Return moImportHeaders
           End Get
-          Set(value As List(Of clsDataImportTemplate))
-               moTempaltes = value
+          Set(value As List(Of clsDataImportHeader))
+               moImportHeaders = value
           End Set
      End Property
 

@@ -67,4 +67,60 @@ Public Class clsValidation
     End Get
   End Property
 
+     Public ReadOnly Property DataObject As String
+          Get
+               Dim sAPIObject As String = ""
+
+               Select Case ValidationType
+                    Case "5", "6"
+
+                         If LookUpType IsNot Nothing Then
+                              sAPIObject = LookUpType.Description
+                         End If
+
+                    Case Else
+                         If String.IsNullOrEmpty(APIEndpoint) = False Then
+                              sAPIObject = APIEndpoint.Substring(APIEndpoint.LastIndexOf("/") + 1)
+                         End If
+               End Select
+
+               If sAPIObject.Contains("?") Then
+                    sAPIObject = sAPIObject.Substring(0, sAPIObject.IndexOf("?"))
+               End If
+
+
+               sAPIObject = StrConv(sAPIObject, VbStrConv.ProperCase)
+               Return sAPIObject
+
+          End Get
+     End Property
+
+     Public ReadOnly Property DetailedDescriptionFromQuery As String
+          Get
+               Dim sAPIObject As String = DataObject
+
+               If String.IsNullOrEmpty(Query) = False Then
+                    sAPIObject += String.Format(" ({0})", Query.Substring(0, Query.LastIndexOf("==")))
+               End If
+
+               sAPIObject = StrConv(sAPIObject, VbStrConv.ProperCase)
+               Return sAPIObject
+          End Get
+     End Property
+
+
+     Public ReadOnly Property DetailedDescriptionFromReturnValue As String
+          Get
+               Dim sAPIObject As String = DataObject
+
+               If String.IsNullOrEmpty(ReturnNodeValue) = False Then
+                    sAPIObject += String.Format(" ({0})", ReturnNodeValue.Substring(ReturnNodeValue.LastIndexOf(".") + 1))
+               End If
+
+               sAPIObject = StrConv(sAPIObject, VbStrConv.ProperCase)
+               Return sAPIObject
+          End Get
+
+     End Property
+
 End Class
