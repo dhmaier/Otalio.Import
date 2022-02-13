@@ -953,6 +953,9 @@ Public Class frmMainMenu
 
                For Each oTempalte As clsDataImportTemplateV2 In oImportHeader.Templates
 
+                    If oImportHeader.Templates.Count = 1 Then
+                         oTempalte.IsMaster = True
+                    End If
 
                     mbContainsHierarchies = False
                     If oTempalte.GraphQLQuery Is Nothing Then oTempalte.GraphQLQuery = ""
@@ -1146,7 +1149,7 @@ Public Class frmMainMenu
                     End If
 
 
-                         oTempalte.ImportColumns = TryCast(oActiveColumns.OrderBy(Function(n) n.No).ToList, List(Of clsImportColum))
+                    oTempalte.ImportColumns = TryCast(oActiveColumns.OrderBy(Function(n) n.No).ToList, List(Of clsImportColum))
                     oTotalActiveColumns.AddRange(oActiveColumns)
                     oTotalVariables.AddRange(oVariables)
 
@@ -3093,7 +3096,7 @@ ExitProces:
 
                          End If
 
-                              For nRow As Integer = 2 To .Rows.LastUsedIndex + 1
+                         For nRow As Integer = 2 To .Rows.LastUsedIndex + 1
 
                               If String.IsNullOrEmpty(oTemplate.StatusCodeColumn) = False Then
                                    .Cells(String.Format("{0}{1}", oTemplate.StatusCodeColumn, nRow)).Value = ""
@@ -3907,12 +3910,28 @@ ExitProces:
 
 
                                    If String.IsNullOrEmpty(.Cells(sCellAddress).Value.ToString.Trim) = False Then
-                                        If (.Cells(sCellAddress).IsDisplayedAsDateTime AndAlso CDate(.Cells(sCellAddress).Value.ToString).TimeOfDay.TotalSeconds = 0) OrElse IsDate(.Cells(sCellAddress).Value.TextValue) Then
-                                             sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), CDate(.Cells(sCellAddress).Value.ToString.Trim).ToString("yyyy-MM-dd"))
-                                        Else
-                                             sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString().Trim)
-                                        End If
 
+                                        Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(sCellAddress).Value.ToString.Trim
+
+                                        If .Cells(sCellAddress).IsDisplayedAsDateTime OrElse IsDate(sValue) Then
+
+                                             If spreadsheetControl.ActiveWorksheet.Cells(sCellAddress).IsDisplayedAsDateTime And IsDate(sValue) = False Then
+                                                  sValue = spreadsheetControl.ActiveWorksheet.Cells(sCellAddress).Value.DateTimeValue
+                                             End If
+
+                                             If IsDate(sValue) AndAlso CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
+                                                  sValue = CDate(sValue).ToString("yyyy-MM-dd")
+                                             Else
+                                                  sValue = CDate(sValue).ToString("yyyy-MM-dd HH:mm")
+                                             End If
+
+                                             sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), sValue.ToString.Trim)
+
+                                        Else
+
+                                             sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumn), sValue.ToString.Trim)
+
+                                        End If
 
                                    Else
                                         bSourceData = False
@@ -3922,14 +3941,34 @@ ExitProces:
 
                               Dim olist As List(Of String) = ExtractColumnDetails(sAPIEndpoint)
                               For Each sColumn As String In olist
+
                                    Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
 
-                                   If (.Cells(sCellAddress).IsDisplayedAsDateTime AndAlso CDate(.Cells(sCellAddress).Value.ToString).TimeOfDay.TotalSeconds = 0) OrElse IsDate(.Cells(sCellAddress).Value.TextValue) Then
-                                        sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), CDate(.Cells(sCellAddress).Value.ToString.Trim).ToString("yyyy-MM-dd"))
-                                   Else
-                                        sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
-                                   End If
 
+                                   If String.IsNullOrEmpty(.Cells(sCellAddress).Value.ToString.Trim) = False Then
+
+                                        Dim sValue As String = spreadsheetControl.ActiveWorksheet.Cells(sCellAddress).Value.ToString.Trim
+
+                                        If .Cells(sCellAddress).IsDisplayedAsDateTime OrElse IsDate(sValue) Then
+
+                                             If spreadsheetControl.ActiveWorksheet.Cells(sCellAddress).IsDisplayedAsDateTime And IsDate(sValue) = False Then
+                                                  sValue = spreadsheetControl.ActiveWorksheet.Cells(sCellAddress).Value.DateTimeValue
+                                             End If
+
+                                             If IsDate(sValue) AndAlso CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
+                                                  sValue = CDate(sValue).ToString("yyyy-MM-dd")
+                                             Else
+                                                  sValue = CDate(sValue).ToString("yyyy-MM-dd HH:mm")
+                                             End If
+
+                                             sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), sValue.ToString.Trim)
+                                        Else
+
+                                             sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), sValue.ToString.Trim)
+
+                                        End If
+
+                                   End If
 
                               Next
 
@@ -4016,7 +4055,7 @@ ExitProces:
 
 
                                    End If
-                                   End If
+                              End If
 
                          End If
                     End If
@@ -4736,13 +4775,22 @@ ExitProces:
                               If spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).IsDisplayedAsDateTime OrElse
                                    IsDate(sValue) Then
 
-                                   'check if there is a time values attached.
-                                   If CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
-                                        sValue = CDate(sValue).ToString("yyyy-MM-dd")
+                                   If spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).IsDisplayedAsDateTime And IsDate(sValue) = False Then
+                                        sValue = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).Value.DateTimeValue
                                    End If
 
+                                   If IsDate(sValue) AndAlso CDate(sValue).TimeOfDay.TotalSeconds = 0 Then
+                                        sValue = CDate(sValue).ToString("yyyy-MM-dd")
+                                   Else
+                                        If spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumnPropeties.CellName, pnRow)).NumberFormat.ToString.ToLower.Contains("dd") Then
+                                             sValue = CDate(sValue).ToString("yyyy-MM-dd HH:mm")
+                                        Else
+                                             sValue = CDate(sValue).ToString("HH:mm")
+                                        End If
+                                   End If
 
                               End If
+
 
                               If oColumnPropeties.Format <> String.Empty Then
                                    sValue = FormatString(sValue, oColumnPropeties.Format)
