@@ -19,6 +19,7 @@ Public Class clsDataImportTemplateV2
      Public Property DTOObject As String = ""
      Public Property Validators As New List(Of clsValidation)
      Public Property ImportColumns As New List(Of clsImportColum)
+     Public Property Selectors As New List(Of clsSelectors)
      Public Property ReturnNodeValue As String = ""
      Public Property ReturnCell As String = ""
      Public Property ReturnCellDTO As String = ""
@@ -34,9 +35,16 @@ Public Class clsDataImportTemplateV2
      Public Property Group As String = ""
      Public Property Position As Integer = 0
      Public Property IsMaster As Boolean = False
+     Public Property IsEnabled As Boolean = True
      Public Property ImportType As String = "2"
+     Public Property IgnoreArray As Boolean = False
 
 
+     Public ReadOnly Property DTOObjectFormated As String
+          Get
+               Return FindAndReplaceTranslations(Me.DTOObject)
+          End Get
+     End Property
 
 
      Public ReadOnly Property IsHierarchal As Boolean

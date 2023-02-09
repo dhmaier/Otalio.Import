@@ -14,23 +14,26 @@ Imports DevExpress.Utils.Drawing
 Imports DevExpress.Utils.Svg
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
+Imports System.Globalization
 
 Module bFunctions
 
+     Public Function GetAppPath(psFile As String, Optional psSystemLocation As String = "") As String
+
+          If psSystemLocation = "" Then
+               psSystemLocation = Application.LocalUserAppDataPath
+          End If
+
+          Dim sPath As String = Path.GetDirectoryName(psSystemLocation)
+          Dim sFullPath As String = sPath & "\" & psFile
+
+          Return sFullPath
+
+     End Function
 
 
-  Public Function GetAppPath(psFile As String) As String
 
-
-    Dim sPath As String = Path.GetDirectoryName(Application.CommonAppDataPath)
-    Dim sFullPath As String = sPath & "\" & psFile
-    Return sFullPath
-
-  End Function
-
-
-
-  Public Function LoadFile(psFullPath As String) As Object
+     Public Function LoadFile(psFullPath As String) As Object
 
 
     Try
@@ -190,16 +193,7 @@ Module bFunctions
 
      End Function
 
-     Public Function FormatString(psString As String, psFormat As String) As String
 
-
-    Select Case psFormat.ToString
-      Case "U" : Return psString.ToUpper
-      Case "L" : Return psString.ToLower
-      Case "P" : Return StrConv(psString, VbStrConv.ProperCase)
-      Case Else : Return psString
-    End Select
-  End Function
 
      Public Function ExtractColumnProperties(psNode As String) As clsColumnProperties
           Try
@@ -209,6 +203,7 @@ Module bFunctions
                If psNode IsNot Nothing Then
 
                     Dim oCP As New clsColumnProperties
+                    oCP.SourceText = psNode
 
                     If psNode.Contains(":") Then
                          Dim oValues As List(Of String) = psNode.Split(":").ToList
@@ -378,11 +373,271 @@ Module bFunctions
 
   End Function
 
-  Public Function CreateImage(ByVal data() As Byte, Optional ByVal skinProvider As ISkinProvider = Nothing) As Image
-    Dim svgBitmap As New SvgBitmap(data)
-    Return svgBitmap.Render(SvgPaletteHelper.GetSvgPalette(If(skinProvider, UserLookAndFeel.Default), ObjectState.Normal), ScaleUtils.GetScaleFactor().Height)
-  End Function
+     Public Function CreateImage(ByVal data() As Byte, Optional ByVal skinProvider As ISkinProvider = Nothing) As Image
+          Dim svgBitmap As New SvgBitmap(data)
+          Return svgBitmap.Render(SvgPaletteHelper.GetSvgPalette(If(skinProvider, UserLookAndFeel.Default), ObjectState.Normal), ScaleUtils.GetScaleFactor().Height)
+     End Function
+
 
 #End Region
 
+     Public Function RemoveLastComma(psString As String) As String
+          If psString.EndsWith(",") Then
+               Return psString.Substring(0, psString.Length - 1)
+          End If
+     End Function
+
+     Public Function FormatCase(psFormat As String, psString As String) As String
+          If String.IsNullOrEmpty(psString) = False Then
+               Select Case psFormat
+                    Case "U" : Return psString.ToUpper
+                    Case "L" : Return psString.ToLower
+                    Case "P" : Return StrConv(psString, VbStrConv.ProperCase)
+                    Case "T" : Return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(psString.ToLower)
+                    Case "FD"
+                         If IsDate(psString) Then
+                              If CDate(psString).TimeOfDay.TotalSeconds = 0 And CDate(psString).Date <> Date.MinValue Then
+                                   Return CDate(psString).ToString("yyyy-MM-dd")
+                              Else
+
+                                   Return CDate(psString).ToString("yyyy-MM-dd HH:mm")
+                              End If
+                         Else
+                              Return psString
+                         End If
+                    Case "FT"
+                         If IsDateOrTime(psString) Then
+                              Return CDate(psString).ToString("HH:mm:ss")
+                         End If
+                    Case Else
+                         Return psString
+               End Select
+          Else
+               Return ""
+          End If
+
+     End Function
+
+     Public Function ExtractQueryParameters(psQuery As String) As List(Of String)
+
+          psQuery = Replace(psQuery, ";", " and ")
+          psQuery = Replace(psQuery, ",", " or ")
+
+          Dim oDataSource As List(Of String) = psQuery.Split(New Char() {" "}, StringSplitOptions.RemoveEmptyEntries).ToList
+          Dim oList As New List(Of String)
+          Dim sCurrentParameter As String = ""
+          For Each sString As String In oDataSource
+               If sString.ToUpper = "AND" Or sString.ToUpper = "OR" Or sString.ToUpper = "," Or sString.ToUpper = ";" Then
+                    oList.Add(sCurrentParameter)
+                    sCurrentParameter = ""
+               Else
+                    sCurrentParameter += sString & " "
+
+               End If
+
+          Next
+
+          If String.IsNullOrEmpty(sCurrentParameter) = False Then
+               oList.Add(sCurrentParameter)
+          End If
+
+          Return oList
+
+     End Function
+
+     Public Function GetTranslation(psDescription As String, Optional psLength As Integer = 0) As Translations
+
+          If psLength > 0 Then
+               If psDescription.Length > psLength Then
+                    psDescription = psDescription.Substring(0, psLength - 1)
+               End If
+          End If
+
+          Dim oTransaltion As New Translations With {.en = New En With {.description = psDescription}}
+          Return oTransaltion
+
+     End Function
+
+     Public Function GetTranslationsArray(pbEnableTransaltion As Boolean, psNodes As List(Of Array)) As String
+
+          Dim oTranslation As String = ""
+          oTranslation += "  " & String.Format("{0}{1}{0}: {2}{4}{3},", ControlChars.Quote, "en", "{", "}", GetTranslationsObjects(psNodes, 0))
+
+          If pbEnableTransaltion Then
+               Dim nColumnNumber As Integer = 0
+               For Each oLanguage As clsLanguages In goLanguages.Where(Function(n) n.code.ToLower <> "en").ToList
+                    nColumnNumber += 1
+                    oTranslation += vbNewLine & "  " & String.Format("{0}{1}{0}: {2}{4}{3},", ControlChars.Quote, oLanguage.code.ToLower, "{", "}", GetTranslationsObjects(psNodes, nColumnNumber))
+               Next
+          End If
+
+          If oTranslation.EndsWith(",") Then
+               oTranslation = oTranslation.Substring(0, oTranslation.Length - 1)
+          End If
+
+
+          Return "{" & oTranslation & "}"
+
+     End Function
+
+     Public Function GetTranslationsObjects(psNodes As List(Of Array), pnColumnNumber As Integer) As String
+          Dim sString As String = ""
+          For Each oArray As Array In psNodes
+               Dim sCell As String = ConvertToLetter(ConvertToNumber(oArray(0)) + pnColumnNumber)
+               sString += String.Format("{0}{1}{0}: {0}<!{2}:{3}!>{0},", ControlChars.Quote, oArray(2), sCell, oArray(1))
+          Next
+
+
+          If sString.EndsWith(",") Then
+               sString = sString.Substring(0, sString.Length - 1)
+          End If
+
+          Return sString
+     End Function
+
+     Public Function FindAndReplaceTranslations(psObject As String) As String
+
+          Dim nPOS As Integer = 0
+          Do While psObject.Substring(nPOS).Contains("@@T!")
+               Dim sColumn As String = ""
+               Dim sFormat As String = ""
+               Dim sNode As String = "description"
+               Dim nStart As Integer = InStr(nPOS + 1, psObject, "@@T!")
+               Dim nEnd As Integer = InStr(nPOS + 1, psObject, "!T@@")
+               Dim sColumnText As String = psObject.Substring(nStart + 3, nEnd - nStart - 4)
+               Dim oListOfProperties As New List(Of Array)
+               For Each oTranslatedObject As String In sColumnText.Split("|")
+                    If oTranslatedObject.Contains(":") Then
+                         Dim sProperties As String() = oTranslatedObject.Split(":").ToArray
+                         Select Case sProperties.Count
+                              Case 1
+                                   sColumn = sProperties(0)
+                              Case 2
+                                   sColumn = sProperties(0)
+                                   sFormat = sProperties(1)
+                              Case 3
+                                   sColumn = sProperties(0)
+                                   sFormat = sProperties(1)
+                                   sNode = sProperties(2)
+
+                         End Select
+
+                         oListOfProperties.Add({sColumn, sFormat, sNode})
+                    End If
+               Next
+
+               psObject = Replace(psObject, String.Format("{1}@@T!{0}!T@@{1}", sColumnText, ControlChars.Quote), GetTranslationsArray(gbTranslationsEnabled, oListOfProperties))
+
+
+               nPOS = nEnd
+          Loop
+
+          Return psObject
+
+     End Function
+     Public Function ConvertToLetter(iCol As Long) As String
+          Dim a As Long
+          Dim b As Long
+          a = iCol
+          ConvertToLetter = ""
+          Do While iCol > 0
+               a = Int((iCol - 1) / 26)
+               b = (iCol - 1) Mod 26
+               ConvertToLetter = Chr(b + 65) & ConvertToLetter
+               iCol = a
+          Loop
+     End Function
+
+     Public Function ConvertToNumber(psColumnLetters As String) As Integer
+          Dim nNumber As Integer = 0
+          Dim sCharList As List(Of String) = psColumnLetters.ToUpper.Split().ToList
+          If sCharList IsNot Nothing Then
+               For Each sChar As String In sCharList
+                    nNumber += (Asc(sChar) - 64)
+               Next
+          End If
+          Return nNumber
+     End Function
+
+
+     Public Sub ValidateTranslationsValidators(ByRef poTemplate As clsDataImportTemplateV2, pbEnableTransaltion As Boolean)
+
+          If poTemplate IsNot Nothing Then
+               'check if there is the translations function included in the DTO stacte
+               If poTemplate.DTOObject.Contains("@@T!") Then
+
+                    Dim sDTOObject As String = poTemplate.DTOObject.ToString
+                    Dim nPOS As Integer = 0
+                    Dim sListOfColumns As New List(Of String)
+                    Dim sListOfFormats As New List(Of String)
+                    Do While sDTOObject.Substring(nPOS).Contains("@@T!")
+
+                         Dim sColumn As String = ""
+                         Dim sFormat As String = ""
+
+                         Dim nStart As Integer = InStr(nPOS + 1, sDTOObject, "@@T!")
+                         Dim nEnd As Integer = InStr(nPOS + 1, sDTOObject, "!T@@")
+                         Dim oTranslatedObject As String = sDTOObject.Substring(nStart + 3, nEnd - nStart - 4)
+                         For Each sColumnText As String In oTranslatedObject.Split("|")
+                              If sColumnText.Contains(":") Then
+                                   Dim sProperties As String() = sColumnText.Split(":").ToArray
+                                   If sProperties.Count() > 0 Then
+                                        sListOfColumns.Add(sProperties(0))
+                                   End If
+
+                                   If sProperties.Count >= 1 Then
+                                        sListOfFormats.Add(sProperties(1))
+                                   Else
+                                        sListOfFormats.Add("")
+                                   End If
+
+                              End If
+                         Next
+
+                         nPOS = nEnd
+                    Loop
+
+                    If sListOfColumns.Count > 0 Then
+                         Dim nCountOfTranslations As Integer = 0
+                         For Each oColumnAddress As String In sListOfColumns
+                              Dim nColumnId As Integer = ConvertToNumber(oColumnAddress)
+                              Dim nCounter As Integer = 0
+
+                              poTemplate.Validators.RemoveAll(Function(n) n.ValidationType = 2 And n.Query.Contains(String.Format("<!{0}!>", oColumnAddress)))
+
+                              For Each oLanguage As clsLanguages In goLanguages.Where(Function(n) n.code.ToLower <> "en").OrderBy(Function(n) n.code).ToList
+                                   nCounter += 1
+                                   poTemplate.Validators.Add(CreateTranslationValidation(oLanguage, oColumnAddress, ConvertToLetter(nColumnId + nCounter), ((nCountOfTranslations + 1) * 99) + nCounter, pbEnableTransaltion, sListOfFormats(nCountOfTranslations)))
+                              Next
+
+                              nCountOfTranslations += 1
+                         Next
+
+                    End If
+
+               End If
+          End If
+
+     End Sub
+
+     Public Function CreateTranslationValidation(psLanguage As clsLanguages, psCellAddressSource As String, psCellAddressDestination As String, pnPriority As Integer, pbEnableTransaltion As Boolean, psFormat As String) As clsValidation
+
+          Dim oValidation As New clsValidation
+          With oValidation
+               .ID = GenerateGUID()
+               .Priority = pnPriority.ToString
+               .ValidationType = "2"
+               .APIEndpoint = "metadata/v1/languages/translate"
+               .Comments = psLanguage.translations.en.description
+               .Query = String.Format("{0}{2}source{2}:{2}EN{2},{2}targetCodes{2}:[{2}{3}{2}],{2}text{2}:{2}<!{4}!>{2}{1}", "{", "}", ControlChars.Quote, psLanguage.code.ToUpper, psCellAddressSource)
+               .ReturnCell = psCellAddressDestination
+               .ReturnNodeValue = "responsePayload.translationMap.success.de.translatedText"
+               .Enabled = IIf(pbEnableTransaltion, "1", "0")
+               .Visibility = IIf(pbEnableTransaltion, "1", "0")
+               .Formatted = psFormat
+          End With
+
+          Return oValidation
+
+     End Function
 End Module

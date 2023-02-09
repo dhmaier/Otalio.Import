@@ -1,106 +1,96 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class ucValidatorProperties
-  Inherits System.Windows.Forms.UserControl
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+Partial Class ucSelectors
+     Inherits System.Windows.Forms.UserControl
 
-  'UserControl overrides dispose to clean up the component list.
-  <System.Diagnostics.DebuggerNonUserCode()> _
-  Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-    Try
-      If disposing AndAlso components IsNot Nothing Then
-        components.Dispose()
-      End If
-    Finally
-      MyBase.Dispose(disposing)
-    End Try
-  End Sub
+     'UserControl overrides dispose to clean up the component list.
+     <System.Diagnostics.DebuggerNonUserCode()>
+     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+          Try
+               If disposing AndAlso components IsNot Nothing Then
+                    components.Dispose()
+               End If
+          Finally
+               MyBase.Dispose(disposing)
+          End Try
+     End Sub
 
-  'Required by the Windows Form Designer
-  Private components As System.ComponentModel.IContainer
+     'Required by the Windows Form Designer
+     Private components As System.ComponentModel.IContainer
 
-  'NOTE: The following procedure is required by the Windows Form Designer
-  'It can be modified using the Windows Form Designer.  
-  'Do not modify it using the code editor.
-  <System.Diagnostics.DebuggerStepThrough()> _
-  Private Sub InitializeComponent()
-        Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
-        Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlGroup1 = New DevExpress.XtraLayout.LayoutControlGroup()
-        Me.cbReturnNode = New DevExpress.XtraEditors.ComboBoxEdit()
-        Me.txtGraphQLNode = New DevExpress.XtraEditors.TextEdit()
+     'NOTE: The following procedure is required by the Windows Form Designer
+     'It can be modified using the Windows Form Designer.  
+     'Do not modify it using the code editor.
+     <System.Diagnostics.DebuggerStepThrough()>
+     Private Sub InitializeComponent()
+          Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
+        Me.cbNodeText = New DevExpress.XtraEditors.ComboBoxEdit()
+        Me.cbNodeID = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.icbVisibility = New DevExpress.XtraEditors.ImageComboBoxEdit()
         Me.lueLookupTypes = New DevExpress.XtraEditors.LookUpEdit()
-        Me.icbFormat = New DevExpress.XtraEditors.ImageComboBoxEdit()
         Me.icbEnabled = New DevExpress.XtraEditors.ImageComboBoxEdit()
         Me.txtUUID = New DevExpress.XtraEditors.TextEdit()
         Me.txtComments = New DevExpress.XtraEditors.MemoEdit()
         Me.txtAPIQuery = New DevExpress.XtraEditors.MemoEdit()
-        Me.txtReturnValueColumn = New DevExpress.XtraEditors.TextEdit()
         Me.txtReturnNode = New DevExpress.XtraEditors.TextEdit()
         Me.txtPriority = New DevExpress.XtraEditors.TextEdit()
         Me.txtHeader = New DevExpress.XtraEditors.MemoEdit()
         Me.icbType = New DevExpress.XtraEditors.ImageComboBoxEdit()
         Me.txtAPIEndpoint = New DevExpress.XtraEditors.TextEdit()
+        Me.LayoutControlItem5 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlGroup1 = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem1 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem2 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem6 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem3 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem4 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem7 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem8 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem9 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem10 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.lciLookUpType = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem12 = New DevExpress.XtraLayout.LayoutControlItem()
-        Me.LayoutControlItem13 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlItem2 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlItem8 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem11 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem14 = New DevExpress.XtraLayout.LayoutControlItem()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
-        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.cbReturnNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.cbNodeText.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.cbNodeID.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.icbVisibility.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lueLookupTypes.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.icbFormat.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.icbEnabled.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtUUID.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtComments.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtAPIQuery.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtReturnValueColumn.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtReturnNode.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPriority.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtHeader.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.icbType.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtAPIEndpoint.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem9, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem10, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lciLookUpType, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem12, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LayoutControlItem13, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'LayoutControl1
         '
-        Me.LayoutControl1.Controls.Add(Me.cbReturnNode)
-        Me.LayoutControl1.Controls.Add(Me.txtGraphQLNode)
+        Me.LayoutControl1.Controls.Add(Me.cbNodeText)
+        Me.LayoutControl1.Controls.Add(Me.cbNodeID)
         Me.LayoutControl1.Controls.Add(Me.icbVisibility)
         Me.LayoutControl1.Controls.Add(Me.lueLookupTypes)
-        Me.LayoutControl1.Controls.Add(Me.icbFormat)
         Me.LayoutControl1.Controls.Add(Me.icbEnabled)
         Me.LayoutControl1.Controls.Add(Me.txtUUID)
         Me.LayoutControl1.Controls.Add(Me.txtComments)
         Me.LayoutControl1.Controls.Add(Me.txtAPIQuery)
-        Me.LayoutControl1.Controls.Add(Me.txtReturnValueColumn)
         Me.LayoutControl1.Controls.Add(Me.txtReturnNode)
         Me.LayoutControl1.Controls.Add(Me.txtPriority)
         Me.LayoutControl1.Controls.Add(Me.txtHeader)
@@ -116,47 +106,31 @@ Partial Class ucValidatorProperties
         Me.LayoutControl1.TabIndex = 0
         Me.LayoutControl1.Text = "LayoutControl1"
         '
-        'LayoutControlItem5
+        'cbNodeText
         '
-        Me.LayoutControlItem5.Control = Me.txtReturnNode
-        Me.LayoutControlItem5.Location = New System.Drawing.Point(0, 366)
-        Me.LayoutControlItem5.Name = "LayoutControlItem5"
-        Me.LayoutControlItem5.Size = New System.Drawing.Size(563, 30)
-        Me.LayoutControlItem5.Text = "Return Value Node:"
-        Me.LayoutControlItem5.TextSize = New System.Drawing.Size(104, 13)
+        Me.cbNodeText.Location = New System.Drawing.Point(76, 461)
+        Me.cbNodeText.Name = "cbNodeText"
+        Me.cbNodeText.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
+        Me.cbNodeText.Properties.Appearance.Options.UseFont = True
+        Me.cbNodeText.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.cbNodeText.Properties.Items.AddRange(New Object() {"responsePayload.content[0].code", "responsePayload.content[0].entityId", "responsePayload.content[0].id", "responsePayload.content[0].translations.en.description"})
+        Me.cbNodeText.Properties.Sorted = True
+        Me.cbNodeText.Size = New System.Drawing.Size(481, 20)
+        Me.cbNodeText.StyleController = Me.LayoutControl1
+        Me.cbNodeText.TabIndex = 23
         '
-        'LayoutControlGroup1
+        'cbNodeID
         '
-        Me.LayoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.[True]
-        Me.LayoutControlGroup1.GroupBordersVisible = False
-        Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem2, Me.LayoutControlItem6, Me.LayoutControlItem3, Me.LayoutControlItem4, Me.LayoutControlItem7, Me.LayoutControlItem8, Me.LayoutControlItem9, Me.LayoutControlItem10, Me.lciLookUpType, Me.LayoutControlItem12, Me.LayoutControlItem13, Me.LayoutControlItem11, Me.LayoutControlItem14})
-        Me.LayoutControlGroup1.Name = "LayoutControlGroup1"
-        Me.LayoutControlGroup1.OptionsItemText.TextToControlDistance = 5
-        Me.LayoutControlGroup1.Size = New System.Drawing.Size(562, 486)
-        Me.LayoutControlGroup1.TextVisible = False
-        '
-        'cbReturnNode
-        '
-        Me.cbReturnNode.Location = New System.Drawing.Point(114, 401)
-        Me.cbReturnNode.Name = "cbReturnNode"
-        Me.cbReturnNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
-        Me.cbReturnNode.Properties.Appearance.Options.UseFont = True
-        Me.cbReturnNode.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.cbReturnNode.Properties.Items.AddRange(New Object() {"responsePayload.content[0].code", "responsePayload.content[0].entityId", "responsePayload.content[0].id"})
-        Me.cbReturnNode.Properties.Sorted = True
-        Me.cbReturnNode.Size = New System.Drawing.Size(443, 20)
-        Me.cbReturnNode.StyleController = Me.LayoutControl1
-        Me.cbReturnNode.TabIndex = 21
-        '
-        'txtGraphQLNode
-        '
-        Me.txtGraphQLNode.Location = New System.Drawing.Point(114, 461)
-        Me.txtGraphQLNode.Name = "txtGraphQLNode"
-        Me.txtGraphQLNode.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtGraphQLNode.Properties.Appearance.Options.UseFont = True
-        Me.txtGraphQLNode.Size = New System.Drawing.Size(443, 20)
-        Me.txtGraphQLNode.StyleController = Me.LayoutControl1
-        Me.txtGraphQLNode.TabIndex = 20
+        Me.cbNodeID.Location = New System.Drawing.Point(76, 431)
+        Me.cbNodeID.Name = "cbNodeID"
+        Me.cbNodeID.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
+        Me.cbNodeID.Properties.Appearance.Options.UseFont = True
+        Me.cbNodeID.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.cbNodeID.Properties.Items.AddRange(New Object() {"responsePayload.content[0].code", "responsePayload.content[0].entityId", "responsePayload.content[0].id"})
+        Me.cbNodeID.Properties.Sorted = True
+        Me.cbNodeID.Size = New System.Drawing.Size(481, 20)
+        Me.cbNodeID.StyleController = Me.LayoutControl1
+        Me.cbNodeID.TabIndex = 22
         '
         'icbVisibility
         '
@@ -174,7 +148,7 @@ Partial Class ucValidatorProperties
         'lueLookupTypes
         '
         Me.lueLookupTypes.AllowHtmlTextInToolTip = DevExpress.Utils.DefaultBoolean.[False]
-        Me.lueLookupTypes.Location = New System.Drawing.Point(114, 65)
+        Me.lueLookupTypes.Location = New System.Drawing.Point(76, 65)
         Me.lueLookupTypes.Name = "lueLookupTypes"
         Me.lueLookupTypes.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.lueLookupTypes.Properties.Appearance.Options.UseFont = True
@@ -190,76 +164,53 @@ Partial Class ucValidatorProperties
         Me.lueLookupTypes.Properties.SearchMode = DevExpress.XtraEditors.Controls.SearchMode.OnlyInPopup
         Me.lueLookupTypes.Properties.SortColumnIndex = 1
         Me.lueLookupTypes.Properties.ValueMember = "Id"
-        Me.lueLookupTypes.Size = New System.Drawing.Size(443, 20)
+        Me.lueLookupTypes.Size = New System.Drawing.Size(481, 20)
         Me.lueLookupTypes.StyleController = Me.LayoutControl1
         Me.lueLookupTypes.TabIndex = 18
-        '
-        'icbFormat
-        '
-        Me.icbFormat.EditValue = CType(0, Short)
-        Me.icbFormat.Location = New System.Drawing.Point(394, 431)
-        Me.icbFormat.Name = "icbFormat"
-        Me.icbFormat.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
-        Me.icbFormat.Properties.Appearance.Options.UseFont = True
-        Me.icbFormat.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.icbFormat.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("None", "", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upper Case", "U", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Lower Case", "L", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Proper Case", "P", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Title Case", "T", -1)})
-        Me.icbFormat.Size = New System.Drawing.Size(163, 20)
-        Me.icbFormat.StyleController = Me.LayoutControl1
-        Me.icbFormat.TabIndex = 16
         '
         'icbEnabled
         '
         Me.icbEnabled.EditValue = CType(0, Short)
-        Me.icbEnabled.Location = New System.Drawing.Point(114, 95)
+        Me.icbEnabled.Location = New System.Drawing.Point(76, 95)
         Me.icbEnabled.Name = "icbEnabled"
         Me.icbEnabled.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbEnabled.Properties.Appearance.Options.UseFont = True
         Me.icbEnabled.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.icbEnabled.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Enabled", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Disabled", "0", -1)})
-        Me.icbEnabled.Size = New System.Drawing.Size(185, 20)
+        Me.icbEnabled.Size = New System.Drawing.Size(223, 20)
         Me.icbEnabled.StyleController = Me.LayoutControl1
         Me.icbEnabled.TabIndex = 15
         '
         'txtUUID
         '
         Me.txtUUID.Enabled = False
-        Me.txtUUID.Location = New System.Drawing.Point(114, 5)
+        Me.txtUUID.Location = New System.Drawing.Point(76, 5)
         Me.txtUUID.Name = "txtUUID"
         Me.txtUUID.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtUUID.Properties.Appearance.Options.UseFont = True
-        Me.txtUUID.Size = New System.Drawing.Size(443, 20)
+        Me.txtUUID.Size = New System.Drawing.Size(481, 20)
         Me.txtUUID.StyleController = Me.LayoutControl1
         Me.txtUUID.TabIndex = 14
         '
         'txtComments
         '
-        Me.txtComments.Location = New System.Drawing.Point(114, 185)
+        Me.txtComments.Location = New System.Drawing.Point(76, 215)
         Me.txtComments.Name = "txtComments"
         Me.txtComments.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtComments.Properties.Appearance.Options.UseFont = True
-        Me.txtComments.Size = New System.Drawing.Size(443, 33)
+        Me.txtComments.Size = New System.Drawing.Size(481, 22)
         Me.txtComments.StyleController = Me.LayoutControl1
         Me.txtComments.TabIndex = 13
         '
         'txtAPIQuery
         '
-        Me.txtAPIQuery.Location = New System.Drawing.Point(114, 305)
+        Me.txtAPIQuery.Location = New System.Drawing.Point(76, 247)
         Me.txtAPIQuery.Name = "txtAPIQuery"
         Me.txtAPIQuery.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtAPIQuery.Properties.Appearance.Options.UseFont = True
-        Me.txtAPIQuery.Size = New System.Drawing.Size(443, 86)
+        Me.txtAPIQuery.Size = New System.Drawing.Size(481, 174)
         Me.txtAPIQuery.StyleController = Me.LayoutControl1
         Me.txtAPIQuery.TabIndex = 12
-        '
-        'txtReturnValueColumn
-        '
-        Me.txtReturnValueColumn.Location = New System.Drawing.Point(114, 431)
-        Me.txtReturnValueColumn.Name = "txtReturnValueColumn"
-        Me.txtReturnValueColumn.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtReturnValueColumn.Properties.Appearance.Options.UseFont = True
-        Me.txtReturnValueColumn.Size = New System.Drawing.Size(161, 20)
-        Me.txtReturnValueColumn.StyleController = Me.LayoutControl1
-        Me.txtReturnValueColumn.TabIndex = 11
         '
         'txtReturnNode
         '
@@ -273,47 +224,66 @@ Partial Class ucValidatorProperties
         '
         'txtPriority
         '
-        Me.txtPriority.Location = New System.Drawing.Point(114, 125)
+        Me.txtPriority.Location = New System.Drawing.Point(76, 125)
         Me.txtPriority.Name = "txtPriority"
         Me.txtPriority.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtPriority.Properties.Appearance.Options.UseFont = True
-        Me.txtPriority.Size = New System.Drawing.Size(443, 20)
+        Me.txtPriority.Size = New System.Drawing.Size(481, 20)
         Me.txtPriority.StyleController = Me.LayoutControl1
         Me.txtPriority.TabIndex = 9
         '
         'txtHeader
         '
-        Me.txtHeader.Location = New System.Drawing.Point(114, 228)
+        Me.txtHeader.Location = New System.Drawing.Point(76, 185)
         Me.txtHeader.Name = "txtHeader"
         Me.txtHeader.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtHeader.Properties.Appearance.Options.UseFont = True
-        Me.txtHeader.Size = New System.Drawing.Size(443, 67)
+        Me.txtHeader.Size = New System.Drawing.Size(481, 20)
         Me.txtHeader.StyleController = Me.LayoutControl1
         Me.txtHeader.TabIndex = 8
         '
         'icbType
         '
         Me.icbType.EditValue = CType(0, Short)
-        Me.icbType.Location = New System.Drawing.Point(114, 35)
+        Me.icbType.Location = New System.Drawing.Point(76, 35)
         Me.icbType.Name = "icbType"
         Me.icbType.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbType.Properties.Appearance.Options.UseFont = True
         Me.icbType.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.icbType.Properties.DropDownRows = 10
-        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("FindAndReplace", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("FindAndReplaceList", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpValue", "5", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookUpListValues", "6", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("LookupType", "7", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Translate", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("ValidateObjectExists", "0", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Delete", "3", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Array", "8", -1)})
-        Me.icbType.Size = New System.Drawing.Size(443, 20)
+        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Date", "DATE", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("List", "LIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Lookup Value", "LOOKUP", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Text", "TEXT", -1)})
+        Me.icbType.Size = New System.Drawing.Size(481, 20)
         Me.icbType.StyleController = Me.LayoutControl1
         Me.icbType.TabIndex = 7
         '
         'txtAPIEndpoint
         '
-        Me.txtAPIEndpoint.Location = New System.Drawing.Point(114, 155)
+        Me.txtAPIEndpoint.Location = New System.Drawing.Point(76, 155)
         Me.txtAPIEndpoint.Name = "txtAPIEndpoint"
         Me.txtAPIEndpoint.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAPIEndpoint.Properties.Appearance.Options.UseFont = True
-        Me.txtAPIEndpoint.Size = New System.Drawing.Size(443, 20)
+        Me.txtAPIEndpoint.Size = New System.Drawing.Size(481, 20)
         Me.txtAPIEndpoint.StyleController = Me.LayoutControl1
         Me.txtAPIEndpoint.TabIndex = 5
+        '
+        'LayoutControlItem5
+        '
+        Me.LayoutControlItem5.Control = Me.txtReturnNode
+        Me.LayoutControlItem5.Location = New System.Drawing.Point(0, 366)
+        Me.LayoutControlItem5.Name = "LayoutControlItem5"
+        Me.LayoutControlItem5.Size = New System.Drawing.Size(563, 30)
+        Me.LayoutControlItem5.Text = "Return Value Node:"
+        Me.LayoutControlItem5.TextSize = New System.Drawing.Size(104, 13)
+        '
+        'LayoutControlGroup1
+        '
+        Me.LayoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.[True]
+        Me.LayoutControlGroup1.GroupBordersVisible = False
+        Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem3, Me.LayoutControlItem4, Me.LayoutControlItem7, Me.LayoutControlItem9, Me.LayoutControlItem10, Me.lciLookUpType, Me.LayoutControlItem12, Me.LayoutControlItem2, Me.LayoutControlItem8, Me.LayoutControlItem11, Me.LayoutControlItem14})
+        Me.LayoutControlGroup1.Name = "LayoutControlGroup1"
+        Me.LayoutControlGroup1.OptionsItemText.TextToControlDistance = 5
+        Me.LayoutControlGroup1.Size = New System.Drawing.Size(562, 486)
+        Me.LayoutControlGroup1.TextVisible = False
         '
         'LayoutControlItem1
         '
@@ -322,25 +292,7 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem1.Name = "LayoutControlItem1"
         Me.LayoutControlItem1.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem1.Text = "API Endpoint:"
-        Me.LayoutControlItem1.TextSize = New System.Drawing.Size(104, 13)
-        '
-        'LayoutControlItem2
-        '
-        Me.LayoutControlItem2.Control = Me.txtHeader
-        Me.LayoutControlItem2.Location = New System.Drawing.Point(0, 223)
-        Me.LayoutControlItem2.Name = "LayoutControlItem2"
-        Me.LayoutControlItem2.Size = New System.Drawing.Size(562, 77)
-        Me.LayoutControlItem2.Text = "Request Headers:"
-        Me.LayoutControlItem2.TextSize = New System.Drawing.Size(104, 13)
-        '
-        'LayoutControlItem6
-        '
-        Me.LayoutControlItem6.Control = Me.txtReturnValueColumn
-        Me.LayoutControlItem6.Location = New System.Drawing.Point(0, 426)
-        Me.LayoutControlItem6.Name = "LayoutControlItem6"
-        Me.LayoutControlItem6.Size = New System.Drawing.Size(280, 30)
-        Me.LayoutControlItem6.Text = "Return Value Column:"
-        Me.LayoutControlItem6.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem1.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem3
         '
@@ -348,8 +300,8 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem3.Location = New System.Drawing.Point(0, 30)
         Me.LayoutControlItem3.Name = "LayoutControlItem3"
         Me.LayoutControlItem3.Size = New System.Drawing.Size(562, 30)
-        Me.LayoutControlItem3.Text = "Validation Type:"
-        Me.LayoutControlItem3.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem3.Text = "Selector Type"
+        Me.LayoutControlItem3.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem4
         '
@@ -358,25 +310,16 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem4.Name = "LayoutControlItem4"
         Me.LayoutControlItem4.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem4.Text = "Priority:"
-        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem7
         '
         Me.LayoutControlItem7.Control = Me.txtAPIQuery
-        Me.LayoutControlItem7.Location = New System.Drawing.Point(0, 300)
+        Me.LayoutControlItem7.Location = New System.Drawing.Point(0, 242)
         Me.LayoutControlItem7.Name = "LayoutControlItem7"
-        Me.LayoutControlItem7.Size = New System.Drawing.Size(562, 96)
+        Me.LayoutControlItem7.Size = New System.Drawing.Size(562, 184)
         Me.LayoutControlItem7.Text = "API Query:"
-        Me.LayoutControlItem7.TextSize = New System.Drawing.Size(104, 13)
-        '
-        'LayoutControlItem8
-        '
-        Me.LayoutControlItem8.Control = Me.txtComments
-        Me.LayoutControlItem8.Location = New System.Drawing.Point(0, 180)
-        Me.LayoutControlItem8.Name = "LayoutControlItem8"
-        Me.LayoutControlItem8.Size = New System.Drawing.Size(562, 43)
-        Me.LayoutControlItem8.Text = "Comments"
-        Me.LayoutControlItem8.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem7.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem9
         '
@@ -385,7 +328,7 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem9.Name = "LayoutControlItem9"
         Me.LayoutControlItem9.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem9.Text = "UUID"
-        Me.LayoutControlItem9.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem9.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem10
         '
@@ -394,7 +337,7 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem10.Name = "LayoutControlItem10"
         Me.LayoutControlItem10.Size = New System.Drawing.Size(304, 30)
         Me.LayoutControlItem10.Text = "Enabled:"
-        Me.LayoutControlItem10.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem10.TextSize = New System.Drawing.Size(66, 13)
         '
         'lciLookUpType
         '
@@ -403,7 +346,7 @@ Partial Class ucValidatorProperties
         Me.lciLookUpType.Name = "lciLookUpType"
         Me.lciLookUpType.Size = New System.Drawing.Size(562, 30)
         Me.lciLookUpType.Text = "Lookup Type"
-        Me.lciLookUpType.TextSize = New System.Drawing.Size(104, 13)
+        Me.lciLookUpType.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem12
         '
@@ -416,71 +359,82 @@ Partial Class ucValidatorProperties
         Me.LayoutControlItem12.TextSize = New System.Drawing.Size(41, 13)
         Me.LayoutControlItem12.TextToControlDistance = 5
         '
-        'LayoutControlItem13
+        'LayoutControlItem2
         '
-        Me.LayoutControlItem13.Control = Me.txtGraphQLNode
-        Me.LayoutControlItem13.Location = New System.Drawing.Point(0, 456)
-        Me.LayoutControlItem13.Name = "LayoutControlItem13"
-        Me.LayoutControlItem13.Size = New System.Drawing.Size(562, 30)
-        Me.LayoutControlItem13.Text = "GraphQL Node:"
-        Me.LayoutControlItem13.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem2.Control = Me.txtHeader
+        Me.LayoutControlItem2.Location = New System.Drawing.Point(0, 180)
+        Me.LayoutControlItem2.MaxSize = New System.Drawing.Size(0, 30)
+        Me.LayoutControlItem2.MinSize = New System.Drawing.Size(91, 30)
+        Me.LayoutControlItem2.Name = "LayoutControlItem2"
+        Me.LayoutControlItem2.Size = New System.Drawing.Size(562, 30)
+        Me.LayoutControlItem2.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
+        Me.LayoutControlItem2.Text = "Label:"
+        Me.LayoutControlItem2.TextSize = New System.Drawing.Size(66, 13)
+        '
+        'LayoutControlItem8
+        '
+        Me.LayoutControlItem8.Control = Me.txtComments
+        Me.LayoutControlItem8.Location = New System.Drawing.Point(0, 210)
+        Me.LayoutControlItem8.MaxSize = New System.Drawing.Size(0, 32)
+        Me.LayoutControlItem8.MinSize = New System.Drawing.Size(91, 32)
+        Me.LayoutControlItem8.Name = "LayoutControlItem8"
+        Me.LayoutControlItem8.Size = New System.Drawing.Size(562, 32)
+        Me.LayoutControlItem8.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
+        Me.LayoutControlItem8.Text = "Variable:"
+        Me.LayoutControlItem8.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem11
         '
-        Me.LayoutControlItem11.Control = Me.icbFormat
-        Me.LayoutControlItem11.Location = New System.Drawing.Point(280, 426)
+        Me.LayoutControlItem11.Control = Me.cbNodeID
+        Me.LayoutControlItem11.Location = New System.Drawing.Point(0, 426)
         Me.LayoutControlItem11.Name = "LayoutControlItem11"
-        Me.LayoutControlItem11.Size = New System.Drawing.Size(282, 30)
-        Me.LayoutControlItem11.Text = "Return Value Format:"
-        Me.LayoutControlItem11.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem11.Size = New System.Drawing.Size(562, 30)
+        Me.LayoutControlItem11.Text = "ID Node:"
+        Me.LayoutControlItem11.TextSize = New System.Drawing.Size(66, 13)
         '
         'LayoutControlItem14
         '
-        Me.LayoutControlItem14.Control = Me.cbReturnNode
-        Me.LayoutControlItem14.Location = New System.Drawing.Point(0, 396)
+        Me.LayoutControlItem14.Control = Me.cbNodeText
+        Me.LayoutControlItem14.Location = New System.Drawing.Point(0, 456)
         Me.LayoutControlItem14.Name = "LayoutControlItem14"
         Me.LayoutControlItem14.Size = New System.Drawing.Size(562, 30)
-        Me.LayoutControlItem14.Text = "Return Value Node:"
-        Me.LayoutControlItem14.TextSize = New System.Drawing.Size(104, 13)
+        Me.LayoutControlItem14.Text = "Text Node:"
+        Me.LayoutControlItem14.TextSize = New System.Drawing.Size(66, 13)
         '
-        'ucValidatorProperties
+        'ucSelectors
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.Controls.Add(Me.LayoutControl1)
-        Me.Name = "ucValidatorProperties"
+        Me.Name = "ucSelectors"
         Me.Size = New System.Drawing.Size(562, 486)
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LayoutControl1.ResumeLayout(False)
-        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.cbReturnNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtGraphQLNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.cbNodeText.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.cbNodeID.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.icbVisibility.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lueLookupTypes.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.icbFormat.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.icbEnabled.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtUUID.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtComments.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtAPIQuery.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtReturnValueColumn.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtReturnNode.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPriority.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtHeader.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.icbType.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtAPIEndpoint.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlGroup1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem9, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem10, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lciLookUpType, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem12, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LayoutControlItem13, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
@@ -488,35 +442,31 @@ Partial Class ucValidatorProperties
     End Sub
 
     Friend WithEvents LayoutControl1 As DevExpress.XtraLayout.LayoutControl
-  Friend WithEvents LayoutControlGroup1 As DevExpress.XtraLayout.LayoutControlGroup
-  Friend WithEvents icbType As DevExpress.XtraEditors.ImageComboBoxEdit
-  Friend WithEvents txtAPIEndpoint As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents LayoutControlItem1 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents LayoutControlItem3 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtHeader As DevExpress.XtraEditors.MemoEdit
-  Friend WithEvents LayoutControlItem2 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtPriority As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents LayoutControlItem4 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtReturnValueColumn As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents txtReturnNode As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents LayoutControlItem5 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents LayoutControlItem6 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtAPIQuery As DevExpress.XtraEditors.MemoEdit
-  Friend WithEvents LayoutControlItem7 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtComments As DevExpress.XtraEditors.MemoEdit
-  Friend WithEvents LayoutControlItem8 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtUUID As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents LayoutControlItem9 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents icbEnabled As DevExpress.XtraEditors.ImageComboBoxEdit
-  Friend WithEvents LayoutControlItem10 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents icbFormat As DevExpress.XtraEditors.ImageComboBoxEdit
-  Friend WithEvents LayoutControlItem11 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents lueLookupTypes As DevExpress.XtraEditors.LookUpEdit
-  Friend WithEvents lciLookUpType As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents icbVisibility As DevExpress.XtraEditors.ImageComboBoxEdit
-  Friend WithEvents LayoutControlItem12 As DevExpress.XtraLayout.LayoutControlItem
-  Friend WithEvents txtGraphQLNode As DevExpress.XtraEditors.TextEdit
-  Friend WithEvents LayoutControlItem13 As DevExpress.XtraLayout.LayoutControlItem
-    Friend WithEvents cbReturnNode As DevExpress.XtraEditors.ComboBoxEdit
-    Friend WithEvents LayoutControlItem14 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents LayoutControlGroup1 As DevExpress.XtraLayout.LayoutControlGroup
+     Friend WithEvents icbType As DevExpress.XtraEditors.ImageComboBoxEdit
+     Friend WithEvents txtAPIEndpoint As DevExpress.XtraEditors.TextEdit
+     Friend WithEvents LayoutControlItem1 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents LayoutControlItem3 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents txtHeader As DevExpress.XtraEditors.MemoEdit
+     Friend WithEvents LayoutControlItem2 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents txtPriority As DevExpress.XtraEditors.TextEdit
+     Friend WithEvents LayoutControlItem4 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents txtReturnNode As DevExpress.XtraEditors.TextEdit
+     Friend WithEvents LayoutControlItem5 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents txtAPIQuery As DevExpress.XtraEditors.MemoEdit
+     Friend WithEvents LayoutControlItem7 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents txtComments As DevExpress.XtraEditors.MemoEdit
+     Friend WithEvents LayoutControlItem8 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents txtUUID As DevExpress.XtraEditors.TextEdit
+     Friend WithEvents LayoutControlItem9 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents icbEnabled As DevExpress.XtraEditors.ImageComboBoxEdit
+     Friend WithEvents LayoutControlItem10 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents lueLookupTypes As DevExpress.XtraEditors.LookUpEdit
+     Friend WithEvents lciLookUpType As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents icbVisibility As DevExpress.XtraEditors.ImageComboBoxEdit
+     Friend WithEvents LayoutControlItem12 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents cbNodeText As DevExpress.XtraEditors.ComboBoxEdit
+     Friend WithEvents cbNodeID As DevExpress.XtraEditors.ComboBoxEdit
+     Friend WithEvents LayoutControlItem11 As DevExpress.XtraLayout.LayoutControlItem
+     Friend WithEvents LayoutControlItem14 As DevExpress.XtraLayout.LayoutControlItem
 End Class

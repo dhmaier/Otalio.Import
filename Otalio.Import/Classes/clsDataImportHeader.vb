@@ -17,6 +17,8 @@ Public Class clsDataImportHeader
      Public Property Templates As New List(Of clsDataImportTemplateV2)
      Public Property StatusCodeColumn As String = ""
      Public Property StatusDescriptionColumn As String = ""
+     Public Property HistoryLog As String = ""
+
 
      Public ReadOnly Property SortedName As String
           Get

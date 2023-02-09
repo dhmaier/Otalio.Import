@@ -24,7 +24,7 @@ Public Class clsAPI
      Private mdResponseDateTime As DateTime
      Private mnRefreshTokenCount As Long = 0
      Private mnTokenExpires As Long? = 0
-
+     Private mnDefaultGetSize As Integer = 100
 
      Private moTimmer As New Timer
 
@@ -78,6 +78,7 @@ Public Class clsAPI
                     If psLoadData Then
                          Call LoadLookupTypes()
                          Call LoadHierarchies()
+                         Call LoadTranslateableLanguages()
                     End If
 
                     Return True
@@ -292,18 +293,30 @@ Public Class clsAPI
                     End If
                End If
 
-
-               If pnSize > -1 Then
-                    If url.Contains("?") Then
-                         url = url & String.Format("&size={0}", pnSize)
-                    Else
-                         url = url & String.Format("?size={0}", pnSize)
+               If url.ToLower.Contains("size=") = False Then
+                    If pnSize > -1 Then
+                         If url.Contains("?") Then
+                              url = url & String.Format("&size={0}", pnSize)
+                         Else
+                              url = url & String.Format("?size={0}", pnSize)
+                         End If
+                    End If
+                    If pnSize = -2 Then
+                         If url.Contains("?") Then
+                              url = url & String.Format("&size={0}", mnDefaultGetSize)
+                         Else
+                              url = url & String.Format("?size={0}", mnDefaultGetSize)
+                         End If
                     End If
                End If
 
 
                If psSort <> String.Empty Then
-                    url = url + "&sort=" & psSort
+                    If url.Contains("?") Then
+                         url = url + "&sort=" & psSort
+                    Else
+                         url = url + "?sort=" & psSort
+                    End If
                End If
 
                Dim oClient = New RestClient(url)
@@ -514,9 +527,9 @@ Public Class clsAPI
                     Dim sRoot As String = String.Empty
                     Dim sNode As String = String.Empty
 
-                    If String.IsNullOrEmpty(psNodeName) = False AndAlso psNodeName.Contains("[0]") Then
-                         sRoot = psNodeName.Substring(0, psNodeName.LastIndexOf("[0]"))
-                         sNode = psNodeName.Substring(psNodeName.LastIndexOf("]") + 2)
+                    If String.IsNullOrEmpty(psRootNode) = False AndAlso psRootNode.Contains("[0]") Then
+                         sRoot = psRootNode.Substring(0, psRootNode.LastIndexOf("[0]"))
+                         sNode = psNodeName ' psRootNode.Substring(psRootNode.LastIndexOf("]") + 2)
                     End If
 
                     If oResponse.StatusCode = HttpStatusCode.OK And json.ContainsKey("responsePayload") = True Then
@@ -579,7 +592,7 @@ Public Class clsAPI
                goLookupTypes.Clear()
 
                If goLookupTypes IsNot Nothing AndAlso goLookupTypes.Count = 0 Then
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", String.Empty, String.Empty)
+                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/lookup-types", String.Empty, String.Empty, "code")
                     If oResponse IsNot Nothing Then
 
                          Dim json As JObject = JObject.Parse(oResponse.Content)
@@ -609,6 +622,32 @@ Public Class clsAPI
 
      End Sub
 
+     Private Sub LoadTranslateableLanguages()
+          goLanguages.Clear()
+
+          If goLanguages IsNot Nothing AndAlso goLanguages.Count = 0 Then
+               Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/languages", String.Empty, "translationEnabled==true", "code")
+               If oResponse IsNot Nothing Then
+
+                    Dim json As JObject = JObject.Parse(oResponse.Content)
+                    Dim oOjbect As JToken = json.SelectToken("responsePayload.content")
+                    If oOjbect IsNot Nothing Then
+                         For Each oNode In oOjbect
+                              If oNode IsNot Nothing Then
+                                   goLanguages.Add(New clsLanguages With {.id = oNode("id"), .code = oNode("code"), .translations = GetTranslation(oNode.SelectToken("translations.en.description"))})
+                              End If
+                         Next
+                    End If
+                    json = Nothing
+                    oOjbect = Nothing
+
+               End If
+
+               oResponse = Nothing
+
+          End If
+
+     End Sub
      Public Function CallGraphQL(psEndPoint As String, psDTOJson As String) As IRestResponse
           Try
                psEndPoint = ExtractSystemVariables(psEndPoint)

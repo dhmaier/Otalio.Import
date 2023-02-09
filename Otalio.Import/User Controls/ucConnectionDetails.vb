@@ -98,6 +98,21 @@ Public Class ucConnectionDetails
 
           sFullPath = GetAppPath(gsSettingFileName)
 
+          If File.Exists(sFullPath) = False Then
+               'check if the old location there is still the file
+               Dim oldFullPath = GetAppPath(gsSettingFileName, Application.CommonAppDataPath)
+               If File.Exists(oldFullPath) Then
+
+                    goConnectionHistory = TryCast(LoadFile(oldFullPath), clsConnectionHistory)
+
+                    If goConnection IsNot Nothing Then
+                         SaveFile(sFullPath, goConnectionHistory)
+                    End If
+
+               End If
+
+          End If
+
 
           If File.Exists(sFullPath) Then
                'load it

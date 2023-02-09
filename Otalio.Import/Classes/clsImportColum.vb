@@ -64,6 +64,7 @@ Public Class clsImportColum
                     Case "U" : Return "Upper Case"
                     Case "L" : Return "Lower Case"
                     Case "P" : Return "Proper Case"
+                    Case "T" : Return "Title Case"
                     Case Else : Return ""
                End Select
           End Get

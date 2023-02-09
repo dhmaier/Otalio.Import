@@ -138,17 +138,14 @@ Public Class ucValidatorProperties
                          lueLookupTypes.EditValue = moValidation.LookUpType
                     End If
 
-                    If String.IsNullOrEmpty(txtAPIEndpoint.EditValue) = True Then
-                         moValidation.APIEndpoint = "metadata/v1/lookup-values"
-                    End If
+                    moValidation.APIEndpoint = String.Format("metadata/v1/lookup-values?hierarchyId=@@HIERARCHYID@@")
 
                     If String.IsNullOrEmpty(txtAPIQuery.EditValue) = True Then
-                         moValidation.Query = String.Format("code=={0}<!XxX!>{0};hierarchyId=={0}1{0}", ControlChars.Quote)
+                         moValidation.Query = String.Format("code=={0}<!XxX!>{0}", ControlChars.Quote)
                     End If
 
-                    If String.IsNullOrEmpty(txtReturnNode.EditValue) = True Then
-                         moValidation.ReturnNodeValue = "responsePayload.content[0].entityId"
-                    End If
+                    moValidation.ReturnNodeValue = "responsePayload.content[0].entityId"
+
 
                Case "7"
 

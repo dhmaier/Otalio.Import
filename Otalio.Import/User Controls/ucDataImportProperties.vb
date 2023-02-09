@@ -69,6 +69,10 @@ Public Class ucDataImportProperties
                          .DataBindings.Add(New Binding("Text", moImportHeader, "StatusDescriptionColumn"))
                     End With
 
+                    With txtHistory
+                         .DataBindings.Clear()
+                         .DataBindings.Add(New Binding("Text", moImportHeader, "HistoryLog"))
+                    End With
 
                     Call LoadTemplates(value)
 
@@ -78,6 +82,9 @@ Public Class ucDataImportProperties
                     gridValidatorsAll.DataSource = moImportHeader.Validators
                     gdValidatorsAll.BestFitColumns()
 
+
+
+
                End If
           End Set
      End Property
@@ -85,6 +92,7 @@ Public Class ucDataImportProperties
      Sub New()
 
           InitializeComponent()
+          lcgColumns.Selected = True
 
      End Sub
 
@@ -112,7 +120,30 @@ Public Class ucDataImportProperties
                End If
           End With
      End Sub
+     Private Sub gdSelectors_DoubleClick(sender As Object, e As EventArgs) Handles gdSelectors.DoubleClick
+          With gdSelectors
+               If .SelectedRowsCount >= 0 Then
+                    Dim oSelector As clsSelectors = TryCast(.GetRow(.FocusedRowHandle), clsSelectors)
+                    If oSelector IsNot Nothing Then
 
+                         Using oForm As New frmSelector
+                              oForm.UcSelectors1._Selector = oSelector
+                              Select Case oForm.ShowDialog
+                                   Case DialogResult.OK 'ok edited
+                                   Case DialogResult.Cancel 'dont do nothing
+                                   Case DialogResult.Abort 'use to flag item to be deleted
+                                        Me.moSelectedTemplate.Selectors.Remove(oForm.UcSelectors1._Selector)
+
+                              End Select
+
+                              Me.gridSelectors.RefreshDataSource()
+                              gdSelectors.BestFitColumns()
+
+                         End Using
+                    End If
+               End If
+          End With
+     End Sub
      Private Sub icbType_EditValueChanged(sender As Object, e As EventArgs) Handles icbType.EditValueChanged
 
           Select Case moSelectedTemplate.ImportType
@@ -206,17 +237,16 @@ Public Class ucDataImportProperties
      Private Sub BindTemplate(poTemplate As clsDataImportTemplateV2)
 
 
-          With poTemplate
-               If .UpdateQuery = Nothing Then .UpdateQuery = ""
-          End With
+
 
           With poTemplate
                If .SelectQuery = Nothing Then .SelectQuery = ""
+               If .GraphQLQuery = Nothing Then .GraphQLQuery = ""
+               If .Selectors Is Nothing Then .Selectors = New List(Of clsSelectors)
+               If .UpdateQuery = Nothing Then .UpdateQuery = ""
           End With
 
-          With poTemplate
-               If .GraphQLQuery = Nothing Then .GraphQLQuery = ""
-          End With
+
 
           With poTemplate
                If .GraphQLRootNode = Nothing Then .GraphQLRootNode = ""
@@ -246,8 +276,6 @@ Public Class ucDataImportProperties
                .DataBindings.Clear()
                .DataBindings.Add(New Binding("Text", poTemplate, "DTOObject"))
           End With
-
-
 
           With txtStatusCodeColumn
                .DataBindings.Clear()
@@ -307,14 +335,27 @@ Public Class ucDataImportProperties
                .DataBindings.Add(New Binding("Text", poTemplate, "FileLocationColumn"))
           End With
 
-          With chkMaster
+          With ckIsEnabled
+               .DataBindings.Clear()
+               .DataBindings.Add(New Binding("Checked", poTemplate, "IsEnabled"))
+          End With
+
+          With ckIsMaster
                .DataBindings.Clear()
                .DataBindings.Add(New Binding("Checked", poTemplate, "IsMaster"))
           End With
 
+          With chkIgnoreArray
+               .DataBindings.Clear()
+               .DataBindings.Add(New Binding("Checked", poTemplate, "IgnoreArray"))
+          End With
+
           gridValidators.DataSource = poTemplate.Validators
+          gridSelectors.DataSource = poTemplate.Selectors
+
           gdImportColumns.BestFitColumns()
           gdValidators.BestFitColumns()
+          gdSelectors.BestFitColumns()
 
 
 
@@ -355,4 +396,6 @@ Public Class ucDataImportProperties
      Public Sub Reload()
           Call LoadTemplates(moImportHeader)
      End Sub
+
+
 End Class

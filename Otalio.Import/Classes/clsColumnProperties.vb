@@ -7,8 +7,9 @@ Imports System.IO
   >
 Public Class clsColumnProperties
 
-  Public Property CellName As String = ""
-  Public Property Format As String = ""
-  Public Property IndexID As String = ""
+     Public Property CellName As String = ""
+     Public Property Format As String = ""
+     Public Property IndexID As String = ""
+     Public Property SourceText As String = ""
 
 End Class

@@ -15,3 +15,4 @@ Public Class clsLookUpTypes
   Public Property OverridableType As Boolean = False
 
 End Class
+
