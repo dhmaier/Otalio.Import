@@ -45,6 +45,13 @@ Public Class ucSelectorQuery
                               listOfContorls.Add(oEditor)
                          Case "DATE"
                               Dim oEditor As New DateEdit
+                              oEditor.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.Custom
+                              oEditor.Properties.EditFormat.FormatString = "yyyy-MM-dd"
+
+                              ' Set the display format to "yyyy-MM-dd"
+                              oEditor.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Custom
+                              oEditor.Properties.DisplayFormat.FormatString = "yyyy-MM-dd"
+
                               Dim oLayoutControlItem As New LayoutControlItem
                               With oLayoutControlItem
                                    .Text = oSelector.Label

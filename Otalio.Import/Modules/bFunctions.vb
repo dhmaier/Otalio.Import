@@ -396,12 +396,12 @@ Module bFunctions
                     Case "T" : Return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(psString.ToLower)
                     Case "FD"
                          If IsDate(psString) Then
-                              If CDate(psString).TimeOfDay.TotalSeconds = 0 And CDate(psString).Date <> Date.MinValue Then
-                                   Return CDate(psString).ToString("yyyy-MM-dd")
-                              Else
+                              'If CDate(psString).TimeOfDay.TotalSeconds = 0 And CDate(psString).Date <> Date.MinValue Then
+                              Return CDate(psString).ToString("yyyy-MM-dd")
+                              'Else
 
-                                   Return CDate(psString).ToString("yyyy-MM-dd HH:mm")
-                              End If
+                              'Return CDate(psString).ToString("yyyy-MM-dd HH:mm")
+                              'End If
                          Else
                               Return psString
                          End If
@@ -409,6 +409,11 @@ Module bFunctions
                          If IsDateOrTime(psString) Then
                               Return CDate(psString).ToString("HH:mm:ss")
                          End If
+                    Case "FDT"
+                         If IsDateOrTime(psString) Then
+                              Return CDate(psString).ToString("yyyy-MM-dd HH:mm")
+                         End If
+
                     Case Else
                          Return psString
                End Select

@@ -94,8 +94,13 @@ Public Class frmMainMenu
      Private Sub frmMainMenu_Shown(sender As Object, e As EventArgs) Handles Me.Shown
           ' Close the Splash Screen.
           SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Initialization Completed")
-
           SplashScreenManager.CloseForm(False)
+
+          If String.IsNullOrEmpty(ReadRegistry("Last Accessed Workbook")) = False Then
+               OpenWorkBook(ReadRegistry("Last Accessed Workbook", ""), ReadRegistry("Last Accessed Workbook Safe Name", ""))
+               UpdateProgressStatus()
+          End If
+
      End Sub
 
 
@@ -121,90 +126,7 @@ Public Class frmMainMenu
                     UpdateProgressStatus("Opening Import", False)
 
                     For Each sFilename As String In fd.FileNames
-
-                         If File.Exists(sFilename) Then
-
-                              Dim oImportHeader As New clsDataImportHeader
-
-                              If sFilename.EndsWith(".dit") Then
-                                   Dim oImportTemplate As clsDataImportTemplate = TryCast(LoadFile(sFilename), clsDataImportTemplate)
-                                   If oImportTemplate IsNot Nothing Then
-                                        With oImportHeader
-
-                                             .Name = oImportTemplate.Name
-                                             .ID = oImportTemplate.ID
-                                             .Notes = oImportTemplate.Notes
-                                             .Priority = oImportTemplate.Priority
-                                             .Group = oImportTemplate.Group
-                                             .WorkbookSheetName = oImportTemplate.WorkbookSheetName
-                                             .StatusCodeColumn = oImportTemplate.StatusCodeColumn
-                                             .StatusDescriptionColumn = oImportTemplate.StatusDescirptionColumn
-
-
-                                             Dim oTemplate As New clsDataImportTemplateV2
-                                             With oTemplate
-                                                  .ImportType = oImportTemplate.ImportType
-                                                  .Name = oImportTemplate.Name
-                                                  .APIEndpoint = oImportTemplate.APIEndpoint
-                                                  .APIEndpointSelect = oImportTemplate.APIEndpointSelect
-                                                  .DTOObject = oImportTemplate.DTOObject
-                                                  .EntityColumn = oImportTemplate.EntityColumn
-                                                  .GraphQLQuery = oImportTemplate.GraphQLQuery
-                                                  .GraphQLRootNode = oImportTemplate.GraphQLRootNode
-                                                  .ImportColumns = oImportTemplate.ImportColumns
-                                                  .ReturnCell = oImportTemplate.ReturnCell
-                                                  .ReturnCellDTO = oImportTemplate.ReturnCellDTO
-                                                  .ReturnNodeValue = oImportTemplate.ReturnNodeValue
-                                                  .SelectQuery = oImportTemplate.SelectQuery
-                                                  .StatusCodeColumn = oImportTemplate.StatusCodeColumn
-                                                  .StatusDescriptionColumn = oImportTemplate.StatusDescirptionColumn
-                                                  .UpdateQuery = oImportTemplate.UpdateQuery
-                                                  .Validators = oImportTemplate.Validators
-                                                  .Variables = oImportTemplate.Variables
-                                                  .Position = oImportHeader.Templates.Count + 1
-                                             End With
-
-                                             .Templates.Add(oTemplate)
-                                        End With
-                                   End If
-                              Else
-                                   oImportHeader = TryCast(LoadFile(sFilename), clsDataImportHeader)
-
-                              End If
-
-
-                              If oImportHeader IsNot Nothing Then
-
-                                   UcProperties1.msFilePath = sFilename
-                                   UcProperties1.msFileName = fd.SafeFileName
-
-                                   For Each oTemplate As clsDataImportTemplateV2 In oImportHeader.Templates
-                                        If oTemplate.Validators Is Nothing Then
-                                             oTemplate.Validators = New List(Of clsValidation)
-                                        End If
-                                   Next
-
-
-                                   If goOpenWorkBook.Templates IsNot Nothing AndAlso goOpenWorkBook.Templates.Count > 0 Then
-
-                                        oImportHeader.Priority = goOpenWorkBook.Templates.Max(Function(n) n.Priority) + 1
-
-                                   Else
-
-                                        oImportHeader.Priority = 1
-
-                                   End If
-
-                                   goOpenWorkBook.Templates.Add(oImportHeader)
-                                   loadWorkbook()
-
-
-
-                              Else
-                                   UpdateProgressStatus()
-                                   MsgBox("Failed to load Data import template file")
-                              End If
-                         End If
+                         OpenTempalte(sFilename, fd.SafeFileName)
                     Next
 
 
@@ -537,35 +459,7 @@ Public Class frmMainMenu
 
                     Dim sFilename As String = fd.FileName
 
-                    If File.Exists(sFilename) Then
-
-                         msFilePath = Path.GetDirectoryName(sFilename)
-                         msFileName = fd.SafeFileName
-                         txtWorkbookName.EditValue = msFileName
-
-                         UpdateProgressStatus("Opening Document", False)
-
-                         Dim oWorkbook As clsWorkbook = TryCast(LoadFile(sFilename), clsWorkbook)
-
-                         If oWorkbook IsNot Nothing Then
-
-                              goOpenWorkBook = oWorkbook
-                              goOpenWorkBook.WorkbookName = msFileName
-
-                              loadWorkbook()
-
-                              'check if there is a data excel sheet in the same folder with the same name
-                              If File.Exists(Replace(sFilename, gsWorkbookExtention, ".xlsx")) Then
-                                   spreadsheetControl.LoadDocument(Replace(sFilename, gsWorkbookExtention, ".xlsx"))
-                              End If
-
-
-                         Else
-                              UpdateProgressStatus()
-                              MsgBox("Failed to load Data import workbook file",, "Warning...")
-                         End If
-
-                    End If
+                    OpenWorkBook(sFilename, fd.SafeFileName)
 
 
                End If
@@ -1448,6 +1342,8 @@ Public Class frmMainMenu
           End Try
      End Function
 
+
+
      Public Sub ImportData(poImportHeader As clsDataImportHeader)
 
 
@@ -1553,25 +1449,31 @@ Public Class frmMainMenu
                                         Dim sAPIEndpoint As String = oTemplate.APIEndpoint
                                         Dim sUnusedProperties As New List(Of String)
                                         If sTemplateDTO IsNot Nothing Then
-                                             Dim jsnDTO As JObject = JObject.Parse(sTemplateDTO)
 
-                                             gbIgnoreArrays = oTemplate.IgnoreArray
-                                             For Each oProperty As JProperty In jsnDTO.Children
-                                                  If oProperty.Value.ToString.Contains("<!") Then
-                                                       If CheckChildrenNodes(oProperty, nRow) = False Then
-                                                            If oProperty.Value.ToString.Contains("@@") = False Then
-                                                                 sUnusedProperties.Add(oProperty.Name)
+                                             If sTemplateDTO.ToString.Trim.StartsWith("{") Then
+                                                  Dim jsnDTO As JObject = JObject.Parse(sTemplateDTO)
+
+                                                  gbIgnoreArrays = oTemplate.IgnoreArray
+                                                  For Each oProperty As JProperty In jsnDTO.Children
+                                                       If oProperty.Value.ToString.Contains("<!") Then
+                                                            If CheckChildrenNodes(oProperty, nRow) = False Then
+                                                                 If oProperty.Value.ToString.Contains("@@") = False Then
+                                                                      sUnusedProperties.Add(oProperty.Name)
+                                                                 End If
                                                             End If
                                                        End If
-                                                  End If
-                                             Next
+                                                  Next
 
-                                             For Each sProperty In sUnusedProperties
-                                                  jsnDTO.Remove(sProperty)
-                                             Next
+                                                  For Each sProperty In sUnusedProperties
+                                                       jsnDTO.Remove(sProperty)
+                                                  Next
 
 
-                                             oDTO = jsnDTO.ToString
+                                                  oDTO = jsnDTO.ToString
+                                             Else
+                                                  oDTO = sTemplateDTO
+                                             End If
+
 
                                              gbIgnoreArrays = False
 
@@ -1594,12 +1496,15 @@ Public Class frmMainMenu
                                              sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
                                         Next
                                         oDTO = goHTTPServer.ExtractSystemVariables(oDTO)
-
-
                                         If String.IsNullOrEmpty(oTemplate.ReturnCellDTO) = False AndAlso oDTO IsNot Nothing Then
                                              .Cells(String.Format("{0}{1}", oTemplate.ReturnCellDTO, nRow)).Value = goHTTPServer.ExtractSystemVariables(oDTO.ToString)
                                         End If
 
+                                        sColumns = ExtractColumnDetails(oDTO)
+                                        For Each sColumn As String In sColumns
+                                             Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
+                                             oDTO = Replace(oDTO, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
+                                        Next
 
                                         Dim oResponse As IRestResponse
                                         Dim bIgnored As Boolean = False
@@ -1640,7 +1545,7 @@ Public Class frmMainMenu
                                                        End If
 
 
-                                                       End If
+                                                  End If
                                              Case "3"
 
                                                   oResponse = goHTTPServer.CallWebEndpointUploadFile(sAPIEndpoint,
@@ -1657,7 +1562,33 @@ Public Class frmMainMenu
 
                                                   oResponse = goHTTPServer.CallWebEndpointUsingDeleteByID(sAPIEndpoint,
                                                                                         .Cells(String.Format("{0}{1}", oTemplate.ReturnCell, nRow)).Value.ToString, sQuery)
+                                             Case "6"
 
+                                                  If String.IsNullOrEmpty(.Cells(String.Format("{0}{1}", oTemplate.ReturnCell, nRow)).Value.ToString) Then
+                                                       'add
+                                                       oResponse = goHTTPServer.CallWebEndpointUsingPost(sAPIEndpoint, oDTO)
+                                                  Else
+                                                       'edit
+                                                       oResponse = goHTTPServer.CallWebEndpointUsingPatch(sAPIEndpoint,
+                                                                                               .Cells(String.Format("{0}{1}", oTemplate.ReturnCell, nRow)).Value.ToString,
+                                                                                                sQuery, oDTO)
+
+                                                       'check if its was found, if not then do an insert
+                                                       If oResponse IsNot Nothing AndAlso oResponse.StatusCode = HttpStatusCode.NotFound Then
+
+                                                            If oDTO.Contains("""id""") Then
+                                                                 Dim oDTOExcludingID As String = Replace(oDTO, .Cells(String.Format("{0}{1}", oTemplate.ReturnCell, nRow)).Value.ToString, "")
+
+                                                                 'Try an add
+                                                                 oResponse = goHTTPServer.CallWebEndpointUsingPost(sAPIEndpoint, oDTOExcludingID)
+                                                            Else
+                                                                 oResponse = goHTTPServer.CallWebEndpointUsingPost(sAPIEndpoint, oDTO)
+                                                            End If
+
+                                                       End If
+
+
+                                                  End If
                                              Case Else
                                                   Exit Sub
                                         End Select
@@ -1838,7 +1769,6 @@ ExitProces:
 
 
      End Sub
-
      Public Sub QueryandLoad(poImportHeader As clsDataImportHeader)
 
 
@@ -2911,33 +2841,44 @@ ExitProces:
 
           If poTemplate.Selectors IsNot Nothing AndAlso poTemplate.Selectors.Count > 0 Then
 
-               'display selector form
-               ShowWaitDialog("Loading Queries... ")
+               Dim bContainsSelector As Boolean = False
+               For Each oSelector As clsSelectors In poTemplate.Selectors
+                    If poTemplate.SelectQuery.Contains(oSelector.Variable) Then
+                         bContainsSelector = True
+                         Exit For
+                    End If
+               Next
 
-               Using oForm As New frmSelectorQuery
-                    oForm.ListOfSelectors = poTemplate.Selectors
-                    oForm.QueryText = psQuery
+               If bContainsSelector Then
+                    'display selector form
+                    ShowWaitDialog("Loading Queries... ")
+
+                    Using oForm As New frmSelectorQuery
+                         oForm.ListOfSelectors = poTemplate.Selectors
+                         oForm.QueryText = psQuery
 
 
-                    oForm.LoadQueries()
-                    ShowWaitDialog()
+                         oForm.LoadQueries()
+                         ShowWaitDialog()
 
-                    Select Case oForm.ShowDialog
-                         Case DialogResult.OK 'ok add
-                              psQuery = oForm.QueryText
-                              Return True
-                         Case DialogResult.Cancel 'dont add
-                              Return False
-                         Case DialogResult.Abort 'use to flag item to be deleted
-                              Return False
+                         Select Case oForm.ShowDialog
+                              Case DialogResult.OK 'ok add
+                                   psQuery = oForm.QueryText
+                                   Return True
+                              Case DialogResult.Cancel 'dont add
+                                   Return False
+                              Case DialogResult.Abort 'use to flag item to be deleted
+                                   Return False
 
-                    End Select
-               End Using
+                         End Select
+                    End Using
+               Else
+                    'no change required
+                    Return True
+               End If
           Else
-               'no change required
                Return True
           End If
-
      End Function
 
      Public Sub ImportFiles(poImportHeader As clsDataImportHeader)
@@ -3392,19 +3333,21 @@ ExitProces:
 
 
                               If pbClearlinkedData Then
-                                   For Each oValidation In oTemplate.Validators.Where(Function(n) n.DataObject <> "Translate").OrderBy(Function(n) n.Priority).ToList
+                                   For Each oValidation In oTemplate.Validators.Where(Function(n) n.DataObject <> "Translate" And n.Enabled = True).OrderBy(Function(n) n.Priority).ToList
 
                                         If oValidation IsNot Nothing Then
 
                                              Dim oCol As clsColumnProperties = ExtractColumnProperties(oValidation.ReturnCell)
                                              For nRow As Integer = 2 To .Rows.LastUsedIndex + 1
-                                                  If String.IsNullOrEmpty(oCol.CellName) = False Then
-                                                       Try
-                                                            .Cells(String.Format("{0}{1}", oCol.CellName, nRow)).Value = ""
-                                                       Catch ex As Exception
+                                                  If .Rows.Item(nRow - 1).Visible = True Then
+                                                       If String.IsNullOrEmpty(oCol.CellName) = False Then
+                                                            Try
+                                                                 .Cells(String.Format("{0}{1}", oCol.CellName, nRow)).Value = ""
+                                                            Catch ex As Exception
 
-                                                       End Try
+                                                            End Try
 
+                                                       End If
                                                   End If
                                              Next
 
@@ -3415,32 +3358,35 @@ ExitProces:
                          End If
 
                          For nRow As Integer = 2 To .Rows.LastUsedIndex + 1
+                              If .Rows.Item(nRow - 1).Visible = True Then
+                                   If String.IsNullOrEmpty(oTemplate.StatusCodeColumn) = False Then
+                                        .Cells(String.Format("{0}{1}", oTemplate.StatusCodeColumn, nRow)).Value = ""
+                                   End If
 
-                              If String.IsNullOrEmpty(oTemplate.StatusCodeColumn) = False Then
-                                   .Cells(String.Format("{0}{1}", oTemplate.StatusCodeColumn, nRow)).Value = ""
-                              End If
+                                   If String.IsNullOrEmpty(oTemplate.StatusDescriptionColumn) = False Then
+                                        .Cells(String.Format("{0}{1}", oTemplate.StatusDescriptionColumn, nRow)).Value = ""
+                                   End If
 
-                              If String.IsNullOrEmpty(oTemplate.StatusDescriptionColumn) = False Then
-                                   .Cells(String.Format("{0}{1}", oTemplate.StatusDescriptionColumn, nRow)).Value = ""
-                              End If
-
-                              If pbClearlinkedData Then
-                                   If String.IsNullOrEmpty(oTemplate.ReturnCellDTO) = False Then
-                                        .Cells(String.Format("{0}{1}", oTemplate.ReturnCellDTO, nRow)).Value = ""
+                                   If pbClearlinkedData Then
+                                        If String.IsNullOrEmpty(oTemplate.ReturnCellDTO) = False Then
+                                             .Cells(String.Format("{0}{1}", oTemplate.ReturnCellDTO, nRow)).Value = ""
+                                        End If
                                    End If
                               End If
+
                          Next
 
                     End If
 
                     For nRow As Integer = 2 To .Rows.LastUsedIndex + 1
+                         If .Rows.Item(nRow - 1).Visible = True Then
+                              If String.IsNullOrEmpty(poImportHeader.StatusCodeColumn) = False Then
+                                   .Cells(String.Format("{0}{1}", poImportHeader.StatusCodeColumn, nRow)).Value = ""
+                              End If
 
-                         If String.IsNullOrEmpty(poImportHeader.StatusCodeColumn) = False Then
-                              .Cells(String.Format("{0}{1}", poImportHeader.StatusCodeColumn, nRow)).Value = ""
-                         End If
-
-                         If String.IsNullOrEmpty(poImportHeader.StatusDescriptionColumn) = False Then
-                              .Cells(String.Format("{0}{1}", poImportHeader.StatusDescriptionColumn, nRow)).Value = ""
+                              If String.IsNullOrEmpty(poImportHeader.StatusDescriptionColumn) = False Then
+                                   .Cells(String.Format("{0}{1}", poImportHeader.StatusDescriptionColumn, nRow)).Value = ""
+                              End If
                          End If
 
                     Next
@@ -3639,7 +3585,7 @@ RetryUpdate:
 
           Try
 
-               If poJsonObject IsNot Nothing AndAlso String.IsNullOrEmpty(poJsonObject) = False Then
+               If poJsonObject IsNot Nothing AndAlso String.IsNullOrEmpty(poJsonObject) = False AndAlso poJsonObject.ToString.Trim.StartsWith("{") Then
 
                     Dim nodes As Dictionary(Of String, String) = New Dictionary(Of String, String)()
                     Dim rootObject As JObject = JObject.Parse(poJsonObject)
@@ -3923,99 +3869,99 @@ RetryUpdate:
                poObject = (Replace(Replace(poObject, "<!", String.Empty), "!>", String.Empty))
 
 
-                    If poObject.Contains("|") = True Then
-                         sColumnDataList = poObject.Split("|").ToList
-                    Else
-                         sColumnDataList.Add(poObject)
-                    End If
+               If poObject.Contains("|") = True Then
+                    sColumnDataList = poObject.Split("|").ToList
+               Else
+                    sColumnDataList.Add(poObject)
+               End If
 
-                    For Each sColumnData As String In sColumnDataList
+               For Each sColumnData As String In sColumnDataList
 
-                         Dim sColumnHeader As String = String.Empty
-                         Dim sColumnFieldName As String = String.Empty
-                         Dim sVariable As String = String.Empty
-                         Dim sFormat As String = String.Empty
-                         Dim sChild As String = String.Empty
-                         Dim sParent As String = String.Empty
-                         Dim sChildNode As String = String.Empty
-                         Dim sCommands As String = String.Empty
-                         Dim sArrayID As String = String.Empty
+                    Dim sColumnHeader As String = String.Empty
+                    Dim sColumnFieldName As String = String.Empty
+                    Dim sVariable As String = String.Empty
+                    Dim sFormat As String = String.Empty
+                    Dim sChild As String = String.Empty
+                    Dim sParent As String = String.Empty
+                    Dim sChildNode As String = String.Empty
+                    Dim sCommands As String = String.Empty
+                    Dim sArrayID As String = String.Empty
 
 
                     If sColumnData.Contains(":") Then
-                              Dim sValues As List(Of String) = sColumnData.Split(":").ToList
-                              If sValues IsNot Nothing AndAlso sValues.Count > 1 Then
-                                   'columnn name
-                                   sColumnHeader = sValues(0)
-                                   'column formating
-                                   sFormat = sValues(1)
-                                   'column arry objects
-                                   If sValues.Count > 2 Then
-                                        sChild = sValues(2)
-                                   End If
-
-                                   If sValues.Count > 3 Then
-                                        sVariable = sValues(3)
-                                   End If
-
-                                   If sValues.Count > 4 Then
-                                        sArrayID = sValues(4)
-                                   End If
-
+                         Dim sValues As List(Of String) = sColumnData.Split(":").ToList
+                         If sValues IsNot Nothing AndAlso sValues.Count > 1 Then
+                              'columnn name
+                              sColumnHeader = sValues(0)
+                              'column formating
+                              sFormat = sValues(1)
+                              'column arry objects
+                              If sValues.Count > 2 Then
+                                   sChild = sValues(2)
                               End If
-                         Else
-                              sColumnHeader = sColumnData
+
+                              If sValues.Count > 3 Then
+                                   sVariable = sValues(3)
+                              End If
+
+                              If sValues.Count > 4 Then
+                                   sArrayID = sValues(4)
+                              End If
+
+                         End If
+                    Else
+                         sColumnHeader = sColumnData
+                    End If
+
+                    'if this is a sub noode get properites name
+                    If psParent.Contains(".") Then
+                         Dim sNodes As String() = psParent.ToString.Split(".")
+                         If sNodes IsNot Nothing Then
+                              Dim nCount As Integer = 1
+                              For Each snode As String In sNodes
+                                   If nCount = sNodes.Count Then
+                                        sColumnFieldName = snode
+                                   Else
+                                        sParent = sParent & snode & "."
+                                   End If
+                                   nCount += 1
+                              Next
+
+                              If sParent.EndsWith(".") Then
+                                   sParent = sParent.Substring(0, sParent.Length - 1)
+                              End If
+
+                         End If
+                    Else
+                         sColumnFieldName = psParent
+                    End If
+
+                    Dim oColumn As New clsImportColum
+                    With oColumn
+                         .Name = sColumnFieldName
+                         .DTOField = sColumnFieldName
+                         .ColumnID = sColumnData
+                         .Parent = sParent
+                         .Formatted = sFormat
+                         .ColumnName = sColumnHeader
+                         .VariableName = sVariable
+                         .Commands = sCommands
+                         .Type = JTokenType.String
+                         .ChildNode = sChildNode
+                         .ArrayID = sArrayID
+                         If String.IsNullOrEmpty(sChild) = False Then
+                              .ChildNode = sChild
+                              .Type = JTokenType.Array
                          End If
 
-                         'if this is a sub noode get properites name
-                         If psParent.Contains(".") Then
-                              Dim sNodes As String() = psParent.ToString.Split(".")
-                              If sNodes IsNot Nothing Then
-                                   Dim nCount As Integer = 1
-                                   For Each snode As String In sNodes
-                                        If nCount = sNodes.Count Then
-                                             sColumnFieldName = snode
-                                        Else
-                                             sParent = sParent & snode & "."
-                                        End If
-                                        nCount += 1
-                                   Next
-
-                                   If sParent.EndsWith(".") Then
-                                        sParent = sParent.Substring(0, sParent.Length - 1)
-                                   End If
-
-                              End If
-                         Else
-                              sColumnFieldName = psParent
+                         If String.IsNullOrEmpty(.ArrayID) = False Then
+                              .Type = JTokenType.Property
                          End If
 
-                         Dim oColumn As New clsImportColum
-                         With oColumn
-                              .Name = sColumnFieldName
-                              .DTOField = sColumnFieldName
-                              .ColumnID = sColumnData
-                              .Parent = sParent
-                              .Formatted = sFormat
-                              .ColumnName = sColumnHeader
-                              .VariableName = sVariable
-                              .Commands = sCommands
-                              .Type = JTokenType.String
-                              .ChildNode = sChildNode
-                              .ArrayID = sArrayID
-                              If String.IsNullOrEmpty(sChild) = False Then
-                                   .ChildNode = sChild
-                                   .Type = JTokenType.Array
-                              End If
+                    End With
 
-                              If String.IsNullOrEmpty(.ArrayID) = False Then
-                                   .Type = JTokenType.Property
-                              End If
-
-                         End With
-
-                         poListOfColumn.Add(oColumn)
-                    Next
+                    poListOfColumn.Add(oColumn)
+               Next
 
 
           Catch ex As Exception
@@ -4025,6 +3971,7 @@ RetryUpdate:
 
 
      End Sub
+
      Public Function ExtractColumnDetails(psString As String, Optional pbColumnAddressOnly As Boolean = False) As List(Of String)
 
           Try
@@ -4419,7 +4366,7 @@ RetryUpdate:
 
 
                                    Else
-                                             bSourceData = False
+                                        bSourceData = False
                                         FormatCell(True, oCell, Color.Transparent)
                                    End If
                               Next
@@ -4726,8 +4673,9 @@ RetryUpdate:
 
                               '  'add item to dictionary 
                               oReturnValuesStore.Add(String.Format("{0}-{1}", sAPIEndpoint, sQuery), String.Format("{0}-{1}", sAPIEndpoint, sQuery))
-                              .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = json.SelectToken(poValidation.ReturnNodeValue).ToString
-
+                              If String.IsNullOrEmpty(poValidation.ReturnNodeValue) = False Then
+                                   .Cells(String.Format("{0}{1}", poValidation.ReturnCell, nRow)).Value = json.SelectToken(poValidation.ReturnNodeValue).ToString
+                              End If
                               '  .Cells(String.Format("{0}{1}", poTemplate.StatusCodeColumn, nRow)).Value = sCode
                               '  .Cells(String.Format("{0}{1}", poTemplate.StatusDescirptionColumn, nRow)).Value = sMessage
                               'End If
@@ -5597,11 +5545,12 @@ RetryUpdate:
                Dim oColumns As New List(Of clsColumnProperties)
                Dim sValues As New Dictionary(Of String, String)
                Dim nCountOfRecords As Integer = 0
+               Dim nCountOfNotNullValue As Integer = 0
                For Each sColumn In sColumns
                     Dim oColumn As clsColumnProperties = ExtractColumnProperties(sColumn)
                     Dim sCellData As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumn.CellName, pnRow)).Value.ToString.Trim
 
-                    If sCellData.Contains(",") Then
+                    If sCellData.EndsWith(",") Then
                          If nCountOfRecords < sCellData.Split(",", 9999, StringSplitOptions.RemoveEmptyEntries).Count Then
                               nCountOfRecords = sCellData.Split(",", 9999, StringSplitOptions.RemoveEmptyEntries).Count
                          End If
@@ -5615,12 +5564,18 @@ RetryUpdate:
 
                     If sValues.ContainsKey(sColumn) = False Then
                          oColumns.Add(oColumn)
+
+                         If String.IsNullOrEmpty(sCellData) = False Then
+                              nCountOfNotNullValue += 1
+                         End If
                          sValues.Add(sColumn, sCellData)
                     End If
 
                Next
 
-
+               If nCountOfNotNullValue = 0 Then
+                    Return False
+               End If
 
                Dim oNewArray As New JArray
                Dim oNewNode As JToken
@@ -5628,58 +5583,61 @@ RetryUpdate:
 
                     'get the first object in the array to build values
                     oNewNode = poNode.Children.First.DeepClone
-                    For Each oProp As JProperty In oNewNode.Values
+                    For Each oNewNodeChild As JToken In oNewNode.Children
+                         For Each oProp As JProperty In oNewNodeChild
 
-                         If oProp.Value.Type = JTokenType.Array Then
-                              Dim bValue = ChildArrayOfObject(oProp, pnRow)
-                              If bValue = False And bHasValues = True Then
+                              If oProp.Value.Type = JTokenType.Array Then
+                                   Dim bValue = ChildArrayOfObject(oProp, pnRow)
+                                   If bValue = False And bHasValues = True Then
+                                   Else
+                                        bHasValues = bValue
+                                   End If
                               Else
-                                   bHasValues = bValue
-                              End If
-                         Else
 
-                              Dim sCol As List(Of String) = ExtractColumnDetails(oProp.ToString)
-                              If sCol.Count > 0 Then
+                                   Dim sCol As List(Of String) = ExtractColumnDetails(oProp.ToString)
+                                   If sCol.Count > 0 Then
 
-                                   Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
+                                        Dim oCP As clsColumnProperties = ExtractColumnProperties(sCol(0))
 
-                                   If oCP.IndexID <> String.Empty Then
+                                        If oCP.IndexID <> String.Empty Then
 
-                                        If sValues(oCP.SourceText).Split(",").Count > 0 AndAlso sValues(oCP.SourceText).Split(",").Count >= nCount Then
-                                             Dim oArray As New List(Of String)
-                                             If sValues(oCP.SourceText).Split(",")(nCount - 1).ToString.Contains("|") Then
-                                                  oArray = sValues(oCP.SourceText).Split(",")(nCount - 1).ToString.Split("|").ToList
-                                             End If
-
-                                             If oArray.Count >= CInt(oCP.IndexID) Then
-
-                                                  If oCP.Format <> String.Empty Then
-                                                       oArray(CInt(oCP.IndexID) - 1) = FormatCase(oCP.Format, oArray(CInt(oCP.IndexID) - 1))
+                                             If sValues(oCP.SourceText).Split(",").Count > 0 AndAlso sValues(oCP.SourceText).Split(",").Count >= nCount Then
+                                                  Dim oArray As New List(Of String)
+                                                  If sValues(oCP.SourceText).Split(",")(nCount - 1).ToString.Contains("|") Then
+                                                       oArray = sValues(oCP.SourceText).Split(",")(nCount - 1).ToString.Split("|").ToList
                                                   End If
 
-                                                  oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
+                                                  If oArray.Count >= CInt(oCP.IndexID) Then
+
+                                                       If oCP.Format <> String.Empty Then
+                                                            oArray(CInt(oCP.IndexID) - 1) = FormatCase(oCP.Format, oArray(CInt(oCP.IndexID) - 1))
+                                                       End If
+
+                                                       oProp.Value = oArray(CInt(oCP.IndexID) - 1).ToString
+                                                  End If
+                                             Else
+                                                  oProp.Value = sValues(oCP.SourceText).ToString.Split("|")(oCP.IndexID - 1)
                                              End If
+
                                         Else
-                                             oProp.Value = sValues(oCP.SourceText).ToString.Split("|")(oCP.IndexID - 1)
+
+                                             If sValues(oCP.SourceText).Split(",").Count > 0 AndAlso sValues(oCP.SourceText).Split(",").Count >= nCount Then
+                                                  oProp.Value = sValues(oCP.SourceText).Split(",")(nCount - 1).ToString
+                                             Else
+                                                  oProp.Value = sValues(oCP.SourceText).ToString
+                                             End If
+
                                         End If
 
-                                   Else
-
-                                        If sValues(oCP.SourceText).Split(",").Count > 0 AndAlso sValues(oCP.SourceText).Split(",").Count >= nCount Then
-                                             oProp.Value = sValues(oCP.SourceText).Split(",")(nCount - 1).ToString
-                                        Else
-                                             oProp.Value = sValues(oCP.SourceText).ToString
-                                        End If
 
                                    End If
 
-
                               End If
-
-                         End If
+                         Next
+                         oNewArray.Add(oNewNodeChild)
                     Next
 
-                    oNewArray.Add(oNewNode.Children.First)
+
 
 
                Next
@@ -6385,6 +6343,132 @@ RetryUpdate:
           End With
      End Sub
 
+     Private Sub OpenTempalte(psFileName As String, psSafeFileName As String)
+          Try
+               If File.Exists(psFileName) Then
+
+                    Dim oImportHeader As New clsDataImportHeader
+
+                    If psFileName.EndsWith(".dit") Then
+                         Dim oImportTemplate As clsDataImportTemplate = TryCast(LoadFile(psFileName), clsDataImportTemplate)
+                         If oImportTemplate IsNot Nothing Then
+                              With oImportHeader
+
+                                   .Name = oImportTemplate.Name
+                                   .ID = oImportTemplate.ID
+                                   .Notes = oImportTemplate.Notes
+                                   .Priority = oImportTemplate.Priority
+                                   .Group = oImportTemplate.Group
+                                   .WorkbookSheetName = oImportTemplate.WorkbookSheetName
+                                   .StatusCodeColumn = oImportTemplate.StatusCodeColumn
+                                   .StatusDescriptionColumn = oImportTemplate.StatusDescirptionColumn
+
+
+                                   Dim oTemplate As New clsDataImportTemplateV2
+                                   With oTemplate
+                                        .ImportType = oImportTemplate.ImportType
+                                        .Name = oImportTemplate.Name
+                                        .APIEndpoint = oImportTemplate.APIEndpoint
+                                        .APIEndpointSelect = oImportTemplate.APIEndpointSelect
+                                        .DTOObject = oImportTemplate.DTOObject
+                                        .EntityColumn = oImportTemplate.EntityColumn
+                                        .GraphQLQuery = oImportTemplate.GraphQLQuery
+                                        .GraphQLRootNode = oImportTemplate.GraphQLRootNode
+                                        .ImportColumns = oImportTemplate.ImportColumns
+                                        .ReturnCell = oImportTemplate.ReturnCell
+                                        .ReturnCellDTO = oImportTemplate.ReturnCellDTO
+                                        .ReturnNodeValue = oImportTemplate.ReturnNodeValue
+                                        .SelectQuery = oImportTemplate.SelectQuery
+                                        .StatusCodeColumn = oImportTemplate.StatusCodeColumn
+                                        .StatusDescriptionColumn = oImportTemplate.StatusDescirptionColumn
+                                        .UpdateQuery = oImportTemplate.UpdateQuery
+                                        .Validators = oImportTemplate.Validators
+                                        .Variables = oImportTemplate.Variables
+                                        .Position = oImportHeader.Templates.Count + 1
+                                   End With
+
+                                   .Templates.Add(oTemplate)
+                              End With
+                         End If
+                    Else
+                         oImportHeader = TryCast(LoadFile(psFileName), clsDataImportHeader)
+
+                    End If
+
+
+                    If oImportHeader IsNot Nothing Then
+
+                         UcProperties1.msFilePath = psFileName
+                         UcProperties1.msFileName = psSafeFileName
+
+                         For Each oTemplate As clsDataImportTemplateV2 In oImportHeader.Templates
+                              If oTemplate.Validators Is Nothing Then
+                                   oTemplate.Validators = New List(Of clsValidation)
+                              End If
+                         Next
+
+
+                         If goOpenWorkBook.Templates IsNot Nothing AndAlso goOpenWorkBook.Templates.Count > 0 Then
+
+                              oImportHeader.Priority = goOpenWorkBook.Templates.Max(Function(n) n.Priority) + 1
+
+                         Else
+
+                              oImportHeader.Priority = 1
+
+                         End If
+
+                         goOpenWorkBook.Templates.Add(oImportHeader)
+                         loadWorkbook()
+
+
+
+                    Else
+                         UpdateProgressStatus()
+                         MsgBox("Failed to load Data import template file")
+                    End If
+               End If
+          Catch ex As Exception
+               MsgBox(String.Format("Failed to load Data import template file: {0}", ex.message), "Warning...")
+          End Try
+     End Sub
+
+     Private Sub OpenWorkBook(psFileName As String, psSafeFileName As String)
+          Try
+               If File.Exists(psFileName) Then
+
+                    msFilePath = Path.GetDirectoryName(psFileName)
+                    msFileName = psSafeFileName
+                    txtWorkbookName.EditValue = msFileName
+
+                    UpdateProgressStatus("Opening Document", False)
+
+                    Dim oWorkbook As clsWorkbook = TryCast(LoadFile(psFileName), clsWorkbook)
+
+                    If oWorkbook IsNot Nothing Then
+
+                         goOpenWorkBook = oWorkbook
+                         goOpenWorkBook.WorkbookName = msFileName
+
+                         loadWorkbook()
+
+                         'check if there is a data excel sheet in the same folder with the same name
+                         If File.Exists(Replace(psFileName, gsWorkbookExtention, ".xlsx")) Then
+                              spreadsheetControl.LoadDocument(Replace(psFileName, gsWorkbookExtention, ".xlsx"))
+                         End If
+
+                         WriteRegistry("Last Accessed Workbook", psFileName)
+                         WriteRegistry("Last Accessed Workbook Safe Name", psSafeFileName)
+                    Else
+                         UpdateProgressStatus()
+                         MsgBox("Failed to load Data import workbook file",, "Warning...")
+                    End If
+
+               End If
+          Catch ex As Exception
+               MsgBox(String.Format("Failed to load Data import workbook file: {0}", ex.Message), "Warning...")
+          End Try
+     End Sub
 #End Region
 
 #Region "Objects"
@@ -6454,6 +6538,8 @@ RetryUpdate:
      Private Sub LcgImportProperties_Shown(sender As Object, e As EventArgs) Handles LcgImportProperties.Shown
           lueHierarchies.Properties.DataSource = goHierarchies
      End Sub
+
+
 
 
 

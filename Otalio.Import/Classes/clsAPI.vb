@@ -471,6 +471,51 @@ Public Class clsAPI
 
      End Function
 
+     Public Function CallWebEndpointUsingPatch(psEndPoint As String, psEntityID As String, psQuery As String, psDTOJson As String) As IRestResponse
+          Try
+               psEndPoint = ExtractSystemVariables(psEndPoint)
+               psQuery = ExtractSystemVariables(psQuery)
+               psDTOJson = ExtractSystemVariables(psDTOJson)
+
+               Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
+
+               If Not String.IsNullOrEmpty(psQuery) Then
+                    If psQuery.Contains("??") Then
+                         url = url + String.Format("{0}", Replace((psQuery.Trim), "??", String.Empty))
+                    Else
+                         url = url + String.Format("?{0}", (psQuery.Trim))
+                    End If
+
+
+               End If
+
+               Dim jsSerializer As JavaScriptSerializer = New JavaScriptSerializer()
+               Dim serialized = jsSerializer.Serialize(psDTOJson)
+               Dim oClient = New RestClient(url)
+
+
+
+               Dim oRequest = New RestRequest(Method.PATCH)
+
+               oRequest.AddParameter("format", "json", ParameterType.UrlSegment)
+               oRequest.AddParameter("Accepts", "application/json;charset=UTF-8", ParameterType.HttpHeader)
+               If psDTOJson IsNot Nothing Then
+                    oRequest.AddParameter("application/json", psDTOJson, ParameterType.RequestBody)
+               End If
+
+               Dim oResponse = ExecuteAPI(oClient, oRequest, False)
+
+               RaiseEvent APICallEvent(oRequest, oResponse)
+
+               Return oResponse
+          Catch ex As Exception
+               RaiseEvent ErrorEvent(ex)
+          End Try
+
+          Return Nothing
+
+     End Function
+
      Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
 
           Dim bFileContent As Byte() = Nothing

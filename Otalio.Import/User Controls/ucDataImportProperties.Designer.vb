@@ -24,6 +24,7 @@ Partial Class ucDataImportProperties
   Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.LayoutControl1 = New DevExpress.XtraLayout.LayoutControl()
+        Me.txtWorkSheetOverride = New DevExpress.XtraEditors.TextEdit()
         Me.chkIgnoreArray = New DevExpress.XtraEditors.CheckEdit()
         Me.txtHistory = New DevExpress.XtraEditors.MemoEdit()
         Me.ckIsMaster = New DevExpress.XtraEditors.CheckEdit()
@@ -172,6 +173,7 @@ Partial Class ucDataImportProperties
         Me.SplitterItem3 = New DevExpress.XtraLayout.SplitterItem()
         Me.LayoutControlItem28 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem30 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.LayoutControlItem31 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.lcgColumns = New DevExpress.XtraLayout.LayoutControlGroup()
         Me.LayoutControlItem23 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlGroup10 = New DevExpress.XtraLayout.LayoutControlGroup()
@@ -183,6 +185,7 @@ Partial Class ucDataImportProperties
         Me.SvgImageCollection1 = New DevExpress.Utils.SvgImageCollection(Me.components)
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
+        CType(Me.txtWorkSheetOverride.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkIgnoreArray.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtHistory.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ckIsMaster.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -277,6 +280,7 @@ Partial Class ucDataImportProperties
         CType(Me.SplitterItem3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem28, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem30, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem31, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.lcgColumns, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem23, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlGroup10, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -290,6 +294,7 @@ Partial Class ucDataImportProperties
         '
         'LayoutControl1
         '
+        Me.LayoutControl1.Controls.Add(Me.txtWorkSheetOverride)
         Me.LayoutControl1.Controls.Add(Me.chkIgnoreArray)
         Me.LayoutControl1.Controls.Add(Me.txtHistory)
         Me.LayoutControl1.Controls.Add(Me.ckIsMaster)
@@ -333,6 +338,16 @@ Partial Class ucDataImportProperties
         Me.LayoutControl1.Size = New System.Drawing.Size(1085, 703)
         Me.LayoutControl1.TabIndex = 0
         Me.LayoutControl1.Text = "LayoutControl1"
+        '
+        'txtWorkSheetOverride
+        '
+        Me.txtWorkSheetOverride.Location = New System.Drawing.Point(655, 187)
+        Me.txtWorkSheetOverride.Name = "txtWorkSheetOverride"
+        Me.txtWorkSheetOverride.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtWorkSheetOverride.Properties.Appearance.Options.UseFont = True
+        Me.txtWorkSheetOverride.Size = New System.Drawing.Size(208, 20)
+        Me.txtWorkSheetOverride.StyleController = Me.LayoutControl1
+        Me.txtWorkSheetOverride.TabIndex = 38
         '
         'chkIgnoreArray
         '
@@ -744,6 +759,7 @@ Partial Class ucDataImportProperties
         Me.gdTemplates.OptionsBehavior.Editable = False
         Me.gdTemplates.OptionsView.ShowDetailButtons = False
         Me.gdTemplates.OptionsView.ShowGroupPanel = False
+        Me.gdTemplates.SortInfo.AddRange(New DevExpress.XtraGrid.Columns.GridColumnSortInfo() {New DevExpress.XtraGrid.Columns.GridColumnSortInfo(Me.gcPosition, DevExpress.Data.ColumnSortOrder.Ascending)})
         '
         'gcName
         '
@@ -898,7 +914,7 @@ Partial Class ucDataImportProperties
         Me.icbType.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbType.Properties.Appearance.Options.UseFont = True
         Me.icbType.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Update", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Update", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upload File", "3", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Delete", "5", -1)})
+        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Update", "4", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Update", "2", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Import and Patch", "6", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upload File", "3", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Delete", "5", -1)})
         Me.icbType.Size = New System.Drawing.Size(556, 20)
         Me.icbType.StyleController = Me.LayoutControl1
         Me.icbType.TabIndex = 15
@@ -1191,7 +1207,7 @@ Partial Class ucDataImportProperties
         Me.txtAPIEndpoint.Name = "txtAPIEndpoint"
         Me.txtAPIEndpoint.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAPIEndpoint.Properties.Appearance.Options.UseFont = True
-        Me.txtAPIEndpoint.Size = New System.Drawing.Size(556, 20)
+        Me.txtAPIEndpoint.Size = New System.Drawing.Size(207, 20)
         Me.txtAPIEndpoint.StyleController = Me.LayoutControl1
         Me.txtAPIEndpoint.TabIndex = 4
         '
@@ -1311,13 +1327,13 @@ Partial Class ucDataImportProperties
         '
         Me.TabbedControlGroup2.Location = New System.Drawing.Point(0, 92)
         Me.TabbedControlGroup2.Name = "TabbedControlGroup2"
-        Me.TabbedControlGroup2.SelectedTabPage = Me.lcgColumns
+        Me.TabbedControlGroup2.SelectedTabPage = Me.LayoutControlGroup4
         Me.TabbedControlGroup2.Size = New System.Drawing.Size(1065, 591)
         Me.TabbedControlGroup2.TabPages.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.lcgColumns, Me.LayoutControlGroup10, Me.LayoutControlGroup4, Me.LayoutControlGroup12})
         '
         'LayoutControlGroup4
         '
-        Me.LayoutControlGroup4.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem21, Me.LayoutControlItem1, Me.LayoutControlItem10, Me.LayoutControlItem6, Me.LayoutControlItem7, Me.LayoutControlItem12, Me.lciReturnNodeName, Me.lciReturnNodeColumn, Me.lciEntityColumn, Me.lciFileLocationColumn, Me.LayoutControlItem14, Me.LayoutControlItem15, Me.LayoutControlItem20, Me.LayoutControlItem13, Me.TabbedControlGroup4, Me.LayoutControlItem22, Me.tcgTemplateObjects, Me.SplitterItem1, Me.SplitterItem2, Me.SplitterItem3, Me.LayoutControlItem28, Me.LayoutControlItem30})
+        Me.LayoutControlGroup4.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem21, Me.LayoutControlItem1, Me.LayoutControlItem10, Me.LayoutControlItem6, Me.LayoutControlItem7, Me.LayoutControlItem12, Me.lciReturnNodeName, Me.lciReturnNodeColumn, Me.lciEntityColumn, Me.lciFileLocationColumn, Me.LayoutControlItem14, Me.LayoutControlItem15, Me.LayoutControlItem20, Me.LayoutControlItem13, Me.TabbedControlGroup4, Me.LayoutControlItem22, Me.tcgTemplateObjects, Me.SplitterItem1, Me.SplitterItem2, Me.SplitterItem3, Me.LayoutControlItem28, Me.LayoutControlItem30, Me.LayoutControlItem31})
         Me.LayoutControlGroup4.Location = New System.Drawing.Point(0, 0)
         Me.LayoutControlGroup4.Name = "LayoutControlGroup4"
         Me.LayoutControlGroup4.Size = New System.Drawing.Size(1041, 544)
@@ -1337,7 +1353,7 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem1.Control = Me.txtAPIEndpoint
         Me.LayoutControlItem1.Location = New System.Drawing.Point(146, 48)
         Me.LayoutControlItem1.Name = "LayoutControlItem1"
-        Me.LayoutControlItem1.Size = New System.Drawing.Size(697, 24)
+        Me.LayoutControlItem1.Size = New System.Drawing.Size(348, 24)
         Me.LayoutControlItem1.Text = "API Endpoint:"
         Me.LayoutControlItem1.TextSize = New System.Drawing.Size(125, 13)
         '
@@ -1623,6 +1639,15 @@ Partial Class ucDataImportProperties
         Me.LayoutControlItem30.TextSize = New System.Drawing.Size(0, 0)
         Me.LayoutControlItem30.TextVisible = False
         '
+        'LayoutControlItem31
+        '
+        Me.LayoutControlItem31.Control = Me.txtWorkSheetOverride
+        Me.LayoutControlItem31.Location = New System.Drawing.Point(494, 48)
+        Me.LayoutControlItem31.Name = "LayoutControlItem31"
+        Me.LayoutControlItem31.Size = New System.Drawing.Size(349, 24)
+        Me.LayoutControlItem31.Text = "Worksheet Name:"
+        Me.LayoutControlItem31.TextSize = New System.Drawing.Size(125, 13)
+        '
         'lcgColumns
         '
         Me.lcgColumns.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem23})
@@ -1703,6 +1728,7 @@ Partial Class ucDataImportProperties
         Me.Size = New System.Drawing.Size(1085, 703)
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LayoutControl1.ResumeLayout(False)
+        CType(Me.txtWorkSheetOverride.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkIgnoreArray.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtHistory.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ckIsMaster.Properties, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1797,6 +1823,7 @@ Partial Class ucDataImportProperties
         CType(Me.SplitterItem3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem28, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem30, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem31, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.lcgColumns, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem23, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlGroup10, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1968,4 +1995,6 @@ Partial Class ucDataImportProperties
     Friend WithEvents LayoutControlItem29 As DevExpress.XtraLayout.LayoutControlItem
     Friend WithEvents chkIgnoreArray As DevExpress.XtraEditors.CheckEdit
     Friend WithEvents LayoutControlItem30 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents txtWorkSheetOverride As DevExpress.XtraEditors.TextEdit
+    Friend WithEvents LayoutControlItem31 As DevExpress.XtraLayout.LayoutControlItem
 End Class
