@@ -12,6 +12,7 @@ Public Class frmSelectorQuery
 
      Private Sub frmSelectorQuery_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
           Try
+               _ucSelectorQuery.ucSelectorQuery_Validating(Nothing, Nothing)
                Me.QueryText = _ucSelectorQuery._Query
           Catch ex As Exception
 

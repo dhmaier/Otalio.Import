@@ -1327,7 +1327,7 @@ Partial Class ucDataImportProperties
         '
         Me.TabbedControlGroup2.Location = New System.Drawing.Point(0, 92)
         Me.TabbedControlGroup2.Name = "TabbedControlGroup2"
-        Me.TabbedControlGroup2.SelectedTabPage = Me.LayoutControlGroup4
+        Me.TabbedControlGroup2.SelectedTabPage = Me.lcgColumns
         Me.TabbedControlGroup2.Size = New System.Drawing.Size(1065, 591)
         Me.TabbedControlGroup2.TabPages.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.lcgColumns, Me.LayoutControlGroup10, Me.LayoutControlGroup4, Me.LayoutControlGroup12})
         '

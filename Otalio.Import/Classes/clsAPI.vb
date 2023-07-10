@@ -25,11 +25,36 @@ Public Class clsAPI
      Private mnRefreshTokenCount As Long = 0
      Private mnTokenExpires As Long? = 0
      Private mnDefaultGetSize As Integer = 100
+     Private mnTokenRefeshTime As Integer = 10
+     Private mbLastLogIn As DateTime = Date.MinValue
+     Private mbLastRefreshToken As DateTime = Date.MinValue
 
-     Private moTimmer As New Timer
+     Private WithEvents moTimmer As New Timer
 
      Public Event APICallEvent(psRequest As RestRequest, psResponse As IRestResponse)
      Public Event ErrorEvent(psExcetpion As Exception)
+
+     Public ReadOnly Property RefreshInSeconds As Integer
+          Get
+               Try
+                    Return ((mnTokenExpires - mnTokenRefeshTime) - CInt(DateTime.Now.Subtract(mdResponseDateTime).TotalSeconds))
+               Catch ex As Exception
+                    Return 0
+               End Try
+
+          End Get
+     End Property
+     Public ReadOnly Property LastLogIn As DateTime
+          Get
+               Return mbLastLogIn
+          End Get
+     End Property
+
+     Public ReadOnly Property LastRefreshToken As DateTime
+          Get
+               Return mbLastRefreshToken
+          End Get
+     End Property
 
 
      Public Sub New()
@@ -39,9 +64,16 @@ Public Class clsAPI
 
      End Sub
 
+
+     Private Sub moTimmer_Tick(sender As Object, e As EventArgs) Handles moTimmer.Tick
+          RefreshIAMConnection()
+     End Sub
+
      Private Function ExecuteAPI(ByVal oClient As RestClient, ByVal oRequest As RestRequest, ByVal isLogin As Boolean) As IRestResponse
+          Dim nRetryAttempts = 0
           Try
 
+RetryAttempt:
                If isLogin Then
                     oRequest.AddHeader("Authorization", "Basic " & Base64Encode(goConnection._UserName & ":" + goConnection._UserPwd))
                Else
@@ -54,8 +86,17 @@ Public Class clsAPI
                     oClient.Authenticator = New RestSharp.Authenticators.HttpBasicAuthenticator(goConnection._HTTPUserName, goConnection._HTTPPassword)
                End If
 
+               Dim oResponse As IRestResponse = oClient.Execute(oRequest)
+               If oResponse.IsSuccessful = False And nRetryAttempts < 1 Then
+                    Select Case oResponse.StatusCode
+                         Case HttpStatusCode.Forbidden, HttpStatusCode.Unauthorized
+                              RefreshIAMConnection()
+                              nRetryAttempts += 1
+                              GoTo RetryAttempt
+                    End Select
+               End If
 
-               Return oClient.Execute(oRequest)
+               Return oResponse
 
           Catch ex As Exception
                RaiseEvent ErrorEvent(ex)
@@ -128,8 +169,11 @@ Public Class clsAPI
                          mnTokenExpires = CInt(moLoginResponse.SelectToken("expires_in"))
                          msAccessToken = moLoginResponse.SelectToken("access_token")
                          msRefreshToken = moLoginResponse.SelectToken("refresh_token")
+                         mnRefreshTokenCount = 0
+                         mbLastLogIn = Now
 
-                         If pbTestOnly = False Then
+
+                         If moTimmer.Enabled = False Then
                               moTimmer.Interval = 1000
                               moTimmer.Start()
                          End If
@@ -158,7 +202,7 @@ Public Class clsAPI
 
 
 
-                    If (mnTokenExpires - DateTime.Now.Subtract(mdResponseDateTime).TotalSeconds <= 10) Then
+                    If (mnTokenExpires - DateTime.Now.Subtract(mdResponseDateTime).TotalSeconds <= mnTokenRefeshTime) Then
 
                          Try
                               Dim url As String = String.Format("{0}iam/v1/sso/refresh", goConnection._ServerAddress)
@@ -183,9 +227,16 @@ Public Class clsAPI
                                    moRefreshResponse = json.SelectToken("responsePayload")
                                    mdResponseDateTime = DateTime.Now
                                    mnRefreshTokenCount += 1
-                                   mnTokenExpires = json.SelectToken("message").SelectToken("expires_in")
-                                   msAccessToken = json.SelectToken("message").SelectToken("access_token")
-                                   msRefreshToken = json.SelectToken("message").SelectToken("refresh_token")
+                                   mnTokenExpires = CInt(moRefreshResponse.SelectToken("expires_in"))
+                                   msAccessToken = moRefreshResponse.SelectToken("access_token")
+                                   msRefreshToken = moRefreshResponse.SelectToken("refresh_token")
+                                   mbLastRefreshToken = Now
+
+
+                                   If RefreshInSeconds <= 0 Then
+                                        'try to login again
+                                        LogIntoIAM()
+                                   End If
 
                               End If
 
@@ -202,6 +253,10 @@ Public Class clsAPI
                                    moTimmer.Stop()
                                    MessageBox.Show(ex.Message)
                               End If
+
+                              'try to login again
+                              LogIntoIAM()
+
                          End Try
                     Else
                     End If

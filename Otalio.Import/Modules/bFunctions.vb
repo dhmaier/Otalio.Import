@@ -15,6 +15,7 @@ Imports DevExpress.Utils.Svg
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports System.Globalization
+Imports System.Text.RegularExpressions
 
 Module bFunctions
 
@@ -384,8 +385,57 @@ Module bFunctions
      Public Function RemoveLastComma(psString As String) As String
           If psString.EndsWith(",") Then
                Return psString.Substring(0, psString.Length - 1)
+          Else
+               Return psString
           End If
      End Function
+
+     Function GetLastValue(textValue As String, separator As String) As String
+          If textValue.Contains(separator) Then
+               Dim values() As String = textValue.Split(separator)
+               Return values(values.Length - 1)
+          Else
+               Return textValue
+          End If
+     End Function
+
+
+     Function RemoveConditionFromRsqlQuery(query As String, valueToRemove As String) As String
+
+          Dim separators As String() = {" OR ", " AND ", ";", " or ", " and "}
+          Dim pattern As String = String.Join("|", separators.Select(Function(x) "(" + Regex.Escape(x) + ")"))
+
+          ' The Regex.Split method splits the string at the separators but includes the separators in the result
+          Dim parts = Regex.Split(query, pattern).ToList()
+
+          Dim conditions As New List(Of String)
+          For i = 0 To parts.Count - 2 Step 2
+               If Not parts(i).Contains(valueToRemove) Then
+                    conditions.Add(parts(i) & parts(i + 1))
+               End If
+          Next
+          ' Last part does not have a trailing separator, add it separately if it does not contain the value to remove
+          If parts.Count Mod 2 = 1 AndAlso Not parts.Last().Contains(valueToRemove) Then
+               conditions.Add(parts.Last())
+          End If
+
+          ' Reassemble the RSQL query
+          Dim newQuery As String = String.Join("", conditions)
+
+          ' Remove trailing logical operation
+          For Each oOperator In separators
+               If newQuery.EndsWith(oOperator) Then
+                    newQuery = newQuery.Substring(0, newQuery.Length - oOperator.Length)
+                    Exit For
+               End If
+          Next
+
+          Return newQuery.Trim()
+
+
+     End Function
+
+
 
      Public Function FormatCase(psFormat As String, psString As String) As String
           If String.IsNullOrEmpty(psString) = False Then

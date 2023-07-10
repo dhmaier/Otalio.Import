@@ -25,6 +25,7 @@
 
      Public Property gbIgnoreArrays As Boolean = False
 
+     Public Property goQueryMemory As New Dictionary(Of String, String)
 
      Public mbCancel As Boolean = False
 

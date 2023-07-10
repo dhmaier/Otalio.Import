@@ -34,6 +34,7 @@ Public Class frmMainMenu
      Private moOverlayLabel As OverlayTextPainter
      Private mnCounter As Integer = 0
      Private mbWaitFormShown As Boolean = False
+     Private WithEvents moTimer As New System.Windows.Forms.Timer
 
 
      Sub New()
@@ -53,6 +54,10 @@ Public Class frmMainMenu
           Me.InitSkinGallery()
 
           bbiPublish.Visibility = If(Debugger.IsAttached, DevExpress.XtraBars.BarItemVisibility.Always, DevExpress.XtraBars.BarItemVisibility.Never)
+
+          moTimer.Interval = 1000
+          moTimer.Start()
+
 
      End Sub
 
@@ -1506,7 +1511,7 @@ Public Class frmMainMenu
                                              oDTO = Replace(oDTO, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
                                         Next
 
-                                        Dim oResponse As IRestResponse
+                                        Dim oResponse As RestResponse
                                         Dim bIgnored As Boolean = False
 
 
@@ -1820,7 +1825,7 @@ ExitProces:
 
                                    If goHTTPServer.TestConnection(True, UcConnectionDetails1._Connection) Then
 
-                                        Dim oResponse As IRestResponse
+                                        Dim oResponse As RestResponse
                                         Dim sNodeLoad As String = String.Empty
                                         Dim nPages As Integer = 0
                                         Dim bPaged As Boolean = False
@@ -1958,7 +1963,7 @@ ExitProces:
                                                                            'call the end point to get the query results
 
 
-                                                                           oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, oTemplate.SelectQuery.ToString, , , nPage, -2)
+                                                                           oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, sSelectQuery, , , nPage, -2)
 
 
                                                                       End If
@@ -2837,13 +2842,23 @@ ExitProces:
 
      End Sub
 
-     Private Function AddSelectorQueries(poTemplate As clsDataImportTemplateV2, ByRef psQuery As String) As Boolean
+     Private Function AddSelectorQueries(poTemplate As clsDataImportTemplateV2, ByRef psQuery As String, Optional pbUseMemory As Boolean = False) As Boolean
+
+          If pbUseMemory Then
+               For Each pair As KeyValuePair(Of String, String) In goQueryMemory
+
+                    psQuery = Replace(psQuery, pair.Key, pair.Value)
+                    Return True
+               Next
+          End If
+
 
           If poTemplate.Selectors IsNot Nothing AndAlso poTemplate.Selectors.Count > 0 Then
 
                Dim bContainsSelector As Boolean = False
                For Each oSelector As clsSelectors In poTemplate.Selectors
                     If poTemplate.SelectQuery.Contains(oSelector.Variable) Then
+
                          bContainsSelector = True
                          Exit For
                     End If
@@ -3000,7 +3015,7 @@ ExitProces:
 
                                         oDTO = goHTTPServer.ExtractSystemVariables(oDTO)
 
-                                        Dim oResponse As IRestResponse
+                                        Dim oResponse As RestResponse
 
                                         Select Case oTemplate.ImportType
                                              Case "1"
@@ -3223,7 +3238,7 @@ ExitProces:
 
 
 
-                                        Dim oResponse As IRestResponse
+                                        Dim oResponse As RestResponse
                                         oResponse = goHTTPServer.CallWebEndpointUsingDeleteByID(oTemplate.APIEndpoint, sID, sQuery)
 
 
@@ -3412,7 +3427,7 @@ ExitProces:
 
      End Function
 
-     Public Sub APICallEvent(psRequest As RestRequest, psResponse As IRestResponse)
+     Public Sub APICallEvent(psRequest As RestRequest, psResponse As RestResponse)
           Try
 
                If Me.UcConnectionDetails1.chkEnableLoging.Checked Then
@@ -3511,16 +3526,22 @@ ExitProces:
                     Dim oColumnas As New List(Of String)
                     For nCol = 0 To .Columns.LastUsedIndex
                          Dim oColumn As Column = .Columns.Item(nCol)
+                         Debug.Print(String.Format("ID : {0} column : {1}", nCol, oColumn.Heading))
+
+
+
                          Dim oColumnText As String = .Cells(String.Format("{0}1", oColumn.Heading)).Value.TextValue
 
-                         If String.IsNullOrEmpty(oColumnText) = False AndAlso oColumnas.Contains(oColumnText) = False Then
-                              oColumnas.Add(oColumnText)
-                         End If
+                         If String.IsNullOrEmpty(oColumnText) = False Then
+                              If String.IsNullOrEmpty(oColumnText) = False AndAlso oColumnas.Contains(oColumnText) = False Then
+                                   oColumnas.Add(oColumnText)
+                              End If
 
-                         If poImportHeader.ImportColumns.Where(Function(n) n.ColumnName = oColumn.Heading).Count = 0 Then
-                              If .Cells(String.Format("{0}1", oColumn.Heading)).Tag Is Nothing Then
-                                   .Cells(String.Format("{0}1", oColumn.Heading)).Tag = .Cells(String.Format("{0}1", oColumn.Heading)).Value.TextValue
-                                   Debug.Print(.Cells(String.Format("{0}1", oColumn.Heading)).Tag)
+                              If poImportHeader.ImportColumns.Where(Function(n) n.ColumnName = oColumn.Heading).Count = 0 Then
+                                   If .Cells(String.Format("{0}1", oColumn.Heading)).Tag Is Nothing Then
+                                        .Cells(String.Format("{0}1", oColumn.Heading)).Tag = .Cells(String.Format("{0}1", oColumn.Heading)).Value.TextValue
+                                        Debug.Print(.Cells(String.Format("{0}1", oColumn.Heading)).Tag)
+                                   End If
                               End If
                          End If
                     Next
@@ -4163,7 +4184,7 @@ RetryUpdate:
                          If oReturnValuesStore.ContainsKey(sQuery) = False Then
 
                               'call the end point to get the query results
-                              Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuery)
+                              Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuery)
                               Dim json As JObject = JObject.Parse(oResponse.Content)
                               If json IsNot Nothing Then
 
@@ -4247,7 +4268,7 @@ RetryUpdate:
                     Call UpdateProgressStatus(String.Format("Preloading data on {0}", poValidation.APIEndpoint))
 
                     'call the end point to get the query results
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuerySelect, poValidation.Sort, sColumnFilter)
+                    Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuerySelect, poValidation.Sort, sColumnFilter)
                     Dim json As JObject = JObject.Parse(oResponse.Content)
                     If json IsNot Nothing Then
 
@@ -4410,7 +4431,7 @@ RetryUpdate:
 
                                         If poValidation.PreloadData = False Then
                                              'call the end p6oint to get the query results
-                                             Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQuery.Trim, poValidation.Sort)
+                                             Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQuery.Trim, poValidation.Sort)
                                              Dim json As JObject = JObject.Parse(oResponse.Content)
                                              If json IsNot Nothing Then
 
@@ -4561,7 +4582,7 @@ RetryUpdate:
                               If oReturnValuesStore.ContainsKey(sQuery) = False Then
 
                                    'call the end point to get the query results
-                                   Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingPost(poValidation.APIEndpoint, sQuery)
+                                   Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingPost(poValidation.APIEndpoint, sQuery)
                                    Dim json As JObject = JObject.Parse(oResponse.Content)
                                    If json IsNot Nothing Then
 
@@ -4663,7 +4684,7 @@ RetryUpdate:
                          If oReturnValuesStore.ContainsKey(String.Format("{0}-{1}", sAPIEndpoint, sQuery)) = False Then
 
                               'call the end point to get the query results
-                              Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingDelete(sAPIEndpoint, sQuery)
+                              Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingDelete(sAPIEndpoint, sQuery)
                               Dim json As JObject = JObject.Parse(oResponse.Content)
                               'If json IsNot Nothing Then
 
@@ -4748,7 +4769,7 @@ RetryUpdate:
                     Call UpdateProgressStatus(String.Format("Preloading data on {0}", poValidation.APIEndpoint))
 
                     'call the end point to get the query results
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuerySelect, poValidation.Sort, sColumnFilter)
+                    Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingGet(poValidation.APIEndpoint, poValidation.Headers, sQuerySelect, poValidation.Sort, sColumnFilter)
                     Dim json As JObject = JObject.Parse(oResponse.Content)
                     If json IsNot Nothing Then
 
@@ -4946,7 +4967,7 @@ RetryUpdate:
                                              If poValidation.PreloadData = False Then
 
                                                   'call the end point to get the query results
-                                                  Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQueryUpdated)
+                                                  Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingGet(sAPIEndpoint, poValidation.Headers, sQueryUpdated)
                                                   Dim json As JObject = JObject.Parse(oResponse.Content)
                                                   If json IsNot Nothing Then
 
@@ -6189,7 +6210,7 @@ RetryUpdate:
                     Call UpdateProgressStatus(String.Format("Downloading Logs"))
 
 
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/logs", "", String.Format("eventType=={0}{1}{0};logEntities.objectId=={0}{2}{0}", ControlChars.Quote, "DATA_IMPORT", Replace(psTemplateID, "-", "")), "utcDatetime,desc", "", 0, 2000)
+                    Dim oResponse As RestResponse = goHTTPServer.CallWebEndpointUsingGet("metadata/v1/logs", "", String.Format("eventType=={0}{1}{0};logEntities.objectId=={0}{2}{0}", ControlChars.Quote, "DATA_IMPORT", Replace(psTemplateID, "-", "")), "utcDatetime,desc", "", 0, 2000)
                     Dim oListLogs As New List(Of clsLogs)
 
 
@@ -6294,53 +6315,60 @@ RetryUpdate:
 
      Public Sub ApplyExcelStyleTemplate(pbResetFormating As Boolean)
 
-          With spreadsheetControl.ActiveWorksheet
-               spreadsheetControl.BeginUpdate()
+          Try
 
-               If .Columns.LastUsedIndex > 0 And .Rows.LastUsedIndex > 0 Then
-                    Dim oRange As DevExpress.Spreadsheet.CellRange = .Range.FromLTRB(0, 0, .Columns.LastUsedIndex, .Rows.LastUsedIndex)
+               With spreadsheetControl.ActiveWorksheet
+                    spreadsheetControl.BeginUpdate()
 
-                    'get the data as a excel table
-                    If .Tables.Count = 0 Then
-                         Dim oTable As Table = .Tables.Add(oRange, True)
-                    Else
+                    If .Columns.LastUsedIndex > 0 And .Rows.LastUsedIndex > 0 Then
+                         Dim oRange As DevExpress.Spreadsheet.CellRange = .Range.FromLTRB(0, 0, .Columns.LastUsedIndex, .Rows.LastUsedIndex)
 
-                         If .Tables(0).Range.RightColumnIndex <> .Columns.LastUsedIndex Or .Tables(0).Range.BottomRowIndex <> .Rows.LastUsedIndex Then
-                              .Tables(0).Range = .Range.FromLTRB(0, 0, .Columns.LastUsedIndex, .Rows.LastUsedIndex)
+                         'get the data as a excel table
+                         If .Tables.Count = 0 Then
+                              Dim oTable As Table = .Tables.Add(oRange, True)
+                         Else
+
+                              If .Tables(0).Range.RightColumnIndex <> .Columns.LastUsedIndex Or .Tables(0).Range.BottomRowIndex <> .Rows.LastUsedIndex Then
+                                   .Tables(0).Range = .Range.FromLTRB(0, 0, .Columns.LastUsedIndex, .Rows.LastUsedIndex)
+                              End If
+
                          End If
 
+                         If pbResetFormating Then
+                              oRange.Borders.RemoveBorders()
+                              oRange.Font.Bold = False
+                              oRange.Font.Italic = False
+                              oRange.FillColor = Color.Transparent
+                         End If
+
+                         oRange.AutoFitColumns
                     End If
 
-                    If pbResetFormating Then
-                         oRange.Borders.RemoveBorders()
-                         oRange.Font.Bold = False
-                         oRange.Font.Italic = False
-                         oRange.FillColor = Color.Transparent
-                    End If
+                    If .Tables.Count > 0 Then
 
-                    oRange.AutoFitColumns
-               End If
+                         ' Access the workbook's collection of table styles.
+                         Dim tableStyles As TableStyleCollection = spreadsheetControl.Document.TableStyles
 
-               If .Tables.Count > 0 Then
+                         If pbResetFormating Then
+                              ' Apply the table style to the existing table.
+                              .Tables(0).Style = tableStyles("TableStyleMedium6")
 
-                    ' Access the workbook's collection of table styles.
-                    Dim tableStyles As TableStyleCollection = spreadsheetControl.Document.TableStyles
+                         Else
+                              ' Apply the table style to the existing table.
+                              .Tables(0).Style = tableStyles("TableStyleMedium7")
 
-                    If pbResetFormating Then
-                         ' Apply the table style to the existing table.
-                         .Tables(0).Style = tableStyles("TableStyleMedium6")
+                         End If
 
-                    Else
-                         ' Apply the table style to the existing table.
-                         .Tables(0).Style = tableStyles("TableStyleMedium7")
 
                     End If
 
 
-               End If
+               End With
 
+          Catch ex As Exception
+          Finally
                spreadsheetControl.EndUpdate()
-          End With
+          End Try
      End Sub
 
      Private Sub OpenTempalte(psFileName As String, psSafeFileName As String)
@@ -6540,13 +6568,20 @@ RetryUpdate:
      End Sub
 
 
+#End Region
+
+#Region "Timmers"
+
+     Private Sub moTimer_Tick(sender As Object, e As EventArgs) Handles moTimer.Tick
+
+
+          bsiTokenRefesh.Caption = String.Format("Token Refresh: {0:n0}(s)", goHTTPServer.RefreshInSeconds)
+          bsiLastLogIn.Caption = String.Format("Last Login: {0}", goHTTPServer.LastLogIn.ToString("hh:mm:ss"))
+          bsiLastToken.Caption = String.Format("Last Refresh: {0}", goHTTPServer.LastRefreshToken.ToString("hh:mm:ss"))
 
 
 
-
-
-
-
+     End Sub
 
 
 #End Region
