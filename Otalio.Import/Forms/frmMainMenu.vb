@@ -12,12 +12,13 @@ Imports System.Linq
 Imports System.Net
 Imports System.Threading
 Imports System.IO.Compression
-
+Imports System.ComponentModel
 
 Public Class frmMainMenu
 
 
 #Region "Form"
+     Private Const csLayoutFileName As String = "gridLayouts.xml"
 
      Private Const EventLogHistory As Integer = 10000
      Private msFilePath As String = String.Empty
@@ -37,12 +38,13 @@ Public Class frmMainMenu
      Private WithEvents moTimer As New System.Windows.Forms.Timer
 
 
+
      Sub New()
 
           ' Open a Splash Screen
           SplashScreenManager.ShowForm(Me, GetType(frmSplashScreen), True, True, False)
           SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Initializing")
-          Thread.Sleep(1000)
+
 
           Me.miButtonImage = CreateButtonImage()
           Me.miHotButtonImage = CreateHotButtonImage()
@@ -58,6 +60,21 @@ Public Class frmMainMenu
           moTimer.Interval = 1000
           moTimer.Start()
 
+          SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Loading Data Connections")
+
+          UcProperties1.ImportHeader = New clsDataImportHeader
+          UcConnectionDetails1.LoadSettingFile(True, False)
+          SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Connecting to last Server")
+          UcConnectionDetails1.TestConnection(goConnection, True)
+
+          siInfo.Caption = String.Format("Version:{0}", My.Application.Info.Version)
+          lueHierarchies.Properties.DataSource = goHierarchies
+
+          SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Adding hooks")
+
+          AddHandler goHTTPServer.APICallEvent, AddressOf APICallEvent
+          AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
+
 
      End Sub
 
@@ -68,24 +85,6 @@ Public Class frmMainMenu
 
      Private Sub InitSkinGallery()
           SkinHelper.InitSkinGallery(rgbiSkins, True)
-     End Sub
-
-     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
-
-          SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Loading Data Connections")
-
-          UcProperties1.ImportHeader = New clsDataImportHeader
-          UcConnectionDetails1.LoadSettingFile(True)
-          siInfo.Caption = String.Format("Version:{0}", My.Application.Info.Version)
-          lueHierarchies.Properties.DataSource = goHierarchies
-
-          SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Adding hooks")
-
-          AddHandler goHTTPServer.APICallEvent, AddressOf APICallEvent
-          AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
-
-
-
      End Sub
 
      Private Function CreateButtonImage() As Image
@@ -106,8 +105,17 @@ Public Class frmMainMenu
                UpdateProgressStatus()
           End If
 
+          LoadGridLayouts(Me, csLayoutFileName)
+
+
      End Sub
 
+     Private Sub frmMainMenu_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+
+          SaveGridLayouts(Me, csLayoutFileName)
+
+
+     End Sub
 
 #End Region
 
@@ -240,32 +248,37 @@ Public Class frmMainMenu
                     If nRowID >= 0 Then
                          Dim oItem As clsDataImportHeader = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportHeader)
 
-                         Dim bApply As Boolean = True
+                         If oItem.ReadOnlyImport = False Then
+                              Dim bApply As Boolean = True
 
-                         If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
-                              Select Case MsgBox(String.Format("This import template {0} requires a valid {1} selected.{2}{2}Select Abort to exit, retry to move to next template and ignore to ignore all errors.", oItem.Name, IIf(oItem.IsShipEntity, "Ship", "Hierarchy"), vbNewLine), vbAbortRetryIgnore, "Warning...")
-                                   Case MsgBoxResult.Abort : Exit Sub
-                                   Case MsgBoxResult.Ignore : bIgnore = True : bApply = False
-                                   Case MsgBoxResult.Retry : bApply = False
-                              End Select
+                              If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
+                                   Select Case MsgBox(String.Format("This import template {0} requires a valid {1} selected.{2}{2}Select Abort to exit, retry to move to next template and ignore to ignore all errors.", oItem.Name, IIf(oItem.IsShipEntity, "Ship", "Hierarchy"), vbNewLine), vbAbortRetryIgnore, "Warning...")
+                                        Case MsgBoxResult.Abort : Exit Sub
+                                        Case MsgBoxResult.Ignore : bIgnore = True : bApply = False
+                                        Case MsgBoxResult.Retry : bApply = False
+                                   End Select
+                              End If
+
+                              If bApply Then
+                                   '   Select Case TryCast(oItem, clsDataImportHeader).ImportType
+                                   'Case "XX"
+                                   '          ImportFiles(TryCast(oItem, clsDataImportHeader))
+                                   '          Application.DoEvents()
+                                   '     Case "XXX"
+                                   '          DeleteRecords(TryCast(oItem, clsDataImportHeader))
+                                   '          Application.DoEvents()
+                                   '     Case Else
+                                   ImportData(TryCast(oItem, clsDataImportHeader))
+                                   Application.DoEvents()
+
+                                   ' End Select
+                              End If
+
                          End If
 
-                         If bApply Then
-                              '   Select Case TryCast(oItem, clsDataImportHeader).ImportType
-                              'Case "XX"
-                              '          ImportFiles(TryCast(oItem, clsDataImportHeader))
-                              '          Application.DoEvents()
-                              '     Case "XXX"
-                              '          DeleteRecords(TryCast(oItem, clsDataImportHeader))
-                              '          Application.DoEvents()
-                              '     Case Else
-                              ImportData(TryCast(oItem, clsDataImportHeader))
-                              Application.DoEvents()
-
-                              ' End Select
-                         End If
-
+                         MsgBox(String.Format("This import template {0} is Read Only and cannot be imported.", oItem.Name), vbAbortRetryIgnore, "Warning...")
                     End If
+
                Next
 
           End If
@@ -290,7 +303,10 @@ Public Class frmMainMenu
                For Each nRowID As Integer In gdWorkbook.GetSelectedRows
                     If nRowID >= 0 Then
                          Dim oItem As clsDataImportHeader = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportHeader)
-                         If oItem IsNot Nothing Then
+                         If oItem IsNot Nothing AndAlso oItem.ReadOnlyImport = False Then
+
+
+
                               Try
 
                                    Dim bApply As Boolean = True
@@ -327,9 +343,17 @@ Public Class frmMainMenu
 
      Private Sub bbiFormatJsonCode_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiFormatJsonCode.ItemClick
           Try
-               UcProperties1.txtDataTransportObject.Text = JValue.Parse(UcProperties1.txtDataTransportObject.Text).ToString(Newtonsoft.Json.Formatting.Indented)
+
+               Dim sResult As String = ValidateJson(UcProperties1.recDTO.Text)
+               If sResult <> "OK" Then
+                    ShowErrorForm(sResult)
+                    Exit Sub
+               End If
+               UcProperties1.linkedItemsCountDTO = 0
+               UcProperties1.recDTO.Text = JValue.Parse(UcProperties1.recDTO.Text).ToString(Newtonsoft.Json.Formatting.Indented)
+
           Catch ex As Exception
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
      End Sub
 
@@ -703,8 +727,10 @@ Public Class frmMainMenu
 
      Private Sub bbiPublish_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiPublish.ItemClick
 
-          Dim sPath As String = ""
+          Dim sPath As String = ReadRegistry("Last Published Folder", "")
           Dim sFileName As String = String.Format("{0} {1}", msFileName, goOpenWorkBook.WorkbookVersion)
+
+
 
           'first save everything
           bbiSaveAll_ItemClick(Me, e)
@@ -712,10 +738,8 @@ Public Class frmMainMenu
           Using oFolder As New FolderBrowserDialog
 
                oFolder.Description = "Please select a folder to save template in"
-               oFolder.SelectedPath = msFilePath
-               If String.IsNullOrEmpty(goConnectionHistory.LastUsedWorkbookFolder) = False Then
-                    oFolder.SelectedPath = goConnectionHistory.LastUsedWorkbookFolder
-               End If
+               oFolder.SelectedPath = sPath
+
 
                If oFolder.ShowDialog = DialogResult.OK Then
                     sPath = oFolder.SelectedPath
@@ -732,7 +756,7 @@ Public Class frmMainMenu
           oZipFile.CreateEntryFromFile(msFilePath & "\" & msFileName, msFileName)
           oZipFile.Dispose()
 
-
+          WriteRegistry("Last Published Folder", sPath)
 
      End Sub
 
@@ -926,6 +950,27 @@ Public Class frmMainMenu
                UcProperties1.gridValidators.RefreshDataSource()
 
           End If
+     End Sub
+
+     Private Sub bbiRestoreGridsLayouts_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiRestoreGridsLayouts.ItemClick
+
+          Try
+               Dim xmlFilePath As String = csLayoutFileName
+
+               If File.Exists(xmlFilePath) Then
+                    File.Delete(xmlFilePath)
+                    Dim result As DialogResult = MessageBox.Show("The layout file has been deleted. To restore the layout, the application needs to be restarted. Do you want to restart now?", "Restart Application", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+                    If result = DialogResult.Yes Then
+                         Application.Restart()
+                    End If
+               Else
+                    ShowErrorForm($"File not found: {xmlFilePath}", New FileNotFoundException())
+               End If
+
+          Catch ex As Exception
+               ShowErrorForm("Error deleting layout file", ex)
+          End Try
      End Sub
 
 #End Region
@@ -1336,7 +1381,7 @@ Public Class frmMainMenu
                Return bHasErrors
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
                SetEditExcelMode(False, poImportHeader)
                EnableCancelButton(False)
@@ -1347,9 +1392,8 @@ Public Class frmMainMenu
           End Try
      End Function
 
-
-
      Public Sub ImportData(poImportHeader As clsDataImportHeader)
+
 
 
           Dim mbIgnore As Boolean = False
@@ -1372,7 +1416,7 @@ Public Class frmMainMenu
                With spreadsheetControl
                     If .Document.Worksheets.Contains(poImportHeader.WorkbookSheetName) = False Then
                          UpdateProgressStatus()
-                         MsgBox(String.Format("Cannot find worksheet {0}", poImportHeader.WorkbookSheetName))
+                         ShowErrorForm(String.Format("Cannot find worksheet {0}", poImportHeader.WorkbookSheetName))
                          Exit Sub
                     End If
                End With
@@ -1443,10 +1487,13 @@ Public Class frmMainMenu
                                         Call ShowWaitDialogWithCancelCaption(String.Format("Template {0} - {1}", oTemplate.Position, oTemplate.Name))
 
                                         Dim sTemplateDTO As String = oTemplate.DTOObjectFormated
+
                                         sTemplateDTO = RemoveCommands(sTemplateDTO)
                                         sTemplateDTO = Replace(sTemplateDTO, vbNewLine, String.Empty)
 
-
+                                        sTemplateDTO = UpdateFormattingConditions(sTemplateDTO, "code", beiCodeFormat.EditValue.ToString, False)
+                                        sTemplateDTO = UpdateFormattingConditions(sTemplateDTO, "translations", beiDescriptionFormat.EditValue.ToString, True)
+                                        sTemplateDTO = UpdateFormattingConditions(sTemplateDTO, "description", beiDescriptionFormat.EditValue.ToString, False)
 
 
 
@@ -1456,6 +1503,7 @@ Public Class frmMainMenu
                                         If sTemplateDTO IsNot Nothing Then
 
                                              If sTemplateDTO.ToString.Trim.StartsWith("{") Then
+
                                                   Dim jsnDTO As JObject = JObject.Parse(sTemplateDTO)
 
                                                   gbIgnoreArrays = oTemplate.IgnoreArray
@@ -1475,9 +1523,15 @@ Public Class frmMainMenu
 
 
                                                   oDTO = jsnDTO.ToString
+
+                                                  'remove empty properties
+                                                  oDTO = CleanJson(oDTO)
+
                                              Else
                                                   oDTO = sTemplateDTO
                                              End If
+
+
 
 
                                              gbIgnoreArrays = False
@@ -1500,7 +1554,13 @@ Public Class frmMainMenu
                                              Dim sCellAddress As String = String.Format("{0}{1}", sColumn, nRow)
                                              sAPIEndpoint = Replace(sAPIEndpoint, String.Format("<!{0}!>", sColumn), .Cells(sCellAddress).Value.ToString.Trim)
                                         Next
+
                                         oDTO = goHTTPServer.ExtractSystemVariables(oDTO)
+
+                                        If String.IsNullOrEmpty(oDTO) = False AndAlso oTemplate.RemoveEmptyAndNull = True Then
+                                             oDTO = RemoveEmptyOrNullProperties(oDTO)
+                                        End If
+
                                         If String.IsNullOrEmpty(oTemplate.ReturnCellDTO) = False AndAlso oDTO IsNot Nothing Then
                                              .Cells(String.Format("{0}{1}", oTemplate.ReturnCellDTO, nRow)).Value = goHTTPServer.ExtractSystemVariables(oDTO.ToString)
                                         End If
@@ -1513,7 +1573,6 @@ Public Class frmMainMenu
 
                                         Dim oResponse As RestResponse
                                         Dim bIgnored As Boolean = False
-
 
                                         Select Case oTemplate.ImportType
                                              Case "1"
@@ -1758,7 +1817,7 @@ ExitProces:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
 
                SetEditExcelMode(False, poImportHeader)
@@ -1774,6 +1833,7 @@ ExitProces:
 
 
      End Sub
+
      Public Sub QueryandLoad(poImportHeader As clsDataImportHeader)
 
 
@@ -1874,7 +1934,15 @@ ExitProces:
                                         Else
                                              If AddSelectorQueries(oTemplate, sSelectQuery) = False Then Exit Sub
                                              Call UpdateProgressStatus(String.Format("Requesting Data from Server {0} on API {1} ", goConnection._ServerAddress, sEndpointSelect, vbNewLine))
-                                             oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, sSelectQuery,,,, -2)
+
+                                             If sEndpointSelect.StartsWith("POST:") = True Then
+                                                  Dim sUpdatedEndpoint As String = sEndpointSelect.Remove(0, 5).ToString.Trim
+
+                                                  oResponse = goHTTPServer.CallWebEndpointUsingPost(sUpdatedEndpoint, String.Empty, sSelectQuery,,,, -2)
+                                             Else
+                                                  oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, sSelectQuery,,,, -2)
+                                             End If
+
                                              sNodeLoad = "responsePayload.content"
                                              bPaged = True
 
@@ -1962,9 +2030,13 @@ ExitProces:
 
                                                                            'call the end point to get the query results
 
+                                                                           If sEndpointSelect.StartsWith("POST:") = True Then
+                                                                                Dim sUpdatedEndpoint As String = sEndpointSelect.Remove(0, 5).ToString.Trim
+                                                                                oResponse = goHTTPServer.CallWebEndpointUsingPost(sUpdatedEndpoint, String.Empty, sSelectQuery, , , nPage, -2)
+                                                                           Else
+                                                                                oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, sSelectQuery, , , nPage, -2)
 
-                                                                           oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, sSelectQuery, , , nPage, -2)
-
+                                                                           End If
 
                                                                       End If
 
@@ -2009,6 +2081,8 @@ ExitProces:
 
                                                                                                Dim oJsn As JToken = oRow
                                                                                                Dim oNodes As List(Of String) = ocolumn.Parent.Split(".").ToList
+
+                                                                                               Debug.Print(sNodeName)
 
                                                                                                Select Case ocolumn.Type
                                                                                                     Case JTokenType.Property
@@ -2235,7 +2309,7 @@ ExitProces:
 
                                                                            Catch ex As Exception
                                                                                 UpdateProgressStatus()
-                                                                                MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+                                                                                ShowErrorForm(ex)
                                                                            End Try
 
                                                                            If mbCancel Then
@@ -2829,7 +2903,7 @@ ExitProces:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
                SetEditExcelMode(False, poImportHeader)
                EnableCancelButton(False)
@@ -3115,7 +3189,7 @@ ExitProces:
                Next
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
 
                Call HideShowColumns(poImportHeader, mbHideCalulationColumns)
@@ -3317,7 +3391,7 @@ ExitProces:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
 
                Call HideShowColumns(poImportHeader, mbHideCalulationColumns)
@@ -3593,7 +3667,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
                spreadsheetControl.EndUpdate()
                HideShowColumns(poImportHeader, True)
@@ -3629,7 +3703,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           Finally
 
           End Try
@@ -3658,7 +3732,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -3710,7 +3784,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -3873,7 +3947,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -3987,7 +4061,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -4024,7 +4098,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -4040,7 +4114,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -4062,7 +4136,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -4088,7 +4162,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -4112,7 +4186,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
           Return String.Empty
@@ -4897,7 +4971,7 @@ RetryUpdate:
                                    If sColumnOrginalValues.ToString.Contains(",") Then
 
                                         sColumnListAddress.Add(sColumnfromList)
-                                        sListValues = .Cells(sCellAddress).Value.ToString.Split(",").ToList
+                                        sListValues = .Cells(sCellAddress).Value.ToString.Split({","}, StringSplitOptions.RemoveEmptyEntries).ToList
 
                                    Else
                                         sQuery = Replace(sQuery, String.Format("<!{0}!>", sColumnfromList), .Cells(sCellAddress).Value.ToString.Trim)
@@ -4992,10 +5066,12 @@ RetryUpdate:
                                                             Else
 
                                                                  Try
-                                                                      sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
+                                                                      If CInt(json.SelectToken("responsePayload.numberOfElements").ToString) > 0 Then
+                                                                           sReturnValue = json.SelectToken(poValidation.ReturnNodeValue.ToString).ToString
 
-                                                                      'check if there is formating
-                                                                      sReturnValue = FormatCase(poValidation.Formatted.ToString, sReturnValue)
+                                                                           'check if there is formating
+                                                                           sReturnValue = FormatCase(poValidation.Formatted.ToString, sReturnValue)
+                                                                      End If
 
                                                                  Catch ex As Exception
                                                                       sReturnValue = String.Format("Error:{0}", ex.Message)
@@ -5233,7 +5309,7 @@ RetryUpdate:
                End Select
 
           Catch ex As Exception
-               '     MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               '     ShowErrorForm(ex)
           End Try
 
      End Function
@@ -5308,7 +5384,7 @@ RetryUpdate:
                End If
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
 
           End Try
      End Function
@@ -5354,7 +5430,7 @@ RetryUpdate:
 
                                    Catch ex As Exception
                                         UpdateProgressStatus()
-                                        MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+                                        ShowErrorForm(ex)
 
                                    End Try
 
@@ -5428,7 +5504,7 @@ RetryUpdate:
 
                                         '     Catch ex As Exception
                                         '          UpdateProgressStatus()
-                                        '          MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+                                        '          ShowErrorForm(ex)
                                         '     End Try
                                         'Else
 
@@ -5535,7 +5611,7 @@ RetryUpdate:
 
                                         '     Catch ex As Exception
                                         '          UpdateProgressStatus()
-                                        '          MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+                                        '          ShowErrorForm(ex)
 
                                         '     End Try
                                         'End If
@@ -5553,7 +5629,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
      End Function
 
@@ -5571,7 +5647,7 @@ RetryUpdate:
                     Dim oColumn As clsColumnProperties = ExtractColumnProperties(sColumn)
                     Dim sCellData As String = spreadsheetControl.ActiveWorksheet.Cells(String.Format("{0}{1}", oColumn.CellName, pnRow)).Value.ToString.Trim
 
-                    If sCellData.EndsWith(",") Then
+                    If IsPropertyArray(poNode) Then
                          If nCountOfRecords < sCellData.Split(",", 9999, StringSplitOptions.RemoveEmptyEntries).Count Then
                               nCountOfRecords = sCellData.Split(",", 9999, StringSplitOptions.RemoveEmptyEntries).Count
                          End If
@@ -5670,7 +5746,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
      End Function
@@ -5709,7 +5785,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
      End Function
@@ -5851,6 +5927,7 @@ RetryUpdate:
 
 
      End Sub
+
      Public Sub UpdateProgressStatus(Optional psStatus As String = "", Optional mbCacelEnabled As Boolean = True)
 
           Try
@@ -6028,6 +6105,16 @@ RetryUpdate:
                labVersion.Text = goOpenWorkBook.WorkbookVersion
                txtWorkbookName.EditValue = goOpenWorkBook.WorkbookName
 
+               With goOpenWorkBook
+                    If String.IsNullOrEmpty(.CodeFormat) Then
+                         .CodeFormat = "U"
+                    End If
+
+                    If String.IsNullOrEmpty(.DescriptionFormat) Then
+                         .DescriptionFormat = "P"
+                    End If
+               End With
+
                With txtMajor
                     .DataBindings.Clear()
                     .DataBindings.Add(New Binding("EditValue", goOpenWorkBook, "MajorVersion"))
@@ -6041,6 +6128,16 @@ RetryUpdate:
                With txtBuild
                     .DataBindings.Clear()
                     .DataBindings.Add(New Binding("EditValue", goOpenWorkBook, "SaveVersion"))
+               End With
+
+               With beiCodeFormat
+                    .DataBindings.Clear()
+                    .DataBindings.Add(New Binding("EditValue", goOpenWorkBook, "CodeFormat"))
+               End With
+
+               With beiDescriptionFormat
+                    .DataBindings.Clear()
+                    .DataBindings.Add(New Binding("EditValue", goOpenWorkBook, "DescriptionFormat"))
                End With
 
                lueHierarchies.Properties.DataSource = goHierarchies
@@ -6083,7 +6180,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
 
           End Try
 
@@ -6296,7 +6393,7 @@ RetryUpdate:
 
           Catch ex As Exception
                UpdateProgressStatus()
-               MsgBox(String.Format("Error code {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+               ShowErrorForm(ex)
           End Try
 
 
@@ -6457,7 +6554,7 @@ RetryUpdate:
                     End If
                End If
           Catch ex As Exception
-               MsgBox(String.Format("Failed to load Data import template file: {0}", ex.message), "Warning...")
+               MsgBox(String.Format("Failed to load Data import template file: {0}", ex.Message), "Warning...")
           End Try
      End Sub
 
@@ -6551,8 +6648,8 @@ RetryUpdate:
                          End With
                     End If
 
-
-
+                    bbiImportExcel.Enabled = oItem.ReadOnlyImport = 0
+                    bbiValidateData.Enabled = oItem.ReadOnlyImport = 0
                End If
           End If
 
@@ -6565,6 +6662,14 @@ RetryUpdate:
 
      Private Sub LcgImportProperties_Shown(sender As Object, e As EventArgs) Handles LcgImportProperties.Shown
           lueHierarchies.Properties.DataSource = goHierarchies
+     End Sub
+
+     Private Sub beiCodeFormat_EditValueChanged(sender As Object, e As EventArgs) Handles beiCodeFormat.EditValueChanged
+          goOpenWorkBook.CodeFormat = beiCodeFormat.EditValue.ToString
+     End Sub
+
+     Private Sub beiDescriptionFormat_EditValueChanged(sender As Object, e As EventArgs) Handles beiDescriptionFormat.EditValueChanged
+          goOpenWorkBook.DescriptionFormat = beiDescriptionFormat.EditValue.ToString
      End Sub
 
 
@@ -6585,5 +6690,18 @@ RetryUpdate:
 
 
 #End Region
+
+     Public Sub TestErrorFormWithException()
+          Try
+               ' Intentionally cause a divide by zero exception
+               Dim zero As Integer = 0
+               Dim result As Integer = 1 / zero
+          Catch ex As Exception
+               ' Display the frmError form with the exception details
+               Dim errorForm As New frmError(ex)
+               errorForm.ShowDialog()
+          End Try
+     End Sub
+
 
 End Class

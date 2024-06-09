@@ -19,6 +19,24 @@ Imports System.Text.RegularExpressions
 
 Module bFunctions
 
+     Public Function IsPropertyArray(ByVal jsonString As String, ByVal propertyName As String) As Boolean
+          Dim jsonObject As JObject = JObject.Parse(jsonString)
+          Dim propertyNode As JToken = jsonObject.SelectToken(propertyName)
+
+          If propertyNode IsNot Nothing AndAlso propertyNode.Type = JTokenType.Array Then
+               Return True
+          End If
+
+          Return False
+     End Function
+     Public Function IsPropertyArray(ByVal propertyNode As JProperty) As Boolean
+          If propertyNode IsNot Nothing AndAlso propertyNode.Value.Type = JTokenType.Array Then
+               Return True
+          End If
+
+          Return False
+     End Function
+
      Public Function GetAppPath(psFile As String, Optional psSystemLocation As String = "") As String
 
           If psSystemLocation = "" Then
@@ -442,8 +460,8 @@ Module bFunctions
                Select Case psFormat
                     Case "U" : Return psString.ToUpper
                     Case "L" : Return psString.ToLower
-                    Case "P" : Return StrConv(psString, VbStrConv.ProperCase)
-                    Case "T" : Return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(psString.ToLower)
+                    Case "P" : Return ToProperCase(psString)
+                    Case "T" : Return ToTitleCase(psString)
                     Case "FD"
                          If IsDate(psString) Then
                               'If CDate(psString).TimeOfDay.TotalSeconds = 0 And CDate(psString).Date <> Date.MinValue Then
@@ -472,6 +490,37 @@ Module bFunctions
           End If
 
      End Function
+
+     ' Function to convert a sentence to Proper Case
+     Public Function ToProperCase(sentence As String) As String
+          Return StrConv(sentence, VbStrConv.ProperCase)
+     End Function
+
+     ' Function to convert a sentence to Title Case
+     Public Function ToTitleCase(sentence As String) As String
+          Dim textInfo As TextInfo = CultureInfo.CurrentCulture.TextInfo
+          Dim words As String() = sentence.ToLower().Split(" "c)
+          Dim smallWords As String() = {
+        "a", "an", "the", "and", "but", "or", "nor", "for", "so", "yet",
+        "at", "by", "for", "in", "of", "on", "to", "up", "with",
+        "about", "across", "after", "against", "along", "among", "around", "as", "before", "behind", "below",
+        "beneath", "beside", "between", "beyond", "during", "except", "from", "inside", "into", "near",
+        "off", "onto", "out", "outside", "over", "past", "through", "under", "until", "within", "without"
+    }
+
+          For i As Integer = 0 To words.Length - 1
+               If i = 0 OrElse i = words.Length - 1 OrElse Not smallWords.Contains(words(i)) Then
+                    words(i) = textInfo.ToTitleCase(words(i))
+               Else
+                    words(i) = words(i)
+               End If
+          Next
+
+          Return String.Join(" ", words)
+     End Function
+
+
+
 
      Public Function ExtractQueryParameters(psQuery As String) As List(Of String)
 
@@ -695,4 +744,51 @@ Module bFunctions
           Return oValidation
 
      End Function
+
+
+     Public Function RemoveEmptyPropertiesRecursively(ByVal jToken As JToken) As JToken
+          If jToken.Type = JTokenType.Object Then
+               Dim copy As JObject = New JObject()
+               For Each prop As JProperty In jToken.Children(Of JProperty)()
+                    Dim childToken As JToken = RemoveEmptyPropertiesRecursively(prop.Value)
+                    If Not (childToken.Type = JTokenType.String AndAlso String.IsNullOrEmpty(childToken.ToString())) Then
+                         copy.Add(prop.Name, childToken)
+                    End If
+               Next
+               Return copy
+          ElseIf jToken.Type = JTokenType.Array Then
+               Dim newArray As JArray = New JArray()
+               For Each child As JToken In jToken.Children()
+                    Dim childToken As JToken = RemoveEmptyPropertiesRecursively(child)
+                    newArray.Add(childToken)
+               Next
+               Return newArray
+          Else
+               Return jToken
+          End If
+     End Function
+
+     Public Function CleanJson(ByVal json As String) As String
+          Dim parsedJson As JToken = JToken.Parse(json)
+          Dim cleanedJson As JToken = RemoveEmptyPropertiesRecursively(parsedJson)
+          Return cleanedJson.ToString()
+     End Function
+
+
+
+     Public Sub ShowErrorForm(errorMessage As String)
+          Dim errorForm As New frmError(errorMessage)
+          errorForm.ShowDialog()
+     End Sub
+
+     Public Sub ShowErrorForm(errorMessage As Exception)
+          Dim errorForm As New frmError(errorMessage)
+          errorForm.ShowDialog()
+     End Sub
+
+     Public Sub ShowErrorForm(errorMessagetext As String, errorMessage As Exception)
+          Dim errorForm As New frmError(errorMessagetext, errorMessage)
+          errorForm.ShowDialog()
+     End Sub
+
 End Module

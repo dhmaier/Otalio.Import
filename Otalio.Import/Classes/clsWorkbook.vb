@@ -8,6 +8,7 @@ Public Class clsWorkbook
 
      Private moImportHeaders As New List(Of clsDataImportHeader)
 
+
      Public Property Templates As List(Of clsDataImportHeader)
           Get
                Return moImportHeaders
@@ -22,6 +23,8 @@ Public Class clsWorkbook
      Public Property MinorVersion As Integer = 0
      Public Property SaveVersion As Integer = 0
      Public Property SelectedHierarchy As String = ""
+     Public Property CodeFormat As String = "U"
+     Public Property DescriptionFormat As String = "P"
 
      Public ReadOnly Property WorkbookVersion As String
           Get

@@ -251,7 +251,7 @@ Partial Class ucSelectors
         Me.icbType.Properties.Appearance.Options.UseFont = True
         Me.icbType.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.icbType.Properties.DropDownRows = 10
-        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Check Box List", "CHECKBOXLIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Date", "DATE", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("List", "LIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Lookup Value", "LOOKUP", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Text", "TEXT", -1)})
+        Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Boolean", "BOOLEAN", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Check Box List", "CHECKBOXLIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Date", "DATE", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("List", "LIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Lookup Value", "LOOKUP", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Predefined List", "CHECKBOXPREDEFINEDLIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Text", "TEXT", -1)})
         Me.icbType.Size = New System.Drawing.Size(481, 20)
         Me.icbType.StyleController = Me.LayoutControl1
         Me.icbType.TabIndex = 7

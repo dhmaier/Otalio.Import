@@ -18,6 +18,7 @@ Public Class clsDataImportHeader
      Public Property StatusCodeColumn As String = ""
      Public Property StatusDescriptionColumn As String = ""
      Public Property HistoryLog As String = ""
+     Public Property ReadOnlyImport As Integer = 0
 
 
      Public ReadOnly Property SortedName As String

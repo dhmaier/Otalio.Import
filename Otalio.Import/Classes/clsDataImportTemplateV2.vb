@@ -38,6 +38,7 @@ Public Class clsDataImportTemplateV2
      Public Property IsEnabled As Boolean = True
      Public Property ImportType As String = "2"
      Public Property IgnoreArray As Boolean = False
+     Public Property RemoveEmptyAndNull As Boolean = False
      Public Property WorkbookSheetName As String = ""
 
 

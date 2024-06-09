@@ -171,4 +171,12 @@ Public Class ucSelectors
           '     moValidation.ReturnNodeValue = cbReturnNode.EditValue
           'End If
      End Sub
+
+     Public Sub LoadFromJsonfile()
+          moSelector.LoadSelectorFromJsonFile()
+     End Sub
+
+     Public Sub ExportToJsonFile()
+          moSelector.ExportToJson()
+     End Sub
 End Class

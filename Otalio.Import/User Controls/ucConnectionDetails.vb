@@ -72,7 +72,7 @@ Public Class ucConnectionDetails
 
      End Sub
 
-     Public Function LoadSettingFile(Optional pbSilent As Boolean = False) As Boolean
+     Public Function LoadSettingFile(Optional pbSilent As Boolean = False, Optional pbTestConnection As Boolean = True) As Boolean
 
           Dim sFullPath As String = GetAppPath(gsSettingFileNameOld)
 
@@ -149,10 +149,10 @@ Public Class ucConnectionDetails
                     gridHistory.DataSource = goConnectionHistory.ConnectionHistory
                     gdHistory.BestFitColumns()
 
-                    goHTTPServer.TestConnection(pbSilent,, True)
-
-                    moLastUsedConnection = goConnectionHistory.ActiveConnection.Clone
-
+                    If pbTestConnection Then
+                         goHTTPServer.TestConnection(pbSilent,, True)
+                         moLastUsedConnection = goConnectionHistory.ActiveConnection.Clone
+                    End If
 
                Else
                     MsgBox("Failed to load connection file")
@@ -242,9 +242,9 @@ Public Class ucConnectionDetails
 
      End Sub
 
-     Private Sub TestConnection(poConnection As clsConnectionDetails)
+     Public Sub TestConnection(poConnection As clsConnectionDetails, Optional pbSilent As Boolean = False)
           If poConnection IsNot Nothing Then
-               goHTTPServer.TestConnection(False, poConnection, True)
+               goHTTPServer.TestConnection(pbSilent, poConnection, True)
           End If
      End Sub
 

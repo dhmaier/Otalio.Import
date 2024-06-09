@@ -26,4 +26,17 @@ Public Class frmSelectorQuery
           Me._ucSelectorQuery._Query = QueryText
 
      End Sub
+
+     Private Sub frmSelectorQuery_Shown(sender As Object, e As EventArgs) Handles Me.Shown
+          Me.Refresh()
+          Application.DoEvents()
+          AdjustFormHeight()
+     End Sub
+
+     Public Sub AdjustFormHeight()
+          Dim userControlHeight As Integer = Me._ucSelectorQuery.CalculateUserControlHeight
+          Me.Height = userControlHeight + Me.Padding.Top + Me.Padding.Bottom + Me._ucSelectorQuery.Margin.Top + Me._ucSelectorQuery.Margin.Bottom + 40
+
+     End Sub
+
 End Class
