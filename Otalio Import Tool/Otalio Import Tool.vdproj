@@ -5636,15 +5636,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Otalio Import Tool"
-        "ProductCode" = "8:{BED87717-2C22-4BFB-8D43-4BECDF8A4FD2}"
-        "PackageCode" = "8:{2439A7ED-9E53-4CDE-8A9E-2C9F5096A537}"
+        "ProductCode" = "8:{118F86DA-93E2-4D64-A8BA-BC30834B9635}"
+        "PackageCode" = "8:{CFFD94C9-DDE3-480C-B4B2-6D5425E9CD2C}"
         "UpgradeCode" = "8:{CFCE9679-B568-4BB7-A408-F6070D15900C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:FALSE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.2.0"
+        "ProductVersion" = "8:2.2.1"
         "Manufacturer" = "8:Otalio GmbH"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -6186,7 +6186,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1E29FEC5B78244F38E737BE64B66C747"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:\\\\Mac\\Dropbox\\Code\\source\\repos\\Otalio.Import - Swan\\Otalio.Import\\obj\\Debug\\Otalio.Import.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3E6B556F61F6470DB6D37F8A2C35C27A"

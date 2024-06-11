@@ -286,7 +286,38 @@ Module bJson
      End Function
 
 
+     ''' <summary>
+     ''' Adds or updates "page" and "size" nodes in a JSON object.
+     ''' </summary>
+     ''' <param name="jsonString">The JSON string.</param>
+     ''' <param name="pageValue">The value to set for the "page" node.</param>
+     ''' <param name="sizeValue">The value to set for the "size" node.</param>
+     ''' <returns>The updated JSON string.</returns>
+     Public Function AddOrUpdateNodesInJsonPageAndSize(jsonString As String, pageValue As Integer, sizeValue As Integer) As String
+          Try
+               ' Parse the JSON string into a JObject
+               Dim jsonObject As JObject = JObject.Parse(jsonString)
 
+               ' Add or update the "page" node
+               If jsonObject("page") Is Nothing Then
+                    jsonObject.Add("page", pageValue)
+               Else
+                    jsonObject("page") = pageValue
+               End If
+
+               ' Add or update the "size" node
+               If jsonObject("size") Is Nothing Then
+                    jsonObject.Add("size", sizeValue)
+               Else
+                    jsonObject("size") = sizeValue
+               End If
+
+               ' Return the updated JSON string
+               Return jsonObject.ToString()
+          Catch ex As Exception
+               Throw New Exception("An error occurred while adding or updating nodes in the JSON.", ex)
+          End Try
+     End Function
 
 
 End Module

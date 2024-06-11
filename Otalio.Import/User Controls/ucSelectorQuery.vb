@@ -266,6 +266,15 @@ Public Class ucSelectorQuery
      Private Sub LoadPredefinedList(poEditor As ImageComboBoxEdit, poSelector As clsSelectors)
           Try
                Dim predefinedValues As String = poSelector.Query
+               Dim defaultValue As String = Nothing
+
+               ' Check if there's a :DEFAULT=value instruction
+               If predefinedValues.Contains(":DEFAULT=") Then
+                    Dim parts As String() = predefinedValues.Split(New String() {":DEFAULT="}, StringSplitOptions.None)
+                    predefinedValues = parts(0).Trim()
+                    defaultValue = parts(1).Trim()
+               End If
+
                Dim values As String() = predefinedValues.Split(","c)
 
                poEditor.Properties.Items.Clear()
@@ -273,10 +282,18 @@ Public Class ucSelectorQuery
                For Each value In values
                     poEditor.Properties.Items.Add(New DevExpress.XtraEditors.Controls.ImageComboBoxItem(value.Trim(), value.Trim()))
                Next
+
+               ' Preselect the default value if specified
+               If defaultValue IsNot Nothing Then
+                    poEditor.SelectedItem = poEditor.Properties.Items.Cast(Of DevExpress.XtraEditors.Controls.ImageComboBoxItem)().
+                FirstOrDefault(Function(item) item.Value.ToString() = defaultValue)
+               End If
+
           Catch ex As Exception
                MsgBox(String.Format("Error loading predefined list: {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
      End Sub
+
 
      ''' <summary>
      ''' Handles the EditValueChanged event for linked combo boxes.
@@ -388,11 +405,10 @@ Public Class ucSelectorQuery
                          Case "CheckEdit"
                               If TryCast(oControl, CheckEdit).EditValue IsNot Nothing Then
                                    svalue = TryCast(oControl, CheckEdit).EditValue.ToString()
-                                   If String.IsNullOrEmpty(svalue) Then
-                                        _Query = RemoveProperty(_Query, oSelector.Variable)
-                                   End If
                               End If
-
+                              If String.IsNullOrEmpty(svalue) Then
+                                   _Query = RemoveProperty(_Query, oSelector.Variable)
+                              End If
                     End Select
 
                     If Not String.IsNullOrEmpty(svalue) Then

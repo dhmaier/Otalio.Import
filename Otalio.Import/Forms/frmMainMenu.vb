@@ -62,6 +62,7 @@ Public Class frmMainMenu
 
           SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Loading Data Connections")
 
+
           UcProperties1.ImportHeader = New clsDataImportHeader
           UcConnectionDetails1.LoadSettingFile(True, False)
           SplashScreenManager.Default.SendCommand(frmSplashScreen.SplashScreenCommand.SetProgress, "Connecting to last Server")
@@ -75,6 +76,12 @@ Public Class frmMainMenu
           AddHandler goHTTPServer.APICallEvent, AddressOf APICallEvent
           AddHandler goHTTPServer.ErrorEvent, AddressOf ErrorEvent
 
+
+          With labelSystem
+               .Text = goConnection.Key
+          End With
+
+          AddHandler UcConnectionDetails1.ChangeOfConnection, AddressOf UpdateSystemLabel
 
      End Sub
 
@@ -1936,6 +1943,9 @@ ExitProces:
                                              Call UpdateProgressStatus(String.Format("Requesting Data from Server {0} on API {1} ", goConnection._ServerAddress, sEndpointSelect, vbNewLine))
 
                                              If sEndpointSelect.StartsWith("POST:") = True Then
+
+                                                  goHTTPServer.LogEvent($"User is using search query {sSelectQuery}", "Query", poImportHeader.Name, poImportHeader.ID)
+
                                                   Dim sUpdatedEndpoint As String = sEndpointSelect.Remove(0, 5).ToString.Trim
 
                                                   oResponse = goHTTPServer.CallWebEndpointUsingPost(sUpdatedEndpoint, String.Empty, sSelectQuery,,,, -2)
@@ -2032,6 +2042,7 @@ ExitProces:
 
                                                                            If sEndpointSelect.StartsWith("POST:") = True Then
                                                                                 Dim sUpdatedEndpoint As String = sEndpointSelect.Remove(0, 5).ToString.Trim
+
                                                                                 oResponse = goHTTPServer.CallWebEndpointUsingPost(sUpdatedEndpoint, String.Empty, sSelectQuery, , , nPage, -2)
                                                                            Else
                                                                                 oResponse = goHTTPServer.CallWebEndpointUsingGet(sEndpointSelect, String.Empty, sSelectQuery, , , nPage, -2)
@@ -2868,10 +2879,9 @@ ExitProces:
                                                   Dim nIndex As Integer = oResponse.Content.ToString.IndexOf("stackTrace")
                                                   Dim sMessage As String = oResponse.Content.ToString.Substring(0, IIf(nIndex > 0, nIndex, oResponse.Content.ToString.Length))
                                                   UpdateProgressStatus()
-                                                  Select Case MsgBox(String.Format("Error in select query.{0}{0}{1}{0}{0}Error message will be copied to your clipboard.", vbNewLine, sMessage), MsgBoxStyle.OkOnly)
-                                                       Case MsgBoxResult.Ok
-                                                            Clipboard.SetText(sMessage)
-                                                  End Select
+
+                                                  ShowErrorForm(String.Format("Error in select query.{0}{0}{1}{0}{0}", vbNewLine, sMessage))
+
                                              End If
 
                                         End If
@@ -6593,6 +6603,10 @@ RetryUpdate:
           Catch ex As Exception
                MsgBox(String.Format("Failed to load Data import workbook file: {0}", ex.Message), "Warning...")
           End Try
+     End Sub
+
+     Private Sub UpdateSystemLabel(psConnection As clsConnectionDetails)
+          labelSystem.Text = psConnection.Key
      End Sub
 #End Region
 

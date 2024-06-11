@@ -6,6 +6,8 @@ Imports System.Linq
 
 Public Class ucConnectionDetails
 
+     Public Event ChangeOfConnection(psConnection As clsConnectionDetails)
+
      Private moConnection As New clsConnectionDetails
      Private moLastUsedConnection As New clsConnectionDetails
 
@@ -23,6 +25,7 @@ Public Class ucConnectionDetails
 
                     BindConnection()
 
+                    RaiseEvent ChangeOfConnection(value)
                End If
           End Set
      End Property
@@ -55,13 +58,14 @@ Public Class ucConnectionDetails
 
           moLastUsedConnection = moConnection
           goConnection = moConnection
-
+          RaiseEvent ChangeOfConnection(goConnection)
           SaveFile(GetAppPath(gsSettingFileName), goConnectionHistory)
           gridHistory.RefreshDataSource()
           gdHistory.BestFitColumns()
           gdHistory.ExpandAllGroups()
 
           goHTTPServer.TestConnection(True,, True)
+
 
 
      End Sub
@@ -180,6 +184,8 @@ Public Class ucConnectionDetails
                     BindConnection()
 
                     goHTTPServer.TestConnection(False,, True)
+
+                    RaiseEvent ChangeOfConnection(moConnection)
                End If
 
           End If
