@@ -198,7 +198,7 @@ Public Class ucSelectorQuery
      End Sub
 
      ''' <summary>
-     ''' Loads data into an ImageComboBoxEdit control.
+     ''' Loads data into an ImageComboBoxEdit control with pagination and error handling.
      ''' </summary>
      ''' <param name="poEditor">The editor control.</param>
      ''' <param name="poSelector">The selector.</param>
@@ -207,28 +207,72 @@ Public Class ucSelectorQuery
           Try
                ' DONT populate if linked to a selector
                If Not psQuery.Contains("<<!") Then
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poSelector.APIEndpoint, String.Empty, psQuery)
-                    Dim jsServerResponse As JObject = JObject.Parse(oResponse.Content)
-                    Dim oObject As JToken = jsServerResponse.SelectToken("responsePayload.content")
-
                     Dim sID As String = poSelector.NodeID.Substring(poSelector.NodeID.IndexOf("]"c) + 2)
                     Dim sText As String = poSelector.NodeText.Substring(poSelector.NodeID.IndexOf("]"c) + 2)
 
+                    Dim pageSize As Integer = 100
+                    Dim currentPage As Integer = 0
+                    Dim totalPages As Integer = 1 ' Initial assumption
+
                     poEditor.Properties.Items.Clear()
 
-                    If oObject IsNot Nothing Then
-                         For Each oRow As JObject In oObject
-                              poEditor.Properties.Items.Add(New DevExpress.XtraEditors.Controls.ImageComboBoxItem With {.Description = FormatCase("T", oRow.SelectToken(sText)).Trim, .Value = oRow.SelectToken(sID)})
-                         Next
-                    End If
+                    Do While currentPage < totalPages
+                         ' Call the endpoint with pagination parameters
+                         Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poSelector.APIEndpoint, String.Empty, psQuery, pnPage:=currentPage, pnSize:=pageSize)
+
+                         ' Check if the response is successful
+                         If oResponse.StatusCode <> Net.HttpStatusCode.OK Then
+                              MsgBox(String.Format("Error loading combo box: HTTP {0} - {1}", oResponse.StatusCode, oResponse.StatusDescription))
+                              Exit Sub
+                         End If
+
+                         ' Parse the response content and handle JSON parsing errors
+                         Dim jsServerResponse As JObject
+                         Try
+                              jsServerResponse = JObject.Parse(oResponse.Content)
+                         Catch jsonEx As JsonReaderException
+                              MsgBox(String.Format("Error parsing JSON response: {0} - {1}{2}{3}", jsonEx.HResult, jsonEx.Message, vbNewLine, jsonEx.StackTrace))
+                              Exit Sub
+                         End Try
+
+                         Dim oObject As JToken = jsServerResponse.SelectToken("responsePayload.content")
+
+                         ' Calculate total pages if it's the first call and total count is available
+                         If currentPage = 0 Then
+                              Dim totalCount As Integer
+                              Try
+                                   totalCount = jsServerResponse.SelectToken("responsePayload.totalElements").Value(Of Integer)
+                                   totalPages = Math.Ceiling(totalCount / pageSize)
+                              Catch ex As Exception
+                                   MsgBox(String.Format("Error retrieving total count: {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+                                   Exit Sub
+                              End Try
+                         End If
+
+                         If oObject IsNot Nothing Then
+                              For Each oRow As JObject In oObject
+                                   poEditor.Properties.Items.Add(New DevExpress.XtraEditors.Controls.ImageComboBoxItem With {
+                            .Description = FormatCase("T", oRow.SelectToken(sText)).Trim(),
+                            .Value = oRow.SelectToken(sID)
+                        })
+                              Next
+                         Else
+                              MsgBox("No data found in response payload.")
+                              Exit Sub
+                         End If
+
+                         currentPage += 1
+                    Loop
                End If
           Catch ex As Exception
                MsgBox(String.Format("Error loading combo box: {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
      End Sub
 
+
+
      ''' <summary>
-     ''' Loads data into a CheckedComboBoxEdit control.
+     ''' Loads data into a CheckedComboBoxEdit control with pagination and error handling.
      ''' </summary>
      ''' <param name="poEditor">The editor control.</param>
      ''' <param name="poSelector">The selector.</param>
@@ -241,22 +285,65 @@ Public Class ucSelectorQuery
                     Dim sText As String = poSelector.NodeText.Substring(poSelector.NodeID.IndexOf("]"c) + 2)
                     Dim sSort As String = If(sText.Contains("."), GetLastValue(sText, "."), sText)
 
-                    Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poSelector.APIEndpoint, String.Empty, psQuery, sSort)
-                    Dim jsServerResponse As JObject = JObject.Parse(oResponse.Content)
-                    Dim oObject As JToken = jsServerResponse.SelectToken("responsePayload.content")
+                    Dim pageSize As Integer = 100
+                    Dim currentPage As Integer = 0
+                    Dim totalPages As Integer = 1 ' Initial assumption
 
                     poEditor.Properties.Items.Clear()
 
-                    If oObject IsNot Nothing Then
-                         For Each oRow As JObject In oObject
-                              poEditor.Properties.Items.Add(New DevExpress.XtraEditors.Controls.CheckedListBoxItem With {.Description = FormatCase("T", oRow.SelectToken(sText)).Trim, .Value = oRow.SelectToken(sID)})
-                         Next
-                    End If
+                    Do While currentPage < totalPages
+                         ' Call the endpoint with pagination parameters
+                         Dim oResponse As IRestResponse = goHTTPServer.CallWebEndpointUsingGet(poSelector.APIEndpoint, String.Empty, psQuery, sSort, pnPage:=currentPage, pnSize:=pageSize)
+
+                         ' Check if the response is successful
+                         If oResponse.StatusCode <> Net.HttpStatusCode.OK Then
+                              MsgBox(String.Format("Error loading checked combo box: HTTP {0} - {1}", oResponse.StatusCode, oResponse.StatusDescription))
+                              Exit Sub
+                         End If
+
+                         ' Parse the response content and handle JSON parsing errors
+                         Dim jsServerResponse As JObject
+                         Try
+                              jsServerResponse = JObject.Parse(oResponse.Content)
+                         Catch jsonEx As JsonReaderException
+                              MsgBox(String.Format("Error parsing JSON response: {0} - {1}{2}{3}", jsonEx.HResult, jsonEx.Message, vbNewLine, jsonEx.StackTrace))
+                              Exit Sub
+                         End Try
+
+                         Dim oObject As JToken = jsServerResponse.SelectToken("responsePayload.content")
+
+                         ' Calculate total pages if it's the first call and total count is available
+                         If currentPage = 0 Then
+                              Dim totalCount As Integer
+                              Try
+                                   totalCount = jsServerResponse.SelectToken("responsePayload.totalElements").Value(Of Integer)
+                                   totalPages = Math.Ceiling(totalCount / pageSize)
+                              Catch ex As Exception
+                                   MsgBox(String.Format("Error retrieving total count: {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
+                                   Exit Sub
+                              End Try
+                         End If
+
+                         If oObject IsNot Nothing Then
+                              For Each oRow As JObject In oObject
+                                   poEditor.Properties.Items.Add(New DevExpress.XtraEditors.Controls.CheckedListBoxItem With {
+                            .Description = FormatCase("T", oRow.SelectToken(sText)).Trim(),
+                            .Value = oRow.SelectToken(sID)
+                        })
+                              Next
+                         Else
+                              MsgBox("No data found in response payload.")
+                              Exit Sub
+                         End If
+
+                         currentPage += 1
+                    Loop
                End If
           Catch ex As Exception
                MsgBox(String.Format("Error loading checked combo box: {0} - {1}{2}{3}", ex.HResult, ex.Message, vbNewLine, ex.StackTrace))
           End Try
      End Sub
+
 
      ''' <summary>
      ''' Loads a predefined list into an ImageComboBoxEdit control.
@@ -412,11 +499,16 @@ Public Class ucSelectorQuery
                     End Select
 
                     If Not String.IsNullOrEmpty(svalue) Then
-                         _Query = Replace(_Query, oSelector.Variable, svalue)
-                         If Not goQueryMemory.ContainsKey(oSelector.Variable) Then
-                              goQueryMemory.Add(oSelector.Variable, svalue)
+
+                         If String.IsNullOrEmpty(oSelector.Formatted) = False Then
+                              svalue = FormatCase(oSelector.Formatted, svalue)
                          End If
-                    End If
+
+                         _Query = Replace(_Query, oSelector.Variable, svalue)
+                              If Not goQueryMemory.ContainsKey(oSelector.Variable) Then
+                                   goQueryMemory.Add(oSelector.Variable, svalue)
+                              End If
+                         End If
                Next
           Catch ex As Exception
                ShowErrorForm(ex)

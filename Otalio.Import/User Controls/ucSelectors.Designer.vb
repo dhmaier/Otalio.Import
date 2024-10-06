@@ -50,6 +50,8 @@ Partial Class ucSelectors
         Me.LayoutControlItem8 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem11 = New DevExpress.XtraLayout.LayoutControlItem()
         Me.LayoutControlItem14 = New DevExpress.XtraLayout.LayoutControlItem()
+        Me.icbFormat = New DevExpress.XtraEditors.ImageComboBoxEdit()
+        Me.LayoutControlItem6 = New DevExpress.XtraLayout.LayoutControlItem()
         CType(Me.LayoutControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.LayoutControl1.SuspendLayout()
         CType(Me.cbNodeText.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -79,10 +81,13 @@ Partial Class ucSelectors
         CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.icbFormat.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'LayoutControl1
         '
+        Me.LayoutControl1.Controls.Add(Me.icbFormat)
         Me.LayoutControl1.Controls.Add(Me.cbNodeText)
         Me.LayoutControl1.Controls.Add(Me.cbNodeID)
         Me.LayoutControl1.Controls.Add(Me.icbVisibility)
@@ -108,27 +113,27 @@ Partial Class ucSelectors
         '
         'cbNodeText
         '
-        Me.cbNodeText.Location = New System.Drawing.Point(76, 461)
+        Me.cbNodeText.Location = New System.Drawing.Point(84, 461)
         Me.cbNodeText.Name = "cbNodeText"
         Me.cbNodeText.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.cbNodeText.Properties.Appearance.Options.UseFont = True
         Me.cbNodeText.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.cbNodeText.Properties.Items.AddRange(New Object() {"responsePayload.content[0].code", "responsePayload.content[0].entityId", "responsePayload.content[0].id", "responsePayload.content[0].translations.en.description"})
         Me.cbNodeText.Properties.Sorted = True
-        Me.cbNodeText.Size = New System.Drawing.Size(481, 20)
+        Me.cbNodeText.Size = New System.Drawing.Size(473, 20)
         Me.cbNodeText.StyleController = Me.LayoutControl1
         Me.cbNodeText.TabIndex = 23
         '
         'cbNodeID
         '
-        Me.cbNodeID.Location = New System.Drawing.Point(76, 431)
+        Me.cbNodeID.Location = New System.Drawing.Point(84, 431)
         Me.cbNodeID.Name = "cbNodeID"
         Me.cbNodeID.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.cbNodeID.Properties.Appearance.Options.UseFont = True
         Me.cbNodeID.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.cbNodeID.Properties.Items.AddRange(New Object() {"responsePayload.content[0].code", "responsePayload.content[0].entityId", "responsePayload.content[0].id"})
         Me.cbNodeID.Properties.Sorted = True
-        Me.cbNodeID.Size = New System.Drawing.Size(481, 20)
+        Me.cbNodeID.Size = New System.Drawing.Size(473, 20)
         Me.cbNodeID.StyleController = Me.LayoutControl1
         Me.cbNodeID.TabIndex = 22
         '
@@ -148,7 +153,7 @@ Partial Class ucSelectors
         'lueLookupTypes
         '
         Me.lueLookupTypes.AllowHtmlTextInToolTip = DevExpress.Utils.DefaultBoolean.[False]
-        Me.lueLookupTypes.Location = New System.Drawing.Point(76, 65)
+        Me.lueLookupTypes.Location = New System.Drawing.Point(84, 65)
         Me.lueLookupTypes.Name = "lueLookupTypes"
         Me.lueLookupTypes.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.lueLookupTypes.Properties.Appearance.Options.UseFont = True
@@ -164,51 +169,51 @@ Partial Class ucSelectors
         Me.lueLookupTypes.Properties.SearchMode = DevExpress.XtraEditors.Controls.SearchMode.OnlyInPopup
         Me.lueLookupTypes.Properties.SortColumnIndex = 1
         Me.lueLookupTypes.Properties.ValueMember = "Id"
-        Me.lueLookupTypes.Size = New System.Drawing.Size(481, 20)
+        Me.lueLookupTypes.Size = New System.Drawing.Size(473, 20)
         Me.lueLookupTypes.StyleController = Me.LayoutControl1
         Me.lueLookupTypes.TabIndex = 18
         '
         'icbEnabled
         '
         Me.icbEnabled.EditValue = CType(0, Short)
-        Me.icbEnabled.Location = New System.Drawing.Point(76, 95)
+        Me.icbEnabled.Location = New System.Drawing.Point(84, 95)
         Me.icbEnabled.Name = "icbEnabled"
         Me.icbEnabled.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbEnabled.Properties.Appearance.Options.UseFont = True
         Me.icbEnabled.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.icbEnabled.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Enabled", "1", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Disabled", "0", -1)})
-        Me.icbEnabled.Size = New System.Drawing.Size(223, 20)
+        Me.icbEnabled.Size = New System.Drawing.Size(215, 20)
         Me.icbEnabled.StyleController = Me.LayoutControl1
         Me.icbEnabled.TabIndex = 15
         '
         'txtUUID
         '
         Me.txtUUID.Enabled = False
-        Me.txtUUID.Location = New System.Drawing.Point(76, 5)
+        Me.txtUUID.Location = New System.Drawing.Point(84, 5)
         Me.txtUUID.Name = "txtUUID"
         Me.txtUUID.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtUUID.Properties.Appearance.Options.UseFont = True
-        Me.txtUUID.Size = New System.Drawing.Size(481, 20)
+        Me.txtUUID.Size = New System.Drawing.Size(473, 20)
         Me.txtUUID.StyleController = Me.LayoutControl1
         Me.txtUUID.TabIndex = 14
         '
         'txtComments
         '
-        Me.txtComments.Location = New System.Drawing.Point(76, 215)
+        Me.txtComments.Location = New System.Drawing.Point(84, 215)
         Me.txtComments.Name = "txtComments"
         Me.txtComments.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtComments.Properties.Appearance.Options.UseFont = True
-        Me.txtComments.Size = New System.Drawing.Size(481, 22)
+        Me.txtComments.Size = New System.Drawing.Size(192, 22)
         Me.txtComments.StyleController = Me.LayoutControl1
         Me.txtComments.TabIndex = 13
         '
         'txtAPIQuery
         '
-        Me.txtAPIQuery.Location = New System.Drawing.Point(76, 247)
+        Me.txtAPIQuery.Location = New System.Drawing.Point(84, 247)
         Me.txtAPIQuery.Name = "txtAPIQuery"
         Me.txtAPIQuery.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtAPIQuery.Properties.Appearance.Options.UseFont = True
-        Me.txtAPIQuery.Size = New System.Drawing.Size(481, 174)
+        Me.txtAPIQuery.Size = New System.Drawing.Size(473, 174)
         Me.txtAPIQuery.StyleController = Me.LayoutControl1
         Me.txtAPIQuery.TabIndex = 12
         '
@@ -224,45 +229,45 @@ Partial Class ucSelectors
         '
         'txtPriority
         '
-        Me.txtPriority.Location = New System.Drawing.Point(76, 125)
+        Me.txtPriority.Location = New System.Drawing.Point(84, 125)
         Me.txtPriority.Name = "txtPriority"
         Me.txtPriority.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtPriority.Properties.Appearance.Options.UseFont = True
-        Me.txtPriority.Size = New System.Drawing.Size(481, 20)
+        Me.txtPriority.Size = New System.Drawing.Size(473, 20)
         Me.txtPriority.StyleController = Me.LayoutControl1
         Me.txtPriority.TabIndex = 9
         '
         'txtHeader
         '
-        Me.txtHeader.Location = New System.Drawing.Point(76, 185)
+        Me.txtHeader.Location = New System.Drawing.Point(84, 185)
         Me.txtHeader.Name = "txtHeader"
         Me.txtHeader.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.txtHeader.Properties.Appearance.Options.UseFont = True
-        Me.txtHeader.Size = New System.Drawing.Size(481, 20)
+        Me.txtHeader.Size = New System.Drawing.Size(473, 20)
         Me.txtHeader.StyleController = Me.LayoutControl1
         Me.txtHeader.TabIndex = 8
         '
         'icbType
         '
         Me.icbType.EditValue = CType(0, Short)
-        Me.icbType.Location = New System.Drawing.Point(76, 35)
+        Me.icbType.Location = New System.Drawing.Point(84, 35)
         Me.icbType.Name = "icbType"
         Me.icbType.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
         Me.icbType.Properties.Appearance.Options.UseFont = True
         Me.icbType.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.icbType.Properties.DropDownRows = 10
         Me.icbType.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Boolean", "BOOLEAN", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Check Box List", "CHECKBOXLIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Date", "DATE", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("List", "LIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Lookup Value", "LOOKUP", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Predefined List", "CHECKBOXPREDEFINEDLIST", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Text", "TEXT", -1)})
-        Me.icbType.Size = New System.Drawing.Size(481, 20)
+        Me.icbType.Size = New System.Drawing.Size(473, 20)
         Me.icbType.StyleController = Me.LayoutControl1
         Me.icbType.TabIndex = 7
         '
         'txtAPIEndpoint
         '
-        Me.txtAPIEndpoint.Location = New System.Drawing.Point(76, 155)
+        Me.txtAPIEndpoint.Location = New System.Drawing.Point(84, 155)
         Me.txtAPIEndpoint.Name = "txtAPIEndpoint"
         Me.txtAPIEndpoint.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAPIEndpoint.Properties.Appearance.Options.UseFont = True
-        Me.txtAPIEndpoint.Size = New System.Drawing.Size(481, 20)
+        Me.txtAPIEndpoint.Size = New System.Drawing.Size(473, 20)
         Me.txtAPIEndpoint.StyleController = Me.LayoutControl1
         Me.txtAPIEndpoint.TabIndex = 5
         '
@@ -279,7 +284,7 @@ Partial Class ucSelectors
         '
         Me.LayoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.[True]
         Me.LayoutControlGroup1.GroupBordersVisible = False
-        Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem3, Me.LayoutControlItem4, Me.LayoutControlItem7, Me.LayoutControlItem9, Me.LayoutControlItem10, Me.lciLookUpType, Me.LayoutControlItem12, Me.LayoutControlItem2, Me.LayoutControlItem8, Me.LayoutControlItem11, Me.LayoutControlItem14})
+        Me.LayoutControlGroup1.Items.AddRange(New DevExpress.XtraLayout.BaseLayoutItem() {Me.LayoutControlItem1, Me.LayoutControlItem3, Me.LayoutControlItem4, Me.LayoutControlItem7, Me.LayoutControlItem9, Me.LayoutControlItem10, Me.lciLookUpType, Me.LayoutControlItem12, Me.LayoutControlItem2, Me.LayoutControlItem8, Me.LayoutControlItem11, Me.LayoutControlItem14, Me.LayoutControlItem6})
         Me.LayoutControlGroup1.Name = "LayoutControlGroup1"
         Me.LayoutControlGroup1.OptionsItemText.TextToControlDistance = 5
         Me.LayoutControlGroup1.Size = New System.Drawing.Size(562, 486)
@@ -292,7 +297,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem1.Name = "LayoutControlItem1"
         Me.LayoutControlItem1.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem1.Text = "API Endpoint:"
-        Me.LayoutControlItem1.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem1.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem3
         '
@@ -301,7 +306,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem3.Name = "LayoutControlItem3"
         Me.LayoutControlItem3.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem3.Text = "Selector Type"
-        Me.LayoutControlItem3.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem3.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem4
         '
@@ -310,7 +315,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem4.Name = "LayoutControlItem4"
         Me.LayoutControlItem4.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem4.Text = "Priority:"
-        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem4.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem7
         '
@@ -319,7 +324,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem7.Name = "LayoutControlItem7"
         Me.LayoutControlItem7.Size = New System.Drawing.Size(562, 184)
         Me.LayoutControlItem7.Text = "API Query:"
-        Me.LayoutControlItem7.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem7.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem9
         '
@@ -328,7 +333,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem9.Name = "LayoutControlItem9"
         Me.LayoutControlItem9.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem9.Text = "UUID"
-        Me.LayoutControlItem9.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem9.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem10
         '
@@ -337,7 +342,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem10.Name = "LayoutControlItem10"
         Me.LayoutControlItem10.Size = New System.Drawing.Size(304, 30)
         Me.LayoutControlItem10.Text = "Enabled:"
-        Me.LayoutControlItem10.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem10.TextSize = New System.Drawing.Size(74, 13)
         '
         'lciLookUpType
         '
@@ -346,7 +351,7 @@ Partial Class ucSelectors
         Me.lciLookUpType.Name = "lciLookUpType"
         Me.lciLookUpType.Size = New System.Drawing.Size(562, 30)
         Me.lciLookUpType.Text = "Lookup Type"
-        Me.lciLookUpType.TextSize = New System.Drawing.Size(66, 13)
+        Me.lciLookUpType.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem12
         '
@@ -369,7 +374,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem2.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem2.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.LayoutControlItem2.Text = "Label:"
-        Me.LayoutControlItem2.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem2.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem8
         '
@@ -378,10 +383,10 @@ Partial Class ucSelectors
         Me.LayoutControlItem8.MaxSize = New System.Drawing.Size(0, 32)
         Me.LayoutControlItem8.MinSize = New System.Drawing.Size(91, 32)
         Me.LayoutControlItem8.Name = "LayoutControlItem8"
-        Me.LayoutControlItem8.Size = New System.Drawing.Size(562, 32)
+        Me.LayoutControlItem8.Size = New System.Drawing.Size(281, 32)
         Me.LayoutControlItem8.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom
         Me.LayoutControlItem8.Text = "Variable:"
-        Me.LayoutControlItem8.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem8.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem11
         '
@@ -390,7 +395,7 @@ Partial Class ucSelectors
         Me.LayoutControlItem11.Name = "LayoutControlItem11"
         Me.LayoutControlItem11.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem11.Text = "ID Node:"
-        Me.LayoutControlItem11.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem11.TextSize = New System.Drawing.Size(74, 13)
         '
         'LayoutControlItem14
         '
@@ -399,7 +404,29 @@ Partial Class ucSelectors
         Me.LayoutControlItem14.Name = "LayoutControlItem14"
         Me.LayoutControlItem14.Size = New System.Drawing.Size(562, 30)
         Me.LayoutControlItem14.Text = "Text Node:"
-        Me.LayoutControlItem14.TextSize = New System.Drawing.Size(66, 13)
+        Me.LayoutControlItem14.TextSize = New System.Drawing.Size(74, 13)
+        '
+        'icbFormat
+        '
+        Me.icbFormat.EditValue = CType(0, Short)
+        Me.icbFormat.Location = New System.Drawing.Point(365, 215)
+        Me.icbFormat.Name = "icbFormat"
+        Me.icbFormat.Properties.Appearance.Font = New System.Drawing.Font("Courier New", 8.25!)
+        Me.icbFormat.Properties.Appearance.Options.UseFont = True
+        Me.icbFormat.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.icbFormat.Properties.Items.AddRange(New DevExpress.XtraEditors.Controls.ImageComboBoxItem() {New DevExpress.XtraEditors.Controls.ImageComboBoxItem("None", "", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Upper Case", "U", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Lower Case", "L", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Proper Case", "P", -1), New DevExpress.XtraEditors.Controls.ImageComboBoxItem("Title Case", "T", -1)})
+        Me.icbFormat.Size = New System.Drawing.Size(192, 20)
+        Me.icbFormat.StyleController = Me.LayoutControl1
+        Me.icbFormat.TabIndex = 17
+        '
+        'LayoutControlItem6
+        '
+        Me.LayoutControlItem6.Control = Me.icbFormat
+        Me.LayoutControlItem6.Location = New System.Drawing.Point(281, 210)
+        Me.LayoutControlItem6.Name = "LayoutControlItem6"
+        Me.LayoutControlItem6.Size = New System.Drawing.Size(281, 32)
+        Me.LayoutControlItem6.Text = "Return Format:"
+        Me.LayoutControlItem6.TextSize = New System.Drawing.Size(74, 13)
         '
         'ucSelectors
         '
@@ -437,6 +464,8 @@ Partial Class ucSelectors
         CType(Me.LayoutControlItem8, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LayoutControlItem14, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.icbFormat.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LayoutControlItem6, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -469,4 +498,6 @@ Partial Class ucSelectors
      Friend WithEvents cbNodeID As DevExpress.XtraEditors.ComboBoxEdit
      Friend WithEvents LayoutControlItem11 As DevExpress.XtraLayout.LayoutControlItem
      Friend WithEvents LayoutControlItem14 As DevExpress.XtraLayout.LayoutControlItem
+    Friend WithEvents icbFormat As DevExpress.XtraEditors.ImageComboBoxEdit
+    Friend WithEvents LayoutControlItem6 As DevExpress.XtraLayout.LayoutControlItem
 End Class

@@ -113,46 +113,66 @@ Module bFunctions
     End Try
   End Function
 
-  Public Function SaveFile(psFullPath As String, poObject As Object) As Boolean
-    'Save it
+     Public Function SaveFile(psFullPath As String, poObject As Object) As Boolean
+          'Save it
 
-    Try
+          Try
 
-      Dim oPackageBytes() As Byte = ObjectToByteArray(poObject)
-      Using oFileStream = New FileStream(psFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Write)
+               Dim oPackageBytes() As Byte = ObjectToByteArray(poObject)
+               Using oFileStream = New FileStream(psFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Write)
 
-        oFileStream.Write(oPackageBytes, 0, oPackageBytes.Length)
-        oFileStream.Close()
+                    oFileStream.Write(oPackageBytes, 0, oPackageBytes.Length)
+                    oFileStream.Close()
 
-        oPackageBytes = Nothing
-      End Using
+                    oPackageBytes = Nothing
+               End Using
 
-      Return True
-    Catch ex As Exception
-      Return False
-    Finally
+               Return True
+          Catch ex As Exception
+               Return False
+          Finally
 
-    End Try
-  End Function
+          End Try
+     End Function
 
-  Public Function SaveFileJson(psFullPath As String, poObject As Object) As Boolean
-    'Save it
+     Public Function SaveFileJson(psFullPath As String, poObject As Object) As Boolean
+          Try
+               ' Validate the file path
+               If String.IsNullOrEmpty(psFullPath) Then
+                    Throw New ArgumentException("File path cannot be null or empty.", NameOf(psFullPath))
+               End If
 
-    Try
+               ' Serialize the object to JSON and write to the file
+               Dim json As String = JsonConvert.SerializeObject(poObject, Formatting.Indented)
+               File.WriteAllText(psFullPath, json)
 
-      File.WriteAllText(psFullPath, JsonConvert.SerializeObject(poObject, Newtonsoft.Json.Formatting.Indented))
+               Return True
+          Catch ex As ArgumentException
+               ' Log specific argument exception details (example: to a log file or system log)
+               ShowErrorForm("Invalid argument: " & ex.Message)
+               Return False
+          Catch ex As IOException
+               ' Log I/O exception details
+               ShowErrorForm("I/O error while writing file: " & ex.Message)
+               Return False
+          Catch ex As UnauthorizedAccessException
+               ' Log unauthorized access exception details
+               ShowErrorForm("Unauthorized access: " & ex.Message)
+               Return False
+          Catch ex As JsonException
+               ' Log JSON serialization exception details
+               ShowErrorForm("JSON serialization error: " & ex.Message)
+               Return False
+          Catch ex As Exception
+               ' Log general exception details
+               ShowErrorForm("An unexpected error occurred: " & ex.Message)
+               Return False
+          End Try
+     End Function
 
-      Return True
-    Catch ex As Exception
-      Return False
-    Finally
 
-    End Try
-  End Function
-
-
-  'The Following functions should be moved to MiscUtils dll
-  Public Function ObjectToByteArray(ByVal Obj As Object) As Byte()
+     'The Following functions should be moved to MiscUtils dll
+     Public Function ObjectToByteArray(ByVal Obj As Object) As Byte()
     Dim Value() As Byte = Nothing
     Dim MS As MemoryStream = Nothing
     Dim BF As Runtime.Serialization.Formatters.Binary.BinaryFormatter = Nothing
@@ -368,29 +388,29 @@ Module bFunctions
     Return ResizeImage(DirectCast(bmp, Image), size.Width, size.Height)
   End Function
 
-  Public Function LoadAndResizeImageAsBytes(psFileName As String, pnFormat As System.Drawing.Imaging.ImageFormat) As Byte()
-    Try
+     Public Function LoadAndResizeImageAsBytes(psFileName As String, pnFormat As System.Drawing.Imaging.ImageFormat, pnWidth As Integer, pnHeight As Integer) As Byte()
+          Try
 
-      If File.Exists(psFileName) Then
-        Dim oImage As Image = Image.FromFile(psFileName)
-        If oImage IsNot Nothing Then
-          oImage = ResizeImage(oImage, 256, 256)
+               If File.Exists(psFileName) Then
+                    Dim oImage As Image = Image.FromFile(psFileName)
+                    If oImage IsNot Nothing Then
+                         oImage = ResizeImage(oImage, pnWidth, pnHeight)
 
-          Using ms = New MemoryStream()
-            oImage.Save(ms, pnFormat) ' Use appropriate format here
-            Return ms.ToArray()
-          End Using
+                         Using ms = New MemoryStream()
+                              oImage.Save(ms, pnFormat) ' Use appropriate format here
+                              Return ms.ToArray()
+                         End Using
 
-        End If
-        oImage.Dispose()
+                    End If
+                    oImage.Dispose()
 
-      End If
-    Catch ex As Exception
+               End If
+          Catch ex As Exception
 
-    End Try
-    Return Nothing
+          End Try
+          Return Nothing
 
-  End Function
+     End Function
 
      Public Function CreateImage(ByVal data() As Byte, Optional ByVal skinProvider As ISkinProvider = Nothing) As Image
           Dim svgBitmap As New SvgBitmap(data)
@@ -700,6 +720,9 @@ Module bFunctions
 
                          nPOS = nEnd
                     Loop
+
+                    poTemplate.Validators.RemoveAll(Function(n) n.ValidationType = 2)
+
 
                     If sListOfColumns.Count > 0 Then
                          Dim nCountOfTranslations As Integer = 0

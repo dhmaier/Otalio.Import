@@ -45,6 +45,7 @@ Public Class clsSelectors
 
 
 
+
      Public Function Clone() As clsSelectors
           Dim oObject As clsSelectors = DirectCast(Me.MemberwiseClone(), clsSelectors)
           oObject.ID = System.Guid.NewGuid.ToString

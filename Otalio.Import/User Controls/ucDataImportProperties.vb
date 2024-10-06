@@ -20,11 +20,11 @@ Public Class ucDataImportProperties
      Public msFilePath As String = ""
      Private mbLoading As Boolean = True
      Private isUpdatingDTO As Boolean = False
-     Public linkedItemsCountDTO As Integer = 0
+     Public linkedItemsCountDTO As Integer = -1
      Private isUpdatingSelect As Boolean = False
-     Public linkedItemsCountSelect As Integer = 0
+     Public linkedItemsCountSelect As Integer = -1
      Private isUpdatingUpdate As Boolean = False
-     Public linkedItemsCountUpdate As Integer = 0
+     Public linkedItemsCountUpdate As Integer = -1
 
      Public Property SelectedTemplate As clsDataImportTemplateV2
           Get
@@ -44,6 +44,9 @@ Public Class ucDataImportProperties
                     mbLoading = True
                     moSelectedTemplate = Nothing
                     moImportHeader = value
+                    linkedItemsCountDTO = -1
+                    linkedItemsCountSelect = -1
+                    linkedItemsCountUpdate = -1
 
                     With txtName
                          .DataBindings.Clear()
@@ -166,23 +169,25 @@ Public Class ucDataImportProperties
      End Sub
      Private Sub icbType_EditValueChanged(sender As Object, e As EventArgs) Handles icbType.EditValueChanged
 
-          Select Case moSelectedTemplate.ImportType
+          If moSelectedTemplate IsNot Nothing Then
+               Select Case moSelectedTemplate.ImportType
 
-               Case "3" 'file import
+                    Case "3" 'file import
 
-                    lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-                    lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-                    lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
-                    lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+                         lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+                         lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+                         lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+                         lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
 
-               Case Else
+                    Case Else
 
-                    lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
-                    lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
-                    lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
-                    lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+                         lciEntityColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+                         lciFileLocationColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never
+                         lciReturnNodeColumn.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+                         lciReturnNodeName.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always
 
-          End Select
+               End Select
+          End If
 
      End Sub
 
@@ -232,7 +237,6 @@ Public Class ucDataImportProperties
 
           'clear existing items
           mbLoading = True
-          linkedItemsCountDTO = 0
 
           If poImportHeader IsNot Nothing Then
                With poImportHeader
@@ -256,6 +260,10 @@ Public Class ucDataImportProperties
 
      Private Sub BindTemplate(poTemplate As clsDataImportTemplateV2)
 
+
+          linkedItemsCountDTO = -1
+          linkedItemsCountSelect = -1
+          linkedItemsCountUpdate = -1
 
 
 
@@ -324,12 +332,12 @@ Public Class ucDataImportProperties
 
           With rtbAPIQuery
                .DataBindings.Clear()
-               .DataBindings.Add(New Binding("Text", poTemplate, "UpdateQuery"))
+               .DataBindings.Add(New Binding("Text", poTemplate, "UpdateQuery", True, DataSourceUpdateMode.OnValidation))
           End With
 
           With rtbSelectQuery
                .DataBindings.Clear()
-               .DataBindings.Add(New Binding("Text", poTemplate, "SelectQuery"))
+               .DataBindings.Add(New Binding("Text", poTemplate, "SelectQuery", True, DataSourceUpdateMode.OnValidation))
           End With
 
 
@@ -374,6 +382,12 @@ Public Class ucDataImportProperties
                .DataBindings.Clear()
                .DataBindings.Add(New Binding("Checked", poTemplate, "RemoveEmptyAndNull"))
           End With
+
+          With txtImageResize
+               .DataBindings.Clear()
+               .DataBindings.Add(New Binding("Text", poTemplate, "ImageResizeFormat"))
+          End With
+
 
           gridValidators.DataSource = poTemplate.Validators
           gridSelectors.DataSource = poTemplate.Selectors
@@ -604,4 +618,24 @@ Public Class ucDataImportProperties
           End With
 
      End Sub
+
+     Private Sub rtbSelectQuery_LostFocus(sender As Object, e As EventArgs) Handles rtbSelectQuery.LostFocus
+
+
+          ' Detect if the content is JSON or RSQL and format accordingly
+          Dim content As String = rtbSelectQuery.Text.Trim()
+          If IsJson(content) Then
+               ' Assume JSON
+               linkedItemsCountSelect = 0
+               rtbSelectQuery.Text = FormatJson(content)
+               ' rtbSelectQuery_TextChanged(Me, e)
+          Else
+               ' Assume RSQL
+               rtbSelectQuery.Text = FormatRSQL(content)
+          End If
+
+
+     End Sub
+
+
 End Class

@@ -90,6 +90,12 @@ Public Class ucSelectors
                          .DataBindings.Add(New Binding("Text", moSelector, "NodeText"))
                     End With
 
+
+                    With icbFormat
+                         .DataBindings.Clear()
+                         .DataBindings.Add(New Binding("Value", moSelector, "Formatted"))
+                    End With
+
                     If moSelector.LookUpType IsNot Nothing Then
                          Dim olookup As clsLookUpTypes = goLookupTypes.Where(Function(n) n.Id = moSelector.LookUpType.Id).FirstOrDefault
                          If olookup IsNot Nothing Then

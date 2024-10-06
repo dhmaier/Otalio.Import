@@ -13,7 +13,9 @@ Public Class frmSelectorQuery
      Private Sub frmSelectorQuery_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
           Try
                _ucSelectorQuery.ucSelectorQuery_Validating(Nothing, Nothing)
-               Me.QueryText = _ucSelectorQuery._Query
+               Me.QueryText = _ucSelectorQuery._Query.Replace(vbCrLf, " ").Replace(vbLf, " ").Trim
+
+
           Catch ex As Exception
 
           End Try
@@ -36,7 +38,9 @@ Public Class frmSelectorQuery
      Public Sub AdjustFormHeight()
           Dim userControlHeight As Integer = Me._ucSelectorQuery.CalculateUserControlHeight
           Me.Height = userControlHeight + Me.Padding.Top + Me.Padding.Bottom + Me._ucSelectorQuery.Margin.Top + Me._ucSelectorQuery.Margin.Bottom + 40
-
+          If Me.Height < 120 Then
+               Me.Height = 120
+          End If
      End Sub
 
 End Class

@@ -97,14 +97,38 @@ Public Class clsValidation
 
      Public ReadOnly Property DetailedDescriptionFromQuery As String
           Get
-               Dim sAPIObject As String = DataObject
+               Try
+                    Dim sAPIObject As String = DataObject
 
-               If String.IsNullOrEmpty(Query) = False Then
-                    sAPIObject += String.Format(" ({0})", Query.Substring(0, Query.LastIndexOf("==")))
-               End If
+                    ' Validate DataObject
+                    If String.IsNullOrEmpty(sAPIObject) = False Then
 
-               sAPIObject = StrConv(sAPIObject, VbStrConv.ProperCase)
-               Return sAPIObject
+
+
+                         ' Validate and process Query
+                         If Not String.IsNullOrEmpty(Query) AndAlso Query.Contains("==") Then
+                              Dim lastIndex As Integer = Query.LastIndexOf("==")
+                              If lastIndex <> -1 Then
+                                   sAPIObject += String.Format(" ({0})", Query.Substring(0, lastIndex))
+                              Else
+                                   Throw New InvalidOperationException("Query does not contain '=='.")
+                              End If
+                         End If
+
+                         ' Convert to proper case
+                         sAPIObject = StrConv(sAPIObject, VbStrConv.ProperCase)
+
+                    End If
+                    Return sAPIObject
+               Catch ex As InvalidOperationException
+                    ' Print specific invalid operation exception details to debug output
+                    Debug.Print("Invalid operation: " & ex.Message)
+                    Return String.Empty
+               Catch ex As Exception
+                    ' Print general exception details to debug output
+                    Debug.Print("An unexpected error occurred: " & ex.Message)
+                    Return String.Empty
+               End Try
           End Get
      End Property
 

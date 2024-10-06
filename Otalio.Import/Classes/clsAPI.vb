@@ -463,7 +463,13 @@ RetryAttempt:
                psQuery = ExtractSystemVariables(psQuery)
                psDTOJson = ExtractSystemVariables(psDTOJson)
 
-               Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
+               Dim url As String = ""
+               If String.IsNullOrEmpty(psEntityID) = False Then
+                    url = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID)
+               Else
+                    url = String.Format("{0}{1}", goConnection._ServerAddress, psEndPoint)
+               End If
+
 
                If Not String.IsNullOrEmpty(psQuery) Then
                     If psQuery.Contains("??") Then
@@ -529,34 +535,44 @@ RetryAttempt:
           Return Nothing
      End Function
 
-     Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
+     Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String, pnWidth As Integer, pnHeight As Integer) As IRestResponse
           Dim bFileContent As Byte() = Nothing
+          Dim validImageTypes As String() = {".jpg", ".jpeg", ".png", ".bmp"}
 
           Try
                psEndPoint = ExtractSystemVariables(psEndPoint)
-               If File.Exists(psFileName) Then
-                    Select Case Path.GetExtension(psFileName).ToLower()
-                         Case ".jpg"
-                              bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg)
-                         Case ".png"
-                              bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png)
-                         Case ".bmp"
-                              bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp)
-                         Case Else
-                              bFileContent = File.ReadAllBytes(psFileName)
-                    End Select
 
-                    If bFileContent IsNot Nothing Then
-                         Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID, psObject)
-                         Dim oClient = New RestClient(url)
-                         Dim oRequest = New RestRequest(psObject, Method.POST)
-                         oRequest.AddHeader("Accept-Encoding", "gzip, deflate, br")
-                         oRequest.AddFile("file", bFileContent, Path.GetFileName(psFileName), String.Format("image/{0}", Path.GetExtension(psFileName)))
-                         Dim oResponse = ExecuteAPI(oClient, oRequest, False)
-                         RaiseEvent APICallEvent(oRequest, oResponse)
-                         Return oResponse
-                    End If
+               ' Validate if the file exists
+               If Not File.Exists(psFileName) Then
+                    Throw New FileNotFoundException("The specified file does not exist: " & psFileName)
                End If
+
+               ' Validate if the file is a valid image type
+               Dim fileExtension As String = Path.GetExtension(psFileName).ToLower()
+
+               ' Process the file based on its extension
+               Select Case fileExtension
+                    Case ".jpg", ".jpeg"
+                         bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg, pnWidth, pnHeight)
+                    Case ".png"
+                         bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png, pnWidth, pnHeight)
+                    Case ".bmp"
+                         bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp, pnWidth, pnHeight)
+                    Case Else
+                         bFileContent = File.ReadAllBytes(psFileName)
+               End Select
+
+               If bFileContent IsNot Nothing Then
+                    Dim url As String = String.Format("{0}{1}/{2}", goConnection._ServerAddress, psEndPoint, psEntityID, psObject)
+                    Dim oClient = New RestClient(url)
+                    Dim oRequest = New RestRequest(psObject, Method.POST)
+                    oRequest.AddHeader("Accept-Encoding", "gzip, deflate, br")
+                    oRequest.AddFile("file", bFileContent, Path.GetFileName(psFileName), String.Format("{0}/{1}", psObject, fileExtension.TrimStart("."c)))
+                    Dim oResponse = ExecuteAPI(oClient, oRequest, False)
+                    RaiseEvent APICallEvent(oRequest, oResponse)
+                    Return oResponse
+               End If
+
           Catch ex As Exception
                RaiseEvent ErrorEvent(ex)
           Finally
@@ -649,9 +665,10 @@ RetryAttempt:
 
      Private Sub LoadTranslatableLanguages()
           Try
-               goLanguages.Clear()
+               ' Remove the clear operation to retain existing languages
+               ' goLanguages.Clear()
 
-               If goLanguages IsNot Nothing AndAlso goLanguages.Count = 0 Then
+               If goLanguages IsNot Nothing Then
                     Dim oResponse As IRestResponse = CallWebEndpointUsingGet("metadata/v1/languages", String.Empty, "translationEnabled==true", "code")
                     If oResponse IsNot Nothing Then
                          Dim json As JObject = JObject.Parse(oResponse.Content)
@@ -659,7 +676,16 @@ RetryAttempt:
                          If oObject IsNot Nothing Then
                               For Each oNode In oObject
                                    If oNode IsNot Nothing Then
-                                        goLanguages.Add(New clsLanguages With {.id = oNode("id"), .code = oNode("code"), .translations = GetTranslation(oNode.SelectToken("translations.en.description"))})
+                                        Dim code As String = oNode("code").ToString()
+                                        ' Check if the code already exists in goLanguages
+                                        Dim exists As Boolean = goLanguages.Any(Function(lang) lang.code = code)
+                                        If Not exists Then
+                                             goLanguages.Add(New clsLanguages With {
+                                                   .id = oNode("id"),
+                                                   .code = code,
+                                                   .translations = GetTranslation(oNode.SelectToken("translations.en.description"))
+                                              })
+                                        End If
                                    End If
                               Next
                          End If
@@ -669,6 +695,7 @@ RetryAttempt:
                RaiseEvent ErrorEvent(ex)
           End Try
      End Sub
+
 
      Public Function CallGraphQL(psEndPoint As String, psDTOJson As String) As IRestResponse
           Try

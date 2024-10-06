@@ -40,6 +40,7 @@ Public Class clsDataImportTemplateV2
      Public Property IgnoreArray As Boolean = False
      Public Property RemoveEmptyAndNull As Boolean = False
      Public Property WorkbookSheetName As String = ""
+     Public Property ImageResizeFormat As String = "0,0"
 
 
      Public ReadOnly Property DTOObjectFormated As String
@@ -147,4 +148,45 @@ Public Class clsDataImportTemplateV2
 
           End Get
      End Property
+
+     ' Read-only property to extract the width from the ImageResizeFormat
+     Public ReadOnly Property Width As Integer
+          Get
+               If String.IsNullOrEmpty(ImageResizeFormat) Then
+                    ImageResizeFormat = "0,0"
+               End If
+               Dim parts() As String = ImageResizeFormat.Split(","c)
+               If parts.Length = 2 Then
+                    Dim widthValue As Integer
+                    If Integer.TryParse(parts(0).Trim(), widthValue) Then
+                         Return widthValue
+                    End If
+               End If
+               ' Return a default value or handle the error as needed
+               Return 48
+          End Get
+     End Property
+
+     ' Read-only property to extract the height from the ImageResizeFormat
+     Public ReadOnly Property Height As Integer
+          Get
+               If String.IsNullOrEmpty(ImageResizeFormat) Then
+                    ImageResizeFormat = "0,0"
+               End If
+
+               Dim parts() As String = ImageResizeFormat.Split(","c)
+               If parts.Length = 2 Then
+                    Dim heightValue As Integer
+                    If Integer.TryParse(parts(1).Trim(), heightValue) Then
+                         Return heightValue
+                    End If
+               End If
+               ' Return a default value or handle the error as needed
+               Return 48
+          End Get
+     End Property
+
+
+
+
 End Class

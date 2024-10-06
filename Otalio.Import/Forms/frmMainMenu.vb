@@ -112,14 +112,22 @@ Public Class frmMainMenu
                UpdateProgressStatus()
           End If
 
-          LoadGridLayouts(Me, csLayoutFileName)
+          Dim appDataFolder As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+          Dim xmlFilePath As String = Path.Combine(appDataFolder, csLayoutFileName)
+          If File.Exists(xmlFilePath) Then
+               LoadGridLayouts(Me, xmlFilePath)
+          End If
+
 
 
      End Sub
 
      Private Sub frmMainMenu_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
 
-          SaveGridLayouts(Me, csLayoutFileName)
+          Dim appDataFolder As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+          Dim xmlFilePath As String = Path.Combine(appDataFolder, csLayoutFileName)
+
+          SaveGridLayouts(Me, xmlFilePath)
 
 
      End Sub
@@ -255,7 +263,7 @@ Public Class frmMainMenu
                     If nRowID >= 0 Then
                          Dim oItem As clsDataImportHeader = TryCast(gdWorkbook.GetRow(nRowID), clsDataImportHeader)
 
-                         If oItem.ReadOnlyImport = False Then
+                         If oItem.ReadOnlyImport = 0 Then
                               Dim bApply As Boolean = True
 
                               If VerifyHierarchSelection(oItem) = False And bIgnore = False Then
@@ -280,10 +288,11 @@ Public Class frmMainMenu
 
                                    ' End Select
                               End If
-
+                         Else
+                              MsgBox(String.Format("This import template {0} is Read Only and cannot be imported.", oItem.Name), MsgBoxStyle.OkOnly, "Warning...")
                          End If
 
-                         MsgBox(String.Format("This import template {0} is Read Only and cannot be imported.", oItem.Name), vbAbortRetryIgnore, "Warning...")
+
                     End If
 
                Next
@@ -487,7 +496,7 @@ Public Class frmMainMenu
                Dim fd As OpenFileDialog = New OpenFileDialog
                fd.Multiselect = False
                fd.Title = "Select a Otalio Dynamic import workbook."
-               fd.Filter = String.Format("Dynamic import workbook |*{0}", gsWorkbookExtention)
+               fd.Filter = String.Format("Dynamic import Template |*{0}|JSON Files|*.json", gsWorkbookExtention)
                fd.FilterIndex = 1
                fd.FileName = txtWorkbookName.Text
                fd.RestoreDirectory = True
@@ -516,8 +525,13 @@ Public Class frmMainMenu
      End Sub
 
      Private Sub bbiAddTemplate_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiAddTemplate.ItemClick
-          goOpenWorkBook.Templates.Add(New clsDataImportHeader)
+
+          Dim oTemp As New clsDataImportHeader
+          oTemp.Templates = New List(Of clsDataImportTemplateV2)
+          oTemp.Templates.Add(New clsDataImportTemplateV2)
+          goOpenWorkBook.Templates.Add(oTemp)
           loadWorkbook()
+
      End Sub
 
      Private Sub bbiRemoveTemplate_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiRemoveTemplate.ItemClick
@@ -734,13 +748,11 @@ Public Class frmMainMenu
 
      Private Sub bbiPublish_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiPublish.ItemClick
 
-          Dim sPath As String = ReadRegistry("Last Published Folder", "")
-          Dim sFileName As String = String.Format("{0} {1}", msFileName, goOpenWorkBook.WorkbookVersion)
-
-
-
           'first save everything
           bbiSaveAll_ItemClick(Me, e)
+
+          Dim sPath As String = ReadRegistry("Last Published Folder", "")
+          Dim sFileName As String = String.Format("{0} {1}", msFileName, goOpenWorkBook.WorkbookVersion)
 
           Using oFolder As New FolderBrowserDialog
 
@@ -962,7 +974,8 @@ Public Class frmMainMenu
      Private Sub bbiRestoreGridsLayouts_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles bbiRestoreGridsLayouts.ItemClick
 
           Try
-               Dim xmlFilePath As String = csLayoutFileName
+               Dim appDataFolder As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+               Dim xmlFilePath As String = Path.Combine(appDataFolder, csLayoutFileName)
 
                If File.Exists(xmlFilePath) Then
                     File.Delete(xmlFilePath)
@@ -1099,10 +1112,21 @@ Public Class frmMainMenu
                                                        End If
 
                                                   Else
-                                                       oCol.Name = String.Format("{0} ({1})", oValidation.DataObject, oCol.Name)
+
+                                                       If String.IsNullOrEmpty(oValidation.Comments) = True Then
+                                                            If String.IsNullOrEmpty(oValidation.LookUpType.Code) = False Then
+                                                                 oCol.Name = String.Format("{0} ({1})", oValidation.LookUpType.Code, oCol.Name)
+                                                            Else
+                                                                 oCol.Name = String.Format("{0} ({1})", oValidation.DataObject, oCol.Name)
+                                                            End If
+                                                       Else
+                                                            oCol.Name = String.Format("{0}", oValidation.Comments.ToString)
+                                                       End If
+
+
                                                   End If
 
-                                                  oActiveColumns.Add(oCol)
+                                                       oActiveColumns.Add(oCol)
                                              End If
                                         Next
 
@@ -1619,10 +1643,12 @@ Public Class frmMainMenu
                                                   End If
                                              Case "3"
 
+
+
                                                   oResponse = goHTTPServer.CallWebEndpointUploadFile(sAPIEndpoint,
                                                                                             .Cells(String.Format("{0}{1}", oTemplate.EntityColumn, nRow)).Value.ToString,
                                                                                             .Cells(String.Format("{0}{1}", oTemplate.FileLocationColumn, nRow)).Value.ToString,
-                                                                                            oTemplate.ReturnNodeValue)
+                                                                                            oTemplate.ReturnNodeValue, oTemplate.Width, oTemplate.Height)
 
                                              Case "4"
 
@@ -1762,7 +1788,9 @@ Public Class frmMainMenu
                                                   oListResponses.Add(AddImportResponse(False, oTemplate.Name, "OK", sReplyMessage))
                                              End If
 
-                                             Call ShowWaitDialogWithCancelProgress(String.Format("{5} row {0} of {1} from Template {4} with {2} - {3}", nRow - 1, nCountRows, sStatusCode, sReplyMessage, oTemplate.Name, IIf(oTemplate.ImportType = "6", "Deleted", "Processed")))
+
+
+                                             Call ShowWaitDialogWithCancelProgress(String.Format("{5} row {0} of {1} from Template {4} with {2} - {3}", nRow - 1, nCountRows, sStatusCode, sReplyMessage, oTemplate.Name, IIf(oTemplate.ImportType = "5", "Deleted", "Processed")))
 
                                         Else
 
@@ -2093,7 +2121,7 @@ ExitProces:
                                                                                                Dim oJsn As JToken = oRow
                                                                                                Dim oNodes As List(Of String) = ocolumn.Parent.Split(".").ToList
 
-                                                                                               Debug.Print(sNodeName)
+                                                                                               '  Debug.Print(sNodeName)
 
                                                                                                Select Case ocolumn.Type
                                                                                                     Case JTokenType.Property
@@ -2320,7 +2348,7 @@ ExitProces:
 
                                                                            Catch ex As Exception
                                                                                 UpdateProgressStatus()
-                                                                                ShowErrorForm(ex)
+                                                                                ShowErrorForm($"Error Select query:{sSelectQuery}", ex)
                                                                            End Try
 
                                                                            If mbCancel Then
@@ -2880,7 +2908,7 @@ ExitProces:
                                                   Dim sMessage As String = oResponse.Content.ToString.Substring(0, IIf(nIndex > 0, nIndex, oResponse.Content.ToString.Length))
                                                   UpdateProgressStatus()
 
-                                                  ShowErrorForm(String.Format("Error in select query.{0}{0}{1}{0}{0}", vbNewLine, sMessage))
+                                                  ShowErrorForm(String.Format("Error in select query.{0}{0}{2}{0}{0}{1}{0}{0}", vbNewLine, sMessage, IIf(IsJson(sSelectQuery), FormatJson(sSelectQuery), sSelectQuery)))
 
                                              End If
 
@@ -3119,7 +3147,7 @@ ExitProces:
                                                   oResponse = goHTTPServer.CallWebEndpointUploadFile(oTemplate.APIEndpoint,
                                                                                                  .Cells(String.Format("{0}{1}", oTemplate.EntityColumn, nRow)).Value.ToString,
                                                                                                  .Cells(String.Format("{0}{1}", oTemplate.FileLocationColumn, nRow)).Value.ToString,
-                                                                                                 oTemplate.ReturnNodeValue)
+                                                                                                 oTemplate.ReturnNodeValue, oTemplate.Width, oTemplate.Height)
                                              Case Else
                                                   Exit Sub
                                         End Select
@@ -4319,7 +4347,7 @@ RetryUpdate:
                Dim nCountColumns As Integer = .Columns.LastUsedIndex
                Dim nCountRows As Integer = .Rows.LastUsedIndex
 
-               .Cells(String.Format("{0}{1}", poValidation.ReturnCell, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
+               '.Cells(String.Format("{0}{1}", poValidation.ReturnCell, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
 
                If poValidation.PreloadData Then
 
@@ -4641,7 +4669,7 @@ RetryUpdate:
                Dim nCountColumns As Integer = .Columns.LastUsedIndex
                Dim nCountRows As Integer = .Rows.LastUsedIndex
 
-               .Cells(String.Format("{0}{1}", poValidation.ReturnCell.Trim, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
+               ' .Cells(String.Format("{0}{1}", poValidation.ReturnCell.Trim, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
@@ -4817,8 +4845,8 @@ RetryUpdate:
                Dim nCountRows As Integer = .Rows.LastUsedIndex
 
 
-               .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments),
-                                      poValidation.APIEndpoint, String.Format("({0})", poValidation.Comments)), VbStrConv.ProperCase)
+               ' .Cells(String.Format("{0}{1}", poValidation.ReturnCellWithoutProperties, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments),
+               'on.APIEndpoint, String.Format("({0})", poValidation.Comments)), VbStrConv.ProperCase)
 
 
                If poValidation.PreloadData Then
@@ -5174,7 +5202,7 @@ RetryUpdate:
                Dim nCountRows As Integer = .Rows.LastUsedIndex
 
 
-               .Cells(String.Format("{0}{1}", poValidation.ReturnCell, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
+               '.Cells(String.Format("{0}{1}", poValidation.ReturnCell, 1)).Value = StrConv(IIf(String.IsNullOrEmpty(poValidation.Comments), poValidation.APIEndpoint, poValidation.Comments), VbStrConv.ProperCase)
 
                'loop though all rows in the excel sheet
                For nRow As Integer = 2 To nCountRows + 1
@@ -5903,6 +5931,7 @@ RetryUpdate:
 
                     siStatus.Caption = psStatus
                     siStatus.Refresh()
+                    Me.Refresh()
                End If
 
           Catch ex As Exception
@@ -6013,6 +6042,7 @@ RetryUpdate:
 
           Dim sTempPath As String = Path.GetTempFileName
           goOpenWorkBook.SelectedHierarchy = gsSelectedHierarchy
+          Dim sExtention As String = gsWorkbookExtention
 
           Try
 
@@ -6029,7 +6059,7 @@ RetryUpdate:
                     Using fd As SaveFileDialog = New SaveFileDialog
 
                          fd.Title = "Save a Otalio Dynamic import template."
-                         fd.Filter = String.Format("Dynamic import Template |*{0}", gsWorkbookExtention)
+                         fd.Filter = String.Format("Dynamic import Template |*{0}|JSON Files|*.json", gsWorkbookExtention)
                          fd.FilterIndex = 1
                          fd.FileName = txtWorkbookName.Text
                          fd.RestoreDirectory = True
@@ -6038,8 +6068,13 @@ RetryUpdate:
                               sPath = Path.GetDirectoryName(fd.FileName)
                               sFileName = Path.GetFileName(fd.FileName)
 
-                              If sFileName.EndsWith(gsWorkbookExtention) = False Then
-                                   sFileName = sFileName & gsWorkbookExtention
+
+                              If sFileName.EndsWith(gsWorkbookExtention) = False And sFileName.EndsWith(".json") = False Then
+                                   If fd.FilterIndex = 1 Then
+                                        sFileName = sFileName & gsWorkbookExtention
+                                   ElseIf fd.FilterIndex = 2 Then
+                                        sFileName = sFileName & ".json"
+                                   End If
                               End If
 
                          Else
@@ -6052,7 +6087,12 @@ RetryUpdate:
 
 
                'create a temporary file
-               SaveFile(sTempPath, goOpenWorkBook)
+               If sFileName.EndsWith(gsWorkbookExtention) Then
+                    SaveFile(sTempPath, goOpenWorkBook)
+               End If
+               If sFileName.EndsWith(".json") Then
+                    SaveFileJson(sTempPath, goOpenWorkBook)
+               End If
 
                If Directory.Exists(sPath) = False Then
                     Directory.CreateDirectory(sPath)
@@ -6082,7 +6122,13 @@ RetryUpdate:
                     File.Delete(Path.Combine(sPath, sFileName))
                End If
 
-               SaveFile(Path.Combine(sPath, sFileName), goOpenWorkBook)
+
+               If sFileName.EndsWith(gsWorkbookExtention) Then
+                    SaveFile(Path.Combine(sPath, sFileName), goOpenWorkBook)
+               End If
+               If sFileName.EndsWith(".json") Then
+                    SaveFileJson(Path.Combine(sPath, sFileName), goOpenWorkBook)
+               End If
 
 
                If pbSaveAs Then
@@ -6571,23 +6617,27 @@ RetryUpdate:
      Private Sub OpenWorkBook(psFileName As String, psSafeFileName As String)
           Try
                If File.Exists(psFileName) Then
-
                     msFilePath = Path.GetDirectoryName(psFileName)
                     msFileName = psSafeFileName
                     txtWorkbookName.EditValue = msFileName
 
                     UpdateProgressStatus("Opening Document", False)
 
-                    Dim oWorkbook As clsWorkbook = TryCast(LoadFile(psFileName), clsWorkbook)
+                    Dim oWorkbook As clsWorkbook = Nothing
+
+                    If Path.GetExtension(psFileName).ToLower() = ".json" Then
+                         oWorkbook = LoadJsonFile(psFileName)
+                    Else
+                         oWorkbook = TryCast(LoadFile(psFileName), clsWorkbook)
+                    End If
 
                     If oWorkbook IsNot Nothing Then
-
                          goOpenWorkBook = oWorkbook
                          goOpenWorkBook.WorkbookName = msFileName
 
                          loadWorkbook()
 
-                         'check if there is a data excel sheet in the same folder with the same name
+                         ' Check if there is a data Excel sheet in the same folder with the same name
                          If File.Exists(Replace(psFileName, gsWorkbookExtention, ".xlsx")) Then
                               spreadsheetControl.LoadDocument(Replace(psFileName, gsWorkbookExtention, ".xlsx"))
                          End If
@@ -6598,7 +6648,6 @@ RetryUpdate:
                          UpdateProgressStatus()
                          MsgBox("Failed to load Data import workbook file",, "Warning...")
                     End If
-
                End If
           Catch ex As Exception
                MsgBox(String.Format("Failed to load Data import workbook file: {0}", ex.Message), "Warning...")

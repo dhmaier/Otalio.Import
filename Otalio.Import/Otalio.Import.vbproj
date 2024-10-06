@@ -238,6 +238,7 @@
     <Compile Include="Modules\bGridHelper.vb" />
     <Compile Include="Modules\bJson.vb" />
     <Compile Include="Modules\bRegistryHelper.vb" />
+    <Compile Include="Modules\bRSQL.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

@@ -1,5 +1,6 @@
 ﻿Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
+Imports System.IO
 
 Module bJson
 
@@ -227,10 +228,16 @@ Module bJson
 
      Public Function UpdateFormattingConditions(jsonString As String, propertyType As String, newFormatType As String, updateAllSubProperties As Boolean) As String
           Try
-               Dim jsonObject As JObject = JObject.Parse(jsonString)
-               ' Recursive function to update formatting conditions
-               UpdateFormattingConditionsInToken(jsonObject, propertyType, newFormatType, updateAllSubProperties)
-               Return jsonObject.ToString()
+               If String.IsNullOrEmpty(jsonString) = False Then
+                    Dim jsonToken As JToken = JToken.Parse(jsonString)
+
+                    ' Recursive function to update formatting conditions
+                    UpdateFormattingConditionsInToken(jsonToken, propertyType, newFormatType, updateAllSubProperties)
+                    Return jsonToken.ToString()
+               Else
+                    Return String.Empty
+               End If
+
           Catch ex As Exception
                Throw New Exception("An error occurred while processing the JSON.", ex)
           End Try
@@ -319,5 +326,33 @@ Module bJson
           End Try
      End Function
 
+     Public Function FormatJson(json As String) As String
+          ' Parse and format the JSON string
+          Try
+               Dim parsedJson As JObject = JObject.Parse(json)
+               Return parsedJson.ToString(Newtonsoft.Json.Formatting.Indented)
+          Catch ex As Exception
+               ' Handle parsing errors
+               Return json
+          End Try
+     End Function
+
+     Public Function IsJson(input As String) As Boolean
+          Try
+               JToken.Parse(input)
+               Return True
+          Catch ex As Exception
+               Return False
+          End Try
+     End Function
+     Public Function LoadJsonFile(psFileName As String) As clsWorkbook
+          Try
+               Dim jsonString As String = File.ReadAllText(psFileName)
+               Return JsonConvert.DeserializeObject(Of clsWorkbook)(jsonString)
+          Catch ex As Exception
+               MsgBox(String.Format("Failed to load JSON file: {0}", ex.Message), "Warning...")
+               Return Nothing
+          End Try
+     End Function
 
 End Module

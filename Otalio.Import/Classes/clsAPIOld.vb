@@ -649,7 +649,7 @@ RetryAttempt:
 
      End Function
 
-     Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String) As IRestResponse
+     Public Function CallWebEndpointUploadFile(psEndPoint As String, psEntityID As String, psFileName As String, psObject As String, pnWidth As Integer, pnHeight As Integer) As IRestResponse
 
           Dim bFileContent As Byte() = Nothing
 
@@ -658,9 +658,9 @@ RetryAttempt:
                If File.Exists(psFileName) Then
 
                     Select Case Path.GetExtension(psFileName).ToString.ToLower
-                         Case ".jpg" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg)
-                         Case ".png" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png)
-                         Case ".bmp" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp)
+                         Case ".jpg" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Jpeg, pnWidth, pnHeight)
+                         Case ".png" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Png, pnWidth, pnHeight)
+                         Case ".bmp" : bFileContent = LoadAndResizeImageAsBytes(psFileName, Imaging.ImageFormat.Bmp, pnWidth, pnHeight)
                          Case Else : bFileContent = System.IO.File.ReadAllBytes(psFileName)
                     End Select
 
